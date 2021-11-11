@@ -119,10 +119,40 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Behavior\Behavior.cs" />
+    <Compile Include="Behavior\HighlightFormFieldOnErrors.cs" />
+    <Compile Include="Behavior\NumericTextBoxBehavior.cs" />
+    <Compile Include="Converters\FirstErrorConverter.cs" />
+    <Compile Include="Converters\NotBooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\TextToHeaderVisibilityConverter.cs" />
+    <Compile Include="Initiator.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MainViewModel.cs" />
+    <Compile Include="Navigation\NavigationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\MessageDialogService.cs" />
+    <Compile Include="Source\Login\LoginPage.xaml.cs">
+      <DependentUpon>LoginPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Login\LoginViewModel.cs" />
+    <Compile Include="Source\Recover\RecoverUser.xaml.cs">
+      <DependentUpon>RecoverUser.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Recover\RecoverUserViewModel.cs" />
+    <Compile Include="Source\Register\Signup.xaml.cs">
+      <DependentUpon>Signup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Register\SignupViewModel.cs" />
+    <Compile Include="Utility\EmailUtility.cs" />
+    <Compile Include="Utility\Utilities.cs" />
+    <Compile Include="Validation\EmailValidationAttribute.cs" />
+    <Compile Include="Validation\MobileNoValidationAttribute.cs" />
+    <Compile Include="Validation\OTPValidationAttribute.cs" />
+    <Compile Include="Validation\PasswordMatchValidationAttribute.cs" />
+    <Compile Include="Validation\PasswordValidationAttribute.cs" />
+    <Compile Include="ViewModelLocator.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -131,6 +161,11 @@
     <None Include="BookingBanquetDV_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\background.jpg" />
+    <Content Include="Assets\email.jpg" />
+    <Content Include="Assets\mobileNo.png" />
+    <Content Include="Assets\password.png" />
+    <Content Include="Assets\username.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -149,11 +184,82 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Source\Login\LoginPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Recover\RecoverUser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Register\Signup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\Brushes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\ColourPalette.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\CommonStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\Converters.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.8</Version>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>2.6.3</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
+      <Version>6.2.10</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
+      <Version>2.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="QueryString.NET">
+      <Version>1.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="SQLCipher.Net.WindowsUAP-PCL">
+      <Version>3.4.2</Version>
+    </PackageReference>
+    <PackageReference Include="Unity">
+      <Version>5.8.11</Version>
+    </PackageReference>
+    <PackageReference Include="XAML-MultiBinding">
+      <Version>1.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="Microsoft.VCLibs, Version=14.0">
+      <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
+    </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BookingServices\BookingServices.csproj">
+      <Project>{ebd20694-22bb-4c9f-9f1b-85571cb829b6}</Project>
+      <Name>BookingServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CommonServices\CommonServices.csproj">
+      <Project>{f779b6f8-b41d-4f80-a10a-313f2a08e1f0}</Project>
+      <Name>CommonServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataAccessLibrary\DataAccessLibrary.csproj">
+      <Project>{b24dcb8c-fc1d-4954-a541-c97c37ac191a}</Project>
+      <Name>DataAccessLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ViewModelsAndValidation\ViewModelsAndValidation.csproj">
+      <Project>{759996A3-BF6C-4C03-9E6E-FE67D8B001E5}</Project>
+      <Name>ViewModelsAndValidation</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

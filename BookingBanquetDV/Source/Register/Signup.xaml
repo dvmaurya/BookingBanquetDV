@@ -1,0 +1,184 @@
+﻿<Page
+    x:Class="BookingBanquetDV.Source.Register.Signup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:BookingBanquetDV.Behavior"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+    <Grid Background="AliceBlue">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Image
+            Grid.Column="1"
+            Margin="0,0,50,0"
+            Source="ms-appx:///Assets/background.jpg" />
+        <Grid
+            Grid.Column="0"
+            Margin="50,50,0,50"
+            BorderBrush="LightGray"
+            BorderThickness="1">
+            <StackPanel Margin="50,40,0,0">
+                <TextBlock
+                    Margin="0,0,50,20"
+                    FontWeight="Bold"
+                    Text="All fields are mandatory" />
+                <StackPanel Margin="0,0,50,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid
+                            Grid.Column="0"
+                            Height="32"
+                            Margin="0,5,0,0"
+                            BorderBrush="Gray"
+                            BorderThickness="2,2,0,2">
+                            <Image Height="27" Source="ms-appx:///Assets/username.png" />
+                        </Grid>
+                        <TextBox
+                            Grid.Column="1"
+                            PlaceholderText="Enter full name"
+                            Text="{Binding FullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <interactivity:Interaction.Behaviors>
+                                <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[FullName]}" />
+                            </interactivity:Interaction.Behaviors>
+                        </TextBox>
+                    </Grid>
+                    <TextBlock
+                        Style="{StaticResource ErrorMessageStyle}"
+                        Text="{Binding Errors[FullName], Converter={StaticResource FirstErrorConverter}}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Margin="0,0,50,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid
+                            Grid.Column="0"
+                            Height="32"
+                            Margin="0,5,0,0"
+                            BorderBrush="Gray"
+                            BorderThickness="2,2,0,2">
+                            <Image Height="27" Source="ms-appx:///Assets/email.jpg" />
+                        </Grid>
+                        <TextBox
+                            Grid.Column="1"
+                            PlaceholderText="Email id"
+                            Text="{Binding EmailId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <interactivity:Interaction.Behaviors>
+                                <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[EmailId]}" />
+                            </interactivity:Interaction.Behaviors>
+                        </TextBox>
+                    </Grid>
+                    <TextBlock
+                        Style="{StaticResource ErrorMessageStyle}"
+                        Text="{Binding Errors[EmailId], Converter={StaticResource FirstErrorConverter}}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Margin="0,0,50,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid
+                            Grid.Column="0"
+                            Height="32"
+                            Margin="0,5,0,0"
+                            BorderBrush="Gray"
+                            BorderThickness="2,2,0,2">
+                            <Image Height="27" Source="ms-appx:///Assets/mobileNo.png" />
+                        </Grid>
+                        <TextBox
+                            Grid.Column="1"
+                            InputScope="Number"
+                            MaxLength="10"
+                            PlaceholderText="Mobile number"
+                            Text="{Binding MobileNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <interactivity:Interaction.Behaviors>
+                                <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
+                                <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[MobileNo]}" />
+                            </interactivity:Interaction.Behaviors>
+                        </TextBox>
+                    </Grid>
+                    <TextBlock
+                        Style="{StaticResource ErrorMessageStyle}"
+                        Text="{Binding Errors[MobileNo], Converter={StaticResource FirstErrorConverter}}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Margin="0,0,50,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid
+                            Grid.Column="0"
+                            BorderBrush="Gray"
+                            BorderThickness="2,2,0,2">
+                            <Image Height="30" Source="ms-appx:///Assets/password.png" />
+                        </Grid>
+                        <PasswordBox
+                            Grid.Column="1"
+                            Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            PlaceholderText="Password" />
+                    </Grid>
+                    <TextBlock
+                        Style="{StaticResource ErrorMessageStyle}"
+                        Text="{Binding Errors[Password], Converter={StaticResource FirstErrorConverter}}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Margin="0,0,50,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid
+                            Grid.Column="0"
+                            BorderBrush="Gray"
+                            BorderThickness="2,2,0,2">
+                            <Image Height="30" Source="ms-appx:///Assets/password.png" />
+                        </Grid>
+                        <PasswordBox
+                            Grid.Column="1"
+                            Password="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            PlaceholderText="Confirm password" />
+                    </Grid>
+                    <TextBlock
+                        Style="{StaticResource ErrorMessageStyle}"
+                        Text="{Binding Errors[ConfirmPassword], Converter={StaticResource FirstErrorConverter}}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Margin="0,0,0,20">
+                    <Button
+                        Width="100"
+                        HorizontalAlignment="Center"
+                        Background="#2596BE"
+                        Command="{Binding SignupCommand}"
+                        Content="SIGN UP"
+                        FontSize="16"
+                        Foreground="#FFFFFF" />
+                    <StackPanel
+                        Margin="0,20,0,0"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal">
+                        <TextBlock Text="Have already account?" />
+                        <HyperlinkButton
+                            Margin="2,-5,0,0"
+                            Command="{Binding LoginCommand}"
+                            Content="Click here to login" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>

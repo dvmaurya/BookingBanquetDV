@@ -1,0 +1,8 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:BookingBanquetDV.Converters">
+    <converters:FirstErrorConverter x:Key="FirstErrorConverter" />
+    <converters:TextToHeaderVisibilityConverter x:Key="TextToHeaderVisibilityConverter" />
+    <converters:NotBooleanToVisibilityConverter x:Key="NotBooleanToVisibilityConverter" />
+</ResourceDictionary>

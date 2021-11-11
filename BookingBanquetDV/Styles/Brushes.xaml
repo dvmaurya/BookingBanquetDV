@@ -1,0 +1,79 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ColourPalette.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <LinearGradientBrush x:Key="PrecisBlueBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.5" Color="#dcdee2" />
+        <GradientStop Offset="1.0" Color="#d3d9e2" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="PrecisBackgroundBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.5" Color="#B3d6e5" />
+        <GradientStop Offset="1.0" Color="#B3d6e5" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="GradientBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.25" Color="{StaticResource GradientBrushLight}" />
+        <GradientStop Offset="1.0" Color="{StaticResource GradientBrushMedium}" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="HeaderBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.75" Color="{StaticResource GradientBrushLight}" />
+        <GradientStop Offset="0.5" Color="{StaticResource GradientBrushMedium}" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="GradientBrushThick" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.25" Color="{StaticResource GradientBrushLight}" />
+        <GradientStop Offset="1.0" Color="{StaticResource GradientBrushMedium}" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="GradientRedBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.25" Color="{StaticResource GradientRedLight}" />
+        <GradientStop Offset="1.0" Color="{StaticResource GradientRedMedium}" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="GradientGrayBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.25" Color="{StaticResource DialogButtonPanelBackground}" />
+        <GradientStop Offset="1.0" Color="{StaticResource GradientGrayMedium}" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="MouseOverGradientBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.238" Color="{StaticResource MouseOverGradientBrushFirst}" />
+        <GradientStop Offset="0.435" Color="{StaticResource MouseOverGradientBrushSecond}" />
+        <GradientStop Offset="1" Color="{StaticResource MouseOverGradientBrushThird}" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="SelectedGradientBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.121" Color="{StaticResource SelectedGradientBrushFirst}" />
+        <GradientStop Offset="0.381" Color="{StaticResource SelectedGradientBrushSecond}" />
+        <GradientStop Offset="1" Color="{StaticResource SelectedGradientBrushThird}" />
+        <GradientStop Offset="0.531" Color="{StaticResource SelectedGradientBrushFourth}" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="DialogButtonPanelBackgroundBrush" Color="{StaticResource DialogButtonPanelBackground}" />
+    <SolidColorBrush
+        x:Key="HighlightBrush"
+        Opacity="0.8"
+        Color="{StaticResource Highlightbackground}" />
+    <SolidColorBrush x:Key="ForegroundHeaderBrush" Color="{StaticResource HeaderForeground}" />
+    <SolidColorBrush x:Key="TabHighlightFillBrush" Color="{StaticResource TabHighlightBackground}" />
+    <SolidColorBrush
+        x:Key="OpaqueButtonHighlightFillBrush"
+        Opacity="0.3"
+        Color="{StaticResource TabHighlightBackground}" />
+    <SolidColorBrush
+        x:Key="TabHighlightStrokeBrush"
+        Opacity="0.6"
+        Color="{StaticResource Highlightbackground}" />
+    <SolidColorBrush x:Key="MenuButtonBackground" Color="{StaticResource DialogButtonPanelBackground}" />
+    <SolidColorBrush x:Key="GlyphBrush" Color="{StaticResource GlyphBrushColour}" />
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColour}" />
+    <SolidColorBrush
+        x:Key="InformationBackgroundBrush"
+        Opacity="0.7"
+        Color="{StaticResource InformationBackgroundColour}" />
+    <SolidColorBrush x:Key="InformationForegroundBrush" Color="{StaticResource InformationForegroundColour}" />
+    <SolidColorBrush x:Key="DisabledForegroundTextBrush" Color="{StaticResource DisabledForegroundTextColour}" />
+    <SolidColorBrush x:Key="InactiveResouceGridTextBrush" Color="{StaticResource DisabledForegroundTextColour}" />
+    <SolidColorBrush x:Key="AlternateRowColourBrush" Color="{StaticResource AlternateRowColour}" />
+    <SolidColorBrush x:Key="LinkedProblemForegroundBrush" Color="Green" />
+    <SolidColorBrush x:Key="DisabledColourBrush" Color="{StaticResource DisabledColour}" />
+    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="White" />
+    <SolidColorBrush x:Key="UnfinishedDataForegroundBrush" Color="#FF6600" />
+    <SolidColorBrush x:Key="AbNormalForegroundBrush" Color="Red" />
+    <SolidColorBrush x:Key="InformationMessageBackgroundBrush" Color="{StaticResource InformationMessageBackgroundColour}" />
+    <SolidColorBrush x:Key="InformationMessageBorderBrush" Color="{StaticResource InformationMessageBorderColour}" />
+    <SolidColorBrush x:Key="NavigationPaneBackgroundBrush" Color="#393939" />
+    <SolidColorBrush x:Key="AppThemeForeGroundBrush" Color="#0082C9" />
+</ResourceDictionary>
