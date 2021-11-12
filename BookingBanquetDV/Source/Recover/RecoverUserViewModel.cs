@@ -1,7 +1,12 @@
 ﻿using BookingBanquetDV.Utility;
 using BookingBanquetDV.Validation;
+using BookingServices.Interfaces;
 using CommonServices.ConstantData;
+using CommonServices.Enums;
+using CommonServices.Extensions;
+using CommonServices.Model;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -19,63 +24,122 @@ namespace BookingBanquetDV.Source.Recover
         private string _emailId;
         private string _mobileNo;
         private string _oTP;
-        private bool _isRecoverEnable;
+        private bool _isOtpEnable;
+        private bool _invalidCredential;
         private string _generatedOTP;
+        private bool _somethingWrongMessage;
+        private bool _isRecoverUIVisible;
+        private bool _isNewPasswordVisible;
+        private string _password;
+        private string _confirmPassword;
+        private IDictionary<string, string> _userDetails;
+        private bool _passwordUpdateFailed;
+        private readonly ICommand _changePasswordCommand;
         private readonly ICommand _getOTPCommand;
         private readonly ICommand _recoverCommand;
         private readonly ICommand _loginCommand;
         private readonly INavigationService _navigationService;
+        private readonly IMessageDialogService _messageDialogService;
+        private readonly IOfflineDatabaseProvider _offlineDatabaseProvider;
 
-        public RecoverUserViewModel(INavigationService navigationService)
+        public RecoverUserViewModel(
+            INavigationService navigationService,
+            IMessageDialogService messageDialogService,
+            IOfflineDatabaseProvider offlineDatabaseProvider)
         {
             _navigationService = navigationService ?? throw new ArgumentNullException("navigationService");
+            _messageDialogService = messageDialogService ?? throw new ArgumentNullException("messageDialogService");
+            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException("offlineDatabaseProvider");
 
+            _isRecoverUIVisible = true;
             _recoverCommand = new DelegateCommand(parameter => OnClickRecover());
             _loginCommand = new DelegateCommand(parameter => OnClickLogin());
-            _getOTPCommand = new DelegateCommand(parameter => OnClickGetOTP());
+            _getOTPCommand = new DelegateCommand(async parameter => await OnClickGetOTPAsync());
+            _changePasswordCommand = new DelegateCommand(async parameter => await OnClickChangePasswordAsync());
         }
 
-        private void OnClickGetOTP()
+        private async Task OnClickChangePasswordAsync()
         {
             if (ValidateProperties())
             {
-                _isRecoverEnable = true;
-                _generatedOTP = Utilities.GenerateOTP();
-
-                ContactEmail contactEmail = new ContactEmail
+                Users users = new Users
                 {
-                    Address = _emailId,
-                    Description = _generatedOTP,
-                    Kind = ContactEmailKind.Work
+                    Id = _userDetails[UsersEnum.Id.ConvertToString()].ToInt32(),
+                    EmailId = _userDetails[UsersEnum.EmailId.ConvertToString()],
+                    FullName = _userDetails[UsersEnum.FullName.ConvertToString()],
+                    UserId = _userDetails[UsersEnum.UserId.ConvertToString()],
+                    Mobile = _userDetails[UsersEnum.Mobile.ConvertToString()],
+                    Password = _password,
+                    CreationDate = _userDetails[UsersEnum.CreationDate.ConvertToString()],
+                    IsActivate = _userDetails[UsersEnum.IsActivated.ConvertToString()] == "0"
+                                ? false : true
                 };
 
-                Contact contact = new Contact();
-                contact.Emails.Add(contactEmail);
+                bool isPasswordUpdated = _offlineDatabaseProvider.AddOrUpdateUsers(users);
 
-                ContactPhone contactPhone = new ContactPhone
+                if (isPasswordUpdated)
                 {
-                    Number = _mobileNo
-                };
+                    await _messageDialogService.ShowMessageDialogAsync(
+                        ApplicationConstants.Success,
+                        ApplicationConstants.PasswordUpdated).ConfigureAwait(true);
 
-                contact.Phones.Add(contactPhone);
+                    _navigationService.Navigate(typeof(MainPage));
+                }
+                else
+                {
+                    _passwordUpdateFailed = true;
 
-                ComposeSms(contact);
-
-                OnPropertyChanged(() => IsRecoverEnable);
+                    OnPropertyChanged(() => PasswordUpdateFailed);
+                }
             }
         }
 
-        private async void ComposeSms(Contact recipient)
+        private async Task OnClickGetOTPAsync()
         {
-            var chatMessage = new Windows.ApplicationModel.Chat.ChatMessage();
-            chatMessage.Body = "this is dv maurya";
-
-            var phone = recipient.Phones.FirstOrDefault();
-            if (phone != null)
+            if (ValidateProperties())
             {
-                chatMessage.Recipients.Add(phone.Number);
+                _userDetails = _offlineDatabaseProvider.GetDataForOTP(_emailId, _mobileNo);
+
+                if (_userDetails != null && _userDetails.Any())
+                {
+                    _invalidCredential = false;
+                    _generatedOTP = Utilities.GenerateOTP();
+
+                    ContactEmail contactEmail = new ContactEmail
+                    {
+                        Address = _emailId,
+                        Description = _generatedOTP,
+                        Kind = ContactEmailKind.Work
+                    };
+
+                    bool isEmailSent = EmailUtility.SendEmails(
+                        contactEmail, _generatedOTP, _userDetails[UsersEnum.FullName.ToString()]);
+
+                    if (isEmailSent)
+                    {
+                        _isOtpEnable = true;
+                        _somethingWrongMessage = false;
+                    }
+                    else
+                    {
+                        await _messageDialogService.ShowMessageDialogAsync(
+                            ApplicationConstants.Warning,
+                            ApplicationConstants.EmailIncorrect).ConfigureAwait(true);
+
+                        _somethingWrongMessage = true;
+                        _isOtpEnable = false;
+                    }
+
+                    OnPropertyChanged(() => IsOtpEnable);
+                    OnPropertyChanged(() => SomethingWrongMessage);
+                }
+                else
+                {
+                    _invalidCredential = true;
+                }
+
+                OnPropertyChanged(() => InvalidCredential);
             }
-            await Windows.ApplicationModel.Chat.ChatMessageManager.ShowComposeSmsMessageAsync(chatMessage);
         }
 
         private void OnClickLogin()
@@ -87,7 +151,14 @@ namespace BookingBanquetDV.Source.Recover
         {
             if (ValidateProperties())
             {
+                if (_oTP.FormatStringEquals(_generatedOTP))
+                {
+                    _isRecoverUIVisible = false;
+                    _isNewPasswordVisible = true;
+                }
 
+                OnPropertyChanged(() => IsRecoverUIVisible);
+                OnPropertyChanged(() => IsNewPasswordVisible);
             }
         }
 
@@ -112,10 +183,10 @@ namespace BookingBanquetDV.Source.Recover
             set => _oTP = value;
         }
 
-        public bool IsRecoverEnable
+        public bool IsOtpEnable
         {
-            get => _isRecoverEnable;
-            set => _isRecoverEnable = value;
+            get => _isOtpEnable;
+            set => _isOtpEnable = value;
         }
 
         public string GeneratedOTP
@@ -124,8 +195,53 @@ namespace BookingBanquetDV.Source.Recover
             set => _generatedOTP = value;
         }
 
+        public bool SomethingWrongMessage
+        {
+            get => _somethingWrongMessage;
+            set => _somethingWrongMessage = value;
+        }
+
+        public bool InvalidCredential
+        {
+            get => _invalidCredential;
+            set => _invalidCredential = value;
+        }
+
         public ICommand RecoverCommand => _recoverCommand;
         public ICommand LoginCommand => _loginCommand;
         public ICommand GetOTPCommand => _getOTPCommand;
+        public ICommand ChangePasswordCommand => _changePasswordCommand;
+
+        public bool IsRecoverUIVisible
+        {
+            get => _isRecoverUIVisible;
+            set => _isRecoverUIVisible = value;
+        }
+
+        public bool IsNewPasswordVisible
+        {
+            get => _isNewPasswordVisible;
+            set => _isNewPasswordVisible = value;
+        }
+
+        [PasswordValidationAttribute(ErrorMessage = ApplicationConstants.PasswordLength)]
+        public string Password
+        {
+            get => _password;
+            set => _password = value;
+        }
+
+        [PasswordMatchValidationAttribute(ErrorMessage = ApplicationConstants.PasswordMatch)]
+        public string ConfirmPassword
+        {
+            get => _confirmPassword;
+            set => _confirmPassword = value;
+        }
+
+        public bool PasswordUpdateFailed
+        {
+            get => _passwordUpdateFailed;
+            set => _passwordUpdateFailed = value;
+        }
     }
 }

@@ -1,0 +1,136 @@
+﻿<UserControl
+    x:Class="BookingBanquetDV.Source.Recover.Controls.RecoverUserUI"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:BookingBanquetDV.Behavior"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:local="using:BookingBanquetDV.Source.Recover"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+    <Grid>
+        <StackPanel Margin="50,40,0,0">
+            <TextBlock
+                FontSize="16"
+                FontWeight="SemiBold"
+                Text="Recover Password" />
+            <StackPanel Margin="0,10,50,20">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid
+                        Grid.Column="0"
+                        Height="32"
+                        Margin="0,5,0,0"
+                        BorderBrush="Gray"
+                        BorderThickness="2,2,0,2">
+                        <Image Source="ms-appx:///Assets/email.jpg" />
+                    </Grid>
+                    <TextBox
+                        Grid.Column="1"
+                        PlaceholderText="Email id"
+                        Text="{Binding EmailId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <interactivity:Interaction.Behaviors>
+                            <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[EmailId]}" />
+                        </interactivity:Interaction.Behaviors>
+                    </TextBox>
+                </Grid>
+                <TextBlock
+                    Style="{StaticResource ErrorMessageStyle}"
+                    Text="{Binding Errors[EmailId], Converter={StaticResource FirstErrorConverter}}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+            <StackPanel Margin="0,0,50,20">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid
+                        Grid.Column="0"
+                        Height="32"
+                        Margin="0,5,0,0"
+                        BorderBrush="Gray"
+                        BorderThickness="2,2,0,2">
+                        <Image Source="ms-appx:///Assets/mobileNo.png" />
+                    </Grid>
+                    <TextBox
+                        Grid.Column="1"
+                        InputScope="Number"
+                        MaxLength="10"
+                        PlaceholderText="Mobile number"
+                        Text="{Binding MobileNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <interactivity:Interaction.Behaviors>
+                            <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
+                            <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[MobileNo]}" />
+                        </interactivity:Interaction.Behaviors>
+                    </TextBox>
+                </Grid>
+                <TextBlock
+                    Style="{StaticResource ErrorMessageStyle}"
+                    Text="{Binding Errors[MobileNo], Converter={StaticResource FirstErrorConverter}}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+            <StackPanel Margin="0,0,50,0">
+                <Button
+                    Width="100"
+                    Margin="0,0,0,20"
+                    HorizontalAlignment="Center"
+                    Background="#2596BE"
+                    Command="{Binding GetOTPCommand}"
+                    Content="Get OTP"
+                    FontSize="16"
+                    Foreground="#FFFFFF"
+                    IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}" />
+                <TextBlock
+                    Margin="0,0,0,10"
+                    Foreground="Green"
+                    Text="OTP has been sent to your email id"
+                    Visibility="{Binding IsOtpEnable}" />
+                <TextBlock
+                    Margin="0,0,0,10"
+                    Foreground="BlueViolet"
+                    Text="Either email id or mobile number is not registered"
+                    Visibility="{Binding InvalidCredential}" />
+                <TextBlock
+                    Margin="0,0,0,10"
+                    Foreground="BlueViolet"
+                    Text="Something went wrong"
+                    Visibility="{Binding SomethingWrongMessage}" />
+            </StackPanel>
+            <StackPanel Margin="0,0,50,0" Visibility="{Binding IsOtpEnable}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid
+                        Grid.Column="0"
+                        BorderBrush="Gray"
+                        BorderThickness="2,2,0,2">
+                        <Image Height="30" Source="ms-appx:///Assets/password.png" />
+                    </Grid>
+                    <PasswordBox
+                        Grid.Column="1"
+                        Password="{Binding OTP, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        PlaceholderText="Enter One Time Password" />
+                </Grid>
+                <TextBlock
+                    Style="{StaticResource ErrorMessageStyle}"
+                    Text="{Binding Errors[OTP], Converter={StaticResource FirstErrorConverter}}"
+                    TextWrapping="Wrap" />
+                <Button
+                    Margin="0,20,0,0"
+                    HorizontalAlignment="Center"
+                    Background="#2596BE"
+                    Command="{Binding RecoverCommand}"
+                    Content="Recover password"
+                    FontSize="16"
+                    Foreground="#FFFFFF" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

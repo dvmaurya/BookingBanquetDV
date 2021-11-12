@@ -67,5 +67,10 @@ namespace BookingServices.DataProvider
         {
             return DataAccess.GetPreviousLoginDetail();
         }
+
+        public IDictionary<string, string> GetDataForOTP(string emailId, string mobileNo)
+        {
+            return DataAccess.GetDataForOTP(emailId, mobileNo);
+        }
     }
 }

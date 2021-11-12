@@ -14,9 +14,20 @@ namespace BookingBanquetDV.Validation
             {
                 if (validationContext.ObjectInstance is ISignupViewModel signup)
                 {
-                    if (string.IsNullOrEmpty(signup.Password))
+                    if (!signup.IsOtpEnable)
+                    {
+                        if (string.IsNullOrEmpty(signup.Password))
+                            return new ValidationResult(ApplicationConstants.PasswordRequired);
+                        else if (signup.Password.Length < 3)
+                            return new ValidationResult(this.ErrorMessage);
+                    }
+                }
+                else if (validationContext.ObjectInstance is IRecoverUserViewModel recoverUser &&
+                    recoverUser.IsNewPasswordVisible)
+                {
+                    if (string.IsNullOrEmpty(recoverUser.Password))
                         return new ValidationResult(ApplicationConstants.PasswordRequired);
-                    else if (signup.Password.Length < 3)
+                    else if (recoverUser.Password.Length < 3)
                         return new ValidationResult(this.ErrorMessage);
                 }
                 else if (validationContext.ObjectInstance is IMainViewModel mainView)

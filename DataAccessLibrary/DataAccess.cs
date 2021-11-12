@@ -78,17 +78,12 @@ namespace DataAccessLibrary
         {
             try
             {
+                string insertOrUpdate = string.Empty;
                 GetDbPath();
 
-                using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
+                if(users.Id == 0)
                 {
-                    db.Open();
-
-                    SqliteCommand insertCommand = new SqliteCommand
-                    {
-                        Connection = db,
-
-                        CommandText = "INSERT INTO " + nameof(users) + " VALUES (" +
+                    insertOrUpdate = "INSERT INTO " + nameof(users) + " VALUES (" +
                         "NULL, " +
                         "@" + nameof(users.UserId) + "," +
                         "@" + nameof(users.FullName) + "," +
@@ -96,7 +91,28 @@ namespace DataAccessLibrary
                         "@" + nameof(users.Mobile) + "," +
                         "@" + nameof(users.Password) + "," +
                         "@" + nameof(users.CreationDate) + "," +
-                        "0);"
+                        "0);";
+                }
+                else
+                {
+                    insertOrUpdate = "UPDATE " +
+                        nameof(users) + " SET " +
+                        nameof(users.UserId) + " = @" + nameof(users.UserId) + ", " +
+                        nameof(users.FullName) + " = @" + nameof(users.FullName) + ", " +
+                        nameof(users.EmailId) + " = @" + nameof(users.EmailId) + ", " +
+                        nameof(users.Mobile) + " = @" + nameof(users.Mobile) + ", " +
+                        nameof(users.Password) + " = @" + nameof(users.Password) + ", " +
+                        nameof(users.CreationDate) + " = @" + nameof(users.CreationDate) + " Where " +
+                        nameof(users.UserId) + " = @" + nameof(users.UserId);
+                }
+                using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
+                {
+                    db.Open();
+
+                    SqliteCommand insertCommand = new SqliteCommand
+                    {
+                        Connection = db,
+                        CommandText = insertOrUpdate
                     };
 
                     insertCommand.Parameters.AddWithValue("@" + nameof(users.UserId), users.UserId);
@@ -107,7 +123,6 @@ namespace DataAccessLibrary
                     insertCommand.Parameters.AddWithValue("@" + nameof(users.CreationDate), users.CreationDate);
 
                     insertCommand.ExecuteReader();
-
                     db.Close();
 
                     return true;
@@ -115,6 +130,7 @@ namespace DataAccessLibrary
             }
             catch(Exception ex)
             {
+                FileLogger.Logger.Info("Exception: ".ConcatString(ex.Message));
                 return false;
             }
         }
@@ -345,5 +361,42 @@ namespace DataAccessLibrary
 
             return entries;
         }
+
+        public static IDictionary<string, string> GetDataForOTP(string emailId, string mobileNo)
+        {
+            IDictionary<string, string> entries = new Dictionary<string, string>();
+
+            if (!string.IsNullOrEmpty(emailId) && !string.IsNullOrEmpty(mobileNo))
+            {
+                GetDbPath();
+
+                using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
+                {
+                    db.Open();
+
+                    SqliteCommand selectCommand = new SqliteCommand
+                        ("SELECT * from " +
+                        nameof(Users) + " Where " +
+                        nameof(Users.EmailId) + " = '" + emailId + "' AND " +
+                        nameof(Users.Mobile) + " = '" + mobileNo + "'", db);
+
+                    SqliteDataReader query = selectCommand.ExecuteReader();
+
+                    while (query.Read())
+                    {
+                        foreach (UsersEnum users in Enum.GetValues(typeof(UsersEnum)))
+                        {
+                            entries.Add(users.ConvertToString(), query.GetString(users.ToInt32()));
+                        }
+                    }
+
+                    db.Close();
+                }
+            }
+
+            return entries;
+        }
+
+
     }
 }

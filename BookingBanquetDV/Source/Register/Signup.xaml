@@ -19,12 +19,12 @@
             Source="ms-appx:///Assets/background.jpg" />
         <Grid
             Grid.Column="0"
-            Margin="50,50,0,50"
+            Margin="50,0,0,0"
             BorderBrush="LightGray"
             BorderThickness="1">
             <StackPanel Margin="50,40,0,0">
                 <TextBlock
-                    Margin="0,0,50,20"
+                    Margin="0,0,0,20"
                     FontWeight="Bold"
                     Text="All fields are mandatory" />
                 <StackPanel Margin="0,0,50,20">
@@ -158,15 +158,57 @@
                         Text="{Binding Errors[ConfirmPassword], Converter={StaticResource FirstErrorConverter}}"
                         TextWrapping="Wrap" />
                 </StackPanel>
-                <StackPanel Margin="0,0,0,20">
+                <StackPanel>
                     <Button
                         Width="100"
+                        Margin="0,0,50,0"
                         HorizontalAlignment="Center"
                         Background="#2596BE"
-                        Command="{Binding SignupCommand}"
-                        Content="SIGN UP"
+                        Command="{Binding OTPCommand}"
+                        Content="Get OTP"
                         FontSize="16"
-                        Foreground="#FFFFFF" />
+                        Foreground="#FFFFFF"
+                        IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}" />
+                    <StackPanel Margin="0,20,50,0" Visibility="{Binding IsOtpEnable}">
+                        <TextBlock
+                            Margin="0,0,0,5"
+                            Foreground="Green"
+                            Text="OTP has been sent to your email id"
+                            Visibility="{Binding IsOtpEnable}" />
+                        <TextBlock
+                            Margin="0,0,0,5"
+                            Foreground="Green"
+                            Text="Something went wrong"
+                            Visibility="{Binding SomethingWrongMessage}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid
+                                Grid.Column="0"
+                                BorderBrush="Gray"
+                                BorderThickness="2,2,0,2">
+                                <Image Height="30" Source="ms-appx:///Assets/password.png" />
+                            </Grid>
+                            <PasswordBox
+                                Grid.Column="1"
+                                Password="{Binding OTP, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                PlaceholderText="Enter One Time Password" />
+                        </Grid>
+                        <TextBlock
+                            Style="{StaticResource ErrorMessageStyle}"
+                            Text="{Binding Errors[OTP], Converter={StaticResource FirstErrorConverter}}"
+                            TextWrapping="Wrap" />
+                        <Button
+                            Margin="0,20,0,0"
+                            HorizontalAlignment="Center"
+                            Background="#2596BE"
+                            Command="{Binding SignupCommand}"
+                            Content="SIGN UP"
+                            FontSize="16"
+                            Foreground="#FFFFFF" />
+                    </StackPanel>
                     <StackPanel
                         Margin="0,20,0,0"
                         HorizontalAlignment="Center"

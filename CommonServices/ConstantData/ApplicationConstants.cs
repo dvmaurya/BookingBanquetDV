@@ -25,12 +25,16 @@
         public const string DatabaseDateTimeFormat = "yyyy-MM-dd HH:mm:ss";
         public const int DefaultCommandIndex = 0;
         public const int CancelCommandIndex = 1;
+        public const string Success = "Success";
         public const string Warning = "Warning";
         public const string Error = "Error";
         public const string CredentialWrong = "Either username or password is incorrect";
         public const string AccountNotActivated = "This account has not been activated. Please contact with your administrator for activating.";
-        public const string SignupSuccess = "Successfuly created your account. Please contact with your administrator for activating your account.";
+        public const string SignupSuccess = "Successfully created your account. Please go to login page.";
         public const string Signup = "Signup";
         public const string Login = "Login";
+        public const string EmailIncorrect = "You are in low internet area. Please connect with internet";
+        public const string PasswordUpdated = "Password updated successfully.";
+        public const string Close = "Close";
     }
 }

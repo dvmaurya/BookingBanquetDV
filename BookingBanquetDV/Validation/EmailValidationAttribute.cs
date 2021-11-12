@@ -17,12 +17,15 @@ namespace BookingBanquetDV.Validation
 
                 if (validationContext.ObjectInstance is ISignupViewModel signup)
                 {
-                    if (string.IsNullOrEmpty(signup.EmailId))
-                        return new ValidationResult(ApplicationConstants.EmailRequired);
-                    else if (!regex.IsMatch(signup.EmailId))
-                        return new ValidationResult(this.ErrorMessage);
-                    else if(signup.IsEmailExist)
-                        return new ValidationResult(ApplicationConstants.EmailIdExist);
+                    if (!signup.IsOtpEnable)
+                    {
+                        if (string.IsNullOrEmpty(signup.EmailId))
+                            return new ValidationResult(ApplicationConstants.EmailRequired);
+                        else if (!regex.IsMatch(signup.EmailId))
+                            return new ValidationResult(this.ErrorMessage);
+                        else if (signup.IsEmailExist)
+                            return new ValidationResult(ApplicationConstants.EmailIdExist);
+                    }
                 }
                 else if (validationContext.ObjectInstance is IMainViewModel mainView)
                 {

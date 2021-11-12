@@ -11,15 +11,28 @@ namespace BookingBanquetDV.Validation
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (validationContext != null &&
-                validationContext.ObjectInstance is IRecoverUserViewModel recoverUser)
+            if (validationContext != null)
             {
-                if(recoverUser.IsRecoverEnable)
+                if (validationContext.ObjectInstance is IRecoverUserViewModel recoverUser)
                 {
-                    if (string.IsNullOrEmpty(recoverUser.OTP))
-                        return new ValidationResult(ApplicationConstants.OTPRequired);
-                    else if (!recoverUser.OTP.FormatStringEquals(recoverUser.GeneratedOTP))
-                        return new ValidationResult(this.ErrorMessage);
+                    if (recoverUser.IsOtpEnable)
+                    {
+                        if (string.IsNullOrEmpty(recoverUser.OTP))
+                            return new ValidationResult(ApplicationConstants.OTPRequired);
+                        else if (!recoverUser.OTP.FormatStringEquals(recoverUser.GeneratedOTP))
+                            return new ValidationResult(this.ErrorMessage);
+                    }
+                }
+
+                else if (validationContext.ObjectInstance is ISignupViewModel signupView)
+                {
+                    if (signupView.IsOtpEnable)
+                    {
+                        if (string.IsNullOrEmpty(signupView.OTP))
+                            return new ValidationResult(ApplicationConstants.OTPRequired);
+                        else if (!signupView.OTP.FormatStringEquals(signupView.GeneratedOTP))
+                            return new ValidationResult(this.ErrorMessage);
+                    }
                 }
             }
 
