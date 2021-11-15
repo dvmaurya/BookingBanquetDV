@@ -33,7 +33,7 @@
         public const string SignupSuccess = "Successfully created your account. Please go to login page.";
         public const string Signup = "Signup";
         public const string Login = "Login";
-        public const string EmailIncorrect = "You are in low internet area. Please connect with internet";
+        public const string LowInternet = "You are in low internet area. Please connect with internet";
         public const string PasswordUpdated = "Password updated successfully.";
         public const string Close = "Close";
     }

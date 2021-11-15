@@ -9,6 +9,7 @@
         Mobile,
         Password,
         CreationDate,
-        IsActivated
+        IsActivated,
+        PasswordChanged
     }
 }

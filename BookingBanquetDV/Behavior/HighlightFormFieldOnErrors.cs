@@ -5,7 +5,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace BookingBanquetDV.Behavior
 {
-    public class HighlightFormFieldOnErrors : Behavior<FrameworkElement>
+    public class HighlightFormFieldOnErrors : Behaviores<FrameworkElement>
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104: Do not declare read only mutable reference types", Justification = "DependencyProperty must be readonly")]
         public static readonly DependencyProperty PropertyErrorsProperty =
@@ -79,7 +79,7 @@ namespace BookingBanquetDV.Behavior
             if (args == null || args.NewValue == null)
                 return;
 
-            FrameworkElement control = ((Behavior<FrameworkElement>)dependencyObject).AssociatedObject;
+            FrameworkElement control = ((Behaviores<FrameworkElement>)dependencyObject).AssociatedObject;
             ICollection<string> propertyErrors = (ICollection<string>)args.NewValue;
             HighlightFormFieldOnErrors type = dependencyObject as HighlightFormFieldOnErrors;
 

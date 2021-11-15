@@ -2,6 +2,7 @@
 using BookingBanquetDV.Source.Login;
 using BookingBanquetDV.Source.Recover;
 using BookingBanquetDV.Source.Register;
+using BookingBanquetDV.Source.Welcome;
 using BookingServices.DataProvider;
 using BookingServices.Interfaces;
 using BookingServices.SQLite;
@@ -39,6 +40,7 @@ namespace BookingBanquetDV
             DIContainer.RegisterType<ILoginViewModel, LoginViewModel>();
             DIContainer.RegisterType<ISignupViewModel, SignupViewModel>();
             DIContainer.RegisterType<IRecoverUserViewModel, RecoverUserViewModel>();
+            DIContainer.RegisterType<IWelcomeViewModel, WelcomeViewModel>();
         }
 
         private static void RegisterServices()

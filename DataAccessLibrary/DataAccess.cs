@@ -3,6 +3,7 @@ using CommonServices.Enums;
 using CommonServices.Extensions;
 using CommonServices.Logger;
 using CommonServices.Model;
+using DataAccessLibrary.DML;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
@@ -32,41 +33,15 @@ namespace DataAccessLibrary
                 string tableCommand = string.Empty;
 
                 if (tableName.FormatStringEquals(ApplicationConstants.Signup))
-                    tableCommand = CreateSignupTableQuery();
+                    tableCommand = SignupQuery.CreateSignupTable;
                 else if (tableName.FormatStringEquals(ApplicationConstants.Login))
-                    tableCommand = CreateLoginTableQuery();
+                    tableCommand = LoginQuery.CreateLoginTable;
 
                 SqliteCommand createTable = new SqliteCommand(tableCommand, db);
 
                 createTable.ExecuteReader();
                 db.Close();
             }
-        }
-
-        private static string CreateLoginTableQuery()
-        {
-            return "CREATE TABLE IF NOT " +
-                "EXISTS " + nameof(LoginDetail) +
-                " ( " + nameof(LoginDetail.Id) + " INTEGER PRIMARY KEY, " +
-                " " + nameof(LoginDetail.UserName) + " NVARCHAR(2048) NUll," +
-                " " + nameof(LoginDetail.UserId) + " NVARCHAR(2048) NUll," +
-                " " + nameof(LoginDetail.IsRememberChecked) + " NVARCHAR(2048) NUll," +
-                " " + nameof(LoginDetail.NumberOfLogin) + " NVARCHAR(2048) NUll," +
-                " " + nameof(LoginDetail.LastLogin) + " NVARCHAR(2048) NUll)";
-        }
-
-        private static string CreateSignupTableQuery()
-        {
-            return "CREATE TABLE IF NOT " +
-                "EXISTS " + nameof(Users) +
-                " ( " + nameof(Users.Id) + " INTEGER PRIMARY KEY, " +
-                " " + nameof(Users.UserId) + " NVARCHAR(2048) NUll," +
-                " " + nameof(Users.FullName) + " NVARCHAR(2048) NUll," +
-                " " + nameof(Users.EmailId) + " NVARCHAR(2048) NUll," +
-                " " + nameof(Users.Mobile) + " NVARCHAR(2048) NUll," +
-                " " + nameof(Users.Password) + " NVARCHAR(2048) NUll," +
-                " " + nameof(Users.CreationDate) + " NVARCHAR(2048) NULL, " +
-                " " + nameof(Users.IsActivate) + " NVARCHAR(2048) NULL)";
         }
 
         private static void GetDbPath()
@@ -81,30 +56,12 @@ namespace DataAccessLibrary
                 string insertOrUpdate = string.Empty;
                 GetDbPath();
 
-                if(users.Id == 0)
-                {
-                    insertOrUpdate = "INSERT INTO " + nameof(users) + " VALUES (" +
-                        "NULL, " +
-                        "@" + nameof(users.UserId) + "," +
-                        "@" + nameof(users.FullName) + "," +
-                        "@" + nameof(users.EmailId) + "," +
-                        "@" + nameof(users.Mobile) + "," +
-                        "@" + nameof(users.Password) + "," +
-                        "@" + nameof(users.CreationDate) + "," +
-                        "0);";
-                }
-                else
-                {
-                    insertOrUpdate = "UPDATE " +
-                        nameof(users) + " SET " +
-                        nameof(users.UserId) + " = @" + nameof(users.UserId) + ", " +
-                        nameof(users.FullName) + " = @" + nameof(users.FullName) + ", " +
-                        nameof(users.EmailId) + " = @" + nameof(users.EmailId) + ", " +
-                        nameof(users.Mobile) + " = @" + nameof(users.Mobile) + ", " +
-                        nameof(users.Password) + " = @" + nameof(users.Password) + ", " +
-                        nameof(users.CreationDate) + " = @" + nameof(users.CreationDate) + " Where " +
-                        nameof(users.UserId) + " = @" + nameof(users.UserId);
-                }
+                insertOrUpdate = users.Id == 0 
+                    ? 
+                    SignupQuery.InsertInSignup
+                    :
+                    SignupQuery.UpdateInSignup;
+
                 using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                 {
                     db.Open();
@@ -121,6 +78,8 @@ namespace DataAccessLibrary
                     insertCommand.Parameters.AddWithValue("@" + nameof(users.Mobile), users.Mobile);
                     insertCommand.Parameters.AddWithValue("@" + nameof(users.Password), users.Password);
                     insertCommand.Parameters.AddWithValue("@" + nameof(users.CreationDate), users.CreationDate);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(users.IsActivate), users.IsActivate);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(users.PasswordChanged), users.PasswordChanged);
 
                     insertCommand.ExecuteReader();
                     db.Close();
@@ -140,6 +99,7 @@ namespace DataAccessLibrary
             string InsertOrUpdate = string.Empty;
             try
             {
+                InitializeDatabase(ApplicationConstants.Login);
                 GetDbPath();
 
                 IDictionary<string, string> userExist = GetLoginDetails(loginDetail);
@@ -147,24 +107,11 @@ namespace DataAccessLibrary
                 if(userExist != null && userExist.Any())
                 {
                     loginDetail.NumberOfLogin = (userExist[nameof(LoginDetail.NumberOfLogin)].ToInt32() + 1).ConvertToString();
-                    InsertOrUpdate = "UPDATE " +
-                        nameof(LoginDetail) + " SET " +
-                        nameof(LoginDetail.UserName) + " = @" + nameof(LoginDetail.UserName) + ", " +
-                        nameof(LoginDetail.UserId) + " = @" + nameof(LoginDetail.UserId) + ", " +
-                        nameof(LoginDetail.IsRememberChecked) + " = @" + nameof(LoginDetail.IsRememberChecked) + ", " +
-                        nameof(LoginDetail.NumberOfLogin) + " = @" + nameof(LoginDetail.NumberOfLogin) + ", " +
-                        nameof(LoginDetail.LastLogin) + " = @" + nameof(LoginDetail.LastLogin) + " Where " +
-                        nameof(LoginDetail.UserId) + " = @" + nameof(LoginDetail.UserId);
+                    InsertOrUpdate = LoginQuery.UpdateLoginDetail;
                 }
                 else
                 {
-                    InsertOrUpdate = "INSERT INTO " + nameof(loginDetail) + " VALUES (" +
-                        "NULL, " +
-                        "@" + nameof(loginDetail.UserName) + "," +
-                        "@" + nameof(loginDetail.UserId) + "," +
-                        "@" + nameof(loginDetail.IsRememberChecked) + "," +
-                        "@" + nameof(loginDetail.NumberOfLogin) + "," +
-                        "@" + nameof(loginDetail.LastLogin) + ");";
+                    InsertOrUpdate = LoginQuery.InsertInLogin;
                 }
 
                 using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
@@ -207,9 +154,7 @@ namespace DataAccessLibrary
             {
                 db.Open();
 
-                string sqlText = "SELECT * from " +
-                        nameof(LoginDetail) + " Where " +
-                        nameof(LoginDetail.UserId) + " = '" + loginDetail.UserId + "'";
+                string sqlText = LoginQuery.SelectAllFromLogin.FormatString(loginDetail.UserId);
 
                 SqliteCommand selectCommand = new SqliteCommand
                     (sqlText, db);
@@ -232,7 +177,7 @@ namespace DataAccessLibrary
             return entries;
         }
 
-        public static List<string> GetAllUsers(string tableName)
+        public static List<string> GetAllUsers()
         {
             List<string> entries = new List<string>();
             GetDbPath();
@@ -243,10 +188,7 @@ namespace DataAccessLibrary
 
                 string sqlText = string.Empty;
 
-                if (tableName.FormatStringEquals(ApplicationConstants.Signup))
-                    sqlText = SelectTextForSignup();
-                else if (tableName.FormatStringEquals(ApplicationConstants.Login))
-                    sqlText = SelectTextForLogin();
+                sqlText = SignupQuery.SelectUserIdFromUser;
 
                 SqliteCommand selectCommand = new SqliteCommand
                     (sqlText, db);
@@ -263,22 +205,6 @@ namespace DataAccessLibrary
             }
 
             return entries;
-        }
-
-        private static string SelectTextForSignup()
-        {
-            return "SELECT " +
-                nameof(Users.UserId) + "," +
-                nameof(Users.Mobile) + " from " +
-                nameof(Users);
-        }
-
-        private static string SelectTextForLogin()
-        {
-            return "SELECT " +
-                nameof(LoginDetail.UserId) + ", " +
-                nameof(LoginDetail.NumberOfLogin) + " from " +
-                nameof(LoginDetail);
         }
 
         public static IDictionary<string, string> GetDataForLogin(string userName, string password)
@@ -300,10 +226,9 @@ namespace DataAccessLibrary
                     db.Open();
 
                     SqliteCommand selectCommand = new SqliteCommand
-                        ("SELECT * from " +
-                        nameof(Users) + " Where " +
-                        emailOrMobile + " = '" + userName + "' AND " +
-                        nameof(Users.Password) + " = '" + password + "'", db);
+                        (SignupQuery.SelectAllFromUser.FormatString(
+                            emailOrMobile, userName,password),
+                        db);
 
                     SqliteDataReader query = selectCommand.ExecuteReader();
 
@@ -334,13 +259,8 @@ namespace DataAccessLibrary
             {
                 db.Open();
 
-                string sqlText = "SELECT * from " +
-                    nameof(LoginDetail) +
-                    " ORDER BY " +
-                    nameof(LoginDetail.LastLogin) + " DESC ";
-
                 SqliteCommand selectCommand = new SqliteCommand
-                    (sqlText, db);
+                    (LoginQuery.SelectAllFromLoginInDec, db);
 
                 SqliteDataReader query = selectCommand.ExecuteReader();
 
@@ -375,19 +295,15 @@ namespace DataAccessLibrary
                     db.Open();
 
                     SqliteCommand selectCommand = new SqliteCommand
-                        ("SELECT * from " +
-                        nameof(Users) + " Where " +
-                        nameof(Users.EmailId) + " = '" + emailId + "' AND " +
-                        nameof(Users.Mobile) + " = '" + mobileNo + "'", db);
+                        (SignupQuery.SelectAllFromUserWithEmailAndMobile.
+                        FormatString(emailId, mobileNo), db);
 
                     SqliteDataReader query = selectCommand.ExecuteReader();
 
                     while (query.Read())
                     {
                         foreach (UsersEnum users in Enum.GetValues(typeof(UsersEnum)))
-                        {
                             entries.Add(users.ConvertToString(), query.GetString(users.ToInt32()));
-                        }
                     }
 
                     db.Close();
@@ -396,7 +312,5 @@ namespace DataAccessLibrary
 
             return entries;
         }
-
-
     }
 }

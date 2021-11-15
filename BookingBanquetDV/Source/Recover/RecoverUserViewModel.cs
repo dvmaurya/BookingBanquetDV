@@ -47,9 +47,9 @@ namespace BookingBanquetDV.Source.Recover
             IMessageDialogService messageDialogService,
             IOfflineDatabaseProvider offlineDatabaseProvider)
         {
-            _navigationService = navigationService ?? throw new ArgumentNullException("navigationService");
-            _messageDialogService = messageDialogService ?? throw new ArgumentNullException("messageDialogService");
-            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException("offlineDatabaseProvider");
+            _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+            _messageDialogService = messageDialogService ?? throw new ArgumentNullException(nameof(messageDialogService));
+            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException(nameof(offlineDatabaseProvider));
 
             _isRecoverUIVisible = true;
             _recoverCommand = new DelegateCommand(parameter => OnClickRecover());
@@ -72,7 +72,8 @@ namespace BookingBanquetDV.Source.Recover
                     Password = _password,
                     CreationDate = _userDetails[UsersEnum.CreationDate.ConvertToString()],
                     IsActivate = _userDetails[UsersEnum.IsActivated.ConvertToString()] == "0"
-                                ? false : true
+                                ? false : true,
+                    PasswordChanged = _userDetails[UsersEnum.PasswordChanged.ConvertToString()].ToInt32() + 1
                 };
 
                 bool isPasswordUpdated = _offlineDatabaseProvider.AddOrUpdateUsers(users);
@@ -124,7 +125,7 @@ namespace BookingBanquetDV.Source.Recover
                     {
                         await _messageDialogService.ShowMessageDialogAsync(
                             ApplicationConstants.Warning,
-                            ApplicationConstants.EmailIncorrect).ConfigureAwait(true);
+                            ApplicationConstants.LowInternet).ConfigureAwait(true);
 
                         _somethingWrongMessage = true;
                         _isOtpEnable = false;

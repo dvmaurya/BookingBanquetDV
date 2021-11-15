@@ -6,7 +6,7 @@ using Windows.UI.Xaml;
 
 namespace BookingBanquetDV.Behavior
 {
-    public abstract class Behavior<T> : DependencyObject, IBehavior where T : DependencyObject
+    public abstract class Behaviores<T> : DependencyObject, IBehavior where T : DependencyObject
     {
         public T AssociatedObject { get; private set; }
         private const string Assignable = "associated Object is not assignable to type:{0}";

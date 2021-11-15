@@ -18,7 +18,6 @@ namespace BookingBanquetDV.Source.Login
         private bool _isLoginSuccess;
         private LoginDetail _loginDetail;
         private IDictionary<string, string> _userDetail;
-        private readonly ICommand _loginCommand;
         private readonly INavigationService _navigationService;
         private readonly IMessageDialogService _messageDialogService;
         private readonly IOfflineDatabaseProvider _offlineDatabaseProvider;
@@ -28,12 +27,10 @@ namespace BookingBanquetDV.Source.Login
             IOfflineDatabaseProvider offlineDatabaseProvider,
             IMessageDialogService messageDialogService)
         {
-            _navigationService = navigationService ?? throw new ArgumentNullException("navigationService");
-            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException("offlineDatabaseProvider");
-            _messageDialogService = messageDialogService ?? throw new ArgumentNullException("messageDialogService");
+            _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException(nameof(offlineDatabaseProvider));
+            _messageDialogService = messageDialogService ?? throw new ArgumentNullException(nameof(messageDialogService));
         }
-
-        public ICommand LoginCommand => _loginCommand;
 
         public async Task<bool> NavigateToWelcomePageAsync(object parameter)
         {
@@ -58,6 +55,7 @@ namespace BookingBanquetDV.Source.Login
                         };
 
                         SaveLoginDetails(_loginDetail);
+                        _navigationService.Navigate(typeof(WelcomePage), _loginDetail);
                     }
                     else
                     {

@@ -15,7 +15,7 @@ namespace BookingServices.DataProvider
 
         public OfflineDatabaseProvider(IDbContext dbContext)
         {
-            _dbContext = dbContext ?? throw new ArgumentNullException("dbContext");
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
         public async Task CreateOfflineDatabaseAsync()
@@ -38,9 +38,9 @@ namespace BookingServices.DataProvider
             return DataAccess.AddOrUpdateUsers(users);
         }
 
-        public List<String> GetAllUsers(string TableName)
+        public List<String> GetAllUsers()
         {
-            return DataAccess.GetAllUsers(TableName);
+            return DataAccess.GetAllUsers();
         }
 
         public IDictionary<string, string> GetDataForLogin(string userName, string password)

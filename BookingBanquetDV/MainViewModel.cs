@@ -35,9 +35,9 @@ namespace BookingBanquetDV
             ILoginViewModel loginViewModel,
             IOfflineDatabaseProvider offlineDatabaseProvider)
         {
-            _navigationService = navigationService ?? throw new ArgumentNullException("navigationService");
-            _loginViewModel = loginViewModel ?? throw new ArgumentNullException("loginViewModel");
-            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException("offlineDatabaseProvider");
+            _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+            _loginViewModel = loginViewModel ?? throw new ArgumentNullException(nameof(loginViewModel));
+            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException(nameof(offlineDatabaseProvider));
 
             _loginCommand = new DelegateCommand(async parameter => await OnClickLoginAsync(parameter));
             _signupCommand = new DelegateCommand(parameter => OnClickSignup());

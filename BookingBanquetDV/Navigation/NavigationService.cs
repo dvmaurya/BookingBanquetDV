@@ -18,7 +18,7 @@ namespace BookingBanquetDV.Navigation
         public NavigationService(
             Frame frame)
         {
-            _frame = frame ?? throw new ArgumentNullException("frame");
+            _frame = frame ?? throw new ArgumentNullException(nameof(frame));
             _frame.Navigated += OnFrameNavigatedTo;
             _frame.Navigating += OnFrameNavigatingFrom;
         }
@@ -38,7 +38,7 @@ namespace BookingBanquetDV.Navigation
                     {
                         backRequestedEventArgs.Handled = true;
 
-                        if (!await customGobackViewmodel.CanExecuteBackRequestedEventAsync())
+                        if (!await customGobackViewmodel.CanExecuteBackRequestedEventAsync().ConfigureAwait(true))
                         {
                             customGobackViewmodel.HandleGoBack();
                             _isDoubleClicked = false;

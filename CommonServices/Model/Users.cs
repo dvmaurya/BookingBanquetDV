@@ -12,5 +12,6 @@ namespace CommonServices.Model
         public string Password { get; set; }
         public string CreationDate { get; set; }
         public bool IsActivate { get; set; }
+        public int PasswordChanged { get; set; }
     }
 }

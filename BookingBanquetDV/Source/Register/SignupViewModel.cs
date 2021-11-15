@@ -1,5 +1,4 @@
-﻿using BookingBanquetDV.Source.Login;
-using BookingBanquetDV.Utility;
+﻿using BookingBanquetDV.Utility;
 using BookingBanquetDV.Validation;
 using BookingServices.Interfaces;
 using CommonServices.ConstantData;
@@ -26,7 +25,6 @@ namespace BookingBanquetDV.Source.Register
         private string _mobileNo;
         private string _password;
         private string _confirmPassword;
-        private List<String> _existUsers;
         private bool _isEmailExist;
         private bool _isMobileExist;
         private bool _somethingWrongMessage;
@@ -34,7 +32,7 @@ namespace BookingBanquetDV.Source.Register
         private string _oTP;
         private string _generatedOTP;
         private Users _users;
-        private ICommand _signupCommand;
+        private readonly ICommand _signupCommand;
         private readonly ICommand _oTPCommand;
         private readonly ICommand _loginCommand;
         private readonly IMessageDialogService _messageDialogService;
@@ -46,21 +44,21 @@ namespace BookingBanquetDV.Source.Register
             IOfflineDatabaseProvider offlineDatabaseProvider,
             IMessageDialogService messageDialogService)
         {
-            _navigationService = navigationService ?? throw new ArgumentNullException("navigationService");
-            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException("offlineDatabaseProvider");
-            _messageDialogService = messageDialogService ?? throw new ArgumentNullException("messageDialogService");
+            _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException(nameof(offlineDatabaseProvider));
+            _messageDialogService = messageDialogService ?? throw new ArgumentNullException(nameof(messageDialogService));
 
             _oTPCommand = new DelegateCommand(
-                async parameter => await OnOTPClickAsync(parameter));
+                async parameter => await OnOTPClickAsync());
 
             _loginCommand = new DelegateCommand(
-                parameter => OnLoginClick(parameter));
+                parameter => OnLoginClick());
 
             _signupCommand = new DelegateCommand(
-                async parameter => await OnSignUpClickAsync(parameter));
+                async parameter => await OnSignUpClickAsync());
         }
 
-        private async Task OnSignUpClickAsync(object parameter)
+        private async Task OnSignUpClickAsync()
         {
             if(ValidateProperties())
             {
@@ -83,21 +81,50 @@ namespace BookingBanquetDV.Source.Register
             }
         }
 
-        private void OnLoginClick(object parameter)
+        private void OnLoginClick()
         {
             _navigationService.Navigate(typeof(MainPage));
         }
 
-        private async Task OnOTPClickAsync(object parameter)
+        private async Task OnOTPClickAsync()
         {
-            if (!string.IsNullOrEmpty(_emailId) &&
-                !string.IsNullOrEmpty(_mobileNo))
-            {
-                _existUsers = _offlineDatabaseProvider.GetAllUsers(ApplicationConstants.Signup);
+            CheckUserExist();
 
-                if (_existUsers != null && _existUsers.Any())
+            if (ValidateProperties())
+            {
+                _users = new Users
                 {
-                    foreach (string existUser in _existUsers)
+                    EmailId = _emailId,
+                    FullName = _fullName,
+                    Mobile = _mobileNo,
+                    Password = _password,
+                    UserId = _emailId,
+                    CreationDate = DateTime.Now.ConvertToString(
+                        ApplicationConstants.DatabaseDateTimeFormat),
+                    IsActivate = false,
+                    PasswordChanged = 0
+                };
+
+                await SendOtpAsync().ConfigureAwait(true);
+            }
+
+            _isMobileExist = false;
+            _isEmailExist = false;
+
+            OnPropertyChanged(() => IsOtpEnable);
+            OnPropertyChanged(() => IsMobileExist);
+            OnPropertyChanged(() => IsEmailExist);
+        }
+
+        private void CheckUserExist()
+        {
+            if (!string.IsNullOrEmpty(_emailId) && !string.IsNullOrEmpty(_mobileNo))
+            {
+                List<string> existUsers = _offlineDatabaseProvider.GetAllUsers();
+
+                if (existUsers != null && existUsers.Any())
+                {
+                    foreach (string existUser in existUsers)
                     {
                         if (existUser.FormatStringEquals(_emailId))
                         {
@@ -112,30 +139,6 @@ namespace BookingBanquetDV.Source.Register
                     }
                 }
             }
-
-            if (ValidateProperties())
-            {
-                _users = new Users
-                {
-                    EmailId = _emailId,
-                    FullName = _fullName,
-                    Mobile = _mobileNo,
-                    Password = _password,
-                    UserId = _emailId,
-                    CreationDate = DateTime.Now.ConvertToString(
-                        ApplicationConstants.DatabaseDateTimeFormat),
-                    IsActivate = false
-                };
-
-                await SendOtpAsync().ConfigureAwait(true);
-            }
-
-            _isMobileExist = false;
-            _isEmailExist = false;
-
-            OnPropertyChanged(() => IsOtpEnable);
-            OnPropertyChanged(() => IsMobileExist);
-            OnPropertyChanged(() => IsEmailExist);
         }
 
         private async Task SendOtpAsync()
@@ -161,7 +164,7 @@ namespace BookingBanquetDV.Source.Register
             {
                 await _messageDialogService.ShowMessageDialogAsync(
                     ApplicationConstants.Warning,
-                    ApplicationConstants.EmailIncorrect).ConfigureAwait(true);
+                    ApplicationConstants.LowInternet).ConfigureAwait(true);
 
                 _somethingWrongMessage = true;
                 _isOtpEnable = false;

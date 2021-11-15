@@ -49,7 +49,7 @@ namespace BookingBanquetDV
 
         }
 
-        protected async override void OnLaunched(LaunchActivatedEventArgs args)
+        protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace BookingBanquetDV
 
         private async void App_BackRequested(object sender, BackRequestedEventArgs e)
         {
-            await DIContainer.GetInstance<INavigationService>().OnBackRequestedAsync(sender, e);
+            await DIContainer.GetInstance<INavigationService>().OnBackRequestedAsync(sender, e).ConfigureAwait(true);
         }
 
         /// <summary>
@@ -125,6 +125,7 @@ namespace BookingBanquetDV
         /// <param name="e">Details about the navigation failure</param>
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
+            if(sender != null) { }
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
 

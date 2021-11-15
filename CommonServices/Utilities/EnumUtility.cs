@@ -16,9 +16,8 @@ namespace CommonServices.Utilities
         {
             FieldInfo fieldInfo = typeof(T).GetField(value.ToString());
 
-            var descriptionAttribute = fieldInfo.GetCustomAttribute(typeof(DisplayAttribute), false) as DisplayAttribute;
-
-            if (descriptionAttribute != null)
+            if (fieldInfo.GetCustomAttribute(typeof(DisplayAttribute), false) is
+                DisplayAttribute descriptionAttribute)
                 return descriptionAttribute.Description;
             else
                 return value.ToString();

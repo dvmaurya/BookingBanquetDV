@@ -9,7 +9,7 @@ namespace BookingServices.Interfaces
     {
         Task CreateOfflineDatabaseAsync();
         bool AddOrUpdateUsers(Users users);
-        List<String> GetAllUsers(string signup);
+        List<string> GetAllUsers();
         void AddOrUpdateLoginDetail(LoginDetail loginDetail);
         IDictionary<string, string> GetDataForLogin(string userName, string password);
         IDictionary<string, string> GetPreviousLoginDetail();

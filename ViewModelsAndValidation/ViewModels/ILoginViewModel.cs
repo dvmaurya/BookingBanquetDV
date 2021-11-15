@@ -5,7 +5,6 @@ namespace ViewModelsAndValidation.ViewModels
 {
     public interface ILoginViewModel
     {
-        ICommand LoginCommand { get; }
         Task<bool> NavigateToWelcomePageAsync(object parameter);
     }
 }
