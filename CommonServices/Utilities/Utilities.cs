@@ -3,7 +3,7 @@ using System;
 using Windows.ApplicationModel;
 using Windows.Networking.Connectivity;
 
-namespace BookingBanquetDV.Utility
+namespace CommonServices.Utilities
 {
     public static class Utilities
     {
@@ -31,8 +31,8 @@ namespace BookingBanquetDV.Utility
 
             if (connectionProfile == null)
                 return false;
-            return (connectionProfile != null &&
-                    connectionProfile.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess);
+            return connectionProfile != null &&
+                    connectionProfile.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess;
         }
 
         public static string GenerateOTP()

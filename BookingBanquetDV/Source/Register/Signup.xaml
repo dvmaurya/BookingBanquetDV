@@ -159,16 +159,25 @@
                         TextWrapping="Wrap" />
                 </StackPanel>
                 <StackPanel>
-                    <Button
-                        Width="100"
-                        Margin="0,0,50,0"
-                        HorizontalAlignment="Center"
-                        Background="#2596BE"
-                        Command="{Binding OTPCommand}"
-                        Content="Get OTP"
-                        FontSize="16"
-                        Foreground="#FFFFFF"
-                        IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}" />
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <Button
+                            Width="100"
+                            Margin="0,0,10,0"
+                            Background="#2596BE"
+                            Command="{Binding OTPCommand}"
+                            Content="Get OTP"
+                            FontSize="16"
+                            Foreground="#FFFFFF"
+                            IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}" />
+                        <Button
+                            Width="100"
+                            Margin="0,0,50,0"
+                            Background="#2596BE"
+                            Command="{Binding ResetCommand}"
+                            Content="Reset"
+                            FontSize="16"
+                            Foreground="#FFFFFF" />
+                    </StackPanel>
                     <StackPanel Margin="0,20,50,0" Visibility="{Binding IsOtpEnable}">
                         <TextBlock
                             Margin="0,0,0,5"

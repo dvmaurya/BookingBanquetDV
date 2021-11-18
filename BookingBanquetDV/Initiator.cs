@@ -6,6 +6,8 @@ using BookingBanquetDV.Source.Welcome;
 using BookingServices.DataProvider;
 using BookingServices.Interfaces;
 using BookingServices.SQLite;
+using CommonServices.Analytcis;
+using CommonServices.Logger;
 using System.IO;
 using Unity.Injection;
 using ViewModelsAndValidation;
@@ -45,7 +47,9 @@ namespace BookingBanquetDV
 
         private static void RegisterServices()
         {
+            DIContainer.RegisterInstance<ILogger>(App.Logger);
             DIContainer.RegisterSingletonType<IMessageDialogService, MessageDialogService>();
+            DIContainer.RegisterInstance<IAnalyticsManager>(AnalyticsManager.Instance);
         }
     }
 }

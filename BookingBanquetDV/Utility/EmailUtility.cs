@@ -1,5 +1,6 @@
 ﻿using CommonServices.Extensions;
 using CommonServices.Logger;
+using CommonServices.Utilities;
 using MailKit.Net.Smtp;
 using MimeKit;
 using System;

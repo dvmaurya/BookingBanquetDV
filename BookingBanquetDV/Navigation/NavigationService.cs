@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommonServices.Analytcis;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using ViewModelsAndValidation;
 using ViewModelsAndValidation.Services;
@@ -14,13 +16,17 @@ namespace BookingBanquetDV.Navigation
         private readonly Frame _frame;
         private Task _navigatingFromTask;
         private bool _isDoubleClicked;
+        private IAnalyticsManager _analyticsManager;
 
         public NavigationService(
             Frame frame)
         {
             _frame = frame ?? throw new ArgumentNullException(nameof(frame));
+
             _frame.Navigated += OnFrameNavigatedTo;
             _frame.Navigating += OnFrameNavigatingFrom;
+
+            _analyticsManager = DIContainer.GetInstance<IAnalyticsManager>();
         }
 
         public async Task OnBackRequestedAsync(object sender, BackRequestedEventArgs backRequestedEventArgs)
@@ -74,6 +80,7 @@ namespace BookingBanquetDV.Navigation
         {
             if (type != null)
             {
+                TraceScreenVisit(type);
                 _frame.Navigate(type);
             }
         }
@@ -83,8 +90,16 @@ namespace BookingBanquetDV.Navigation
             if (type != null &&
                 parameter != null)
             {
+                TraceScreenVisit(type);
                 _frame.Navigate(type, parameter);
             }
+        }
+
+        private void TraceScreenVisit(Type type)
+        {
+            string screenName = type.ToString().Split('.').Last();
+
+            _analyticsManager.TraceScreenView(screenName);
         }
 
         public async Task SuspendingAsync()

@@ -1,6 +1,7 @@
 ﻿using BookingBanquetDV.Source.Recover;
 using BookingBanquetDV.Source.Register;
 using BookingServices.Interfaces;
+using CommonServices.Analytcis;
 using CommonServices.ConstantData;
 using CommonServices.Extensions;
 using CommonServices.Model;
@@ -29,15 +30,18 @@ namespace BookingBanquetDV
         private readonly INavigationService _navigationService;
         private readonly ILoginViewModel _loginViewModel;
         private readonly IOfflineDatabaseProvider _offlineDatabaseProvider;
+        private IAnalyticsManager _analyticsManager;
 
         public MainViewModel(
             INavigationService navigationService,
             ILoginViewModel loginViewModel,
-            IOfflineDatabaseProvider offlineDatabaseProvider)
+            IOfflineDatabaseProvider offlineDatabaseProvider,
+            IAnalyticsManager analyticsManager)
         {
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             _loginViewModel = loginViewModel ?? throw new ArgumentNullException(nameof(loginViewModel));
             _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException(nameof(offlineDatabaseProvider));
+            _analyticsManager = analyticsManager ?? throw new ArgumentNullException(nameof(analyticsManager));
 
             _loginCommand = new DelegateCommand(async parameter => await OnClickLoginAsync(parameter));
             _signupCommand = new DelegateCommand(parameter => OnClickSignup());

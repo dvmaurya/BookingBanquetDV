@@ -5,6 +5,7 @@ using CommonServices.ConstantData;
 using CommonServices.Enums;
 using CommonServices.Extensions;
 using CommonServices.Model;
+using CommonServices.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,6 @@ using ViewModelsAndValidation.Command;
 using ViewModelsAndValidation.Services;
 using ViewModelsAndValidation.ViewModels;
 using Windows.ApplicationModel.Contacts;
-using Windows.Storage;
 
 namespace BookingBanquetDV.Source.Recover
 {

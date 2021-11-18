@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 namespace ViewModelsAndValidation.ViewModels
 {
@@ -18,6 +17,7 @@ namespace ViewModelsAndValidation.ViewModels
         ICommand OTPCommand { get; }
         ICommand LoginCommand { get; }
         ICommand SignupCommand { get; }
+        ICommand ResetCommand { get; }
         string GeneratedOTP { get; }
     }
 }

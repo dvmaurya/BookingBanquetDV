@@ -4,6 +4,7 @@ using BookingServices.Interfaces;
 using CommonServices.ConstantData;
 using CommonServices.Extensions;
 using CommonServices.Model;
+using CommonServices.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,7 @@ namespace BookingBanquetDV.Source.Register
         private string _oTP;
         private string _generatedOTP;
         private Users _users;
+        private ICommand _resetCommand;
         private readonly ICommand _signupCommand;
         private readonly ICommand _oTPCommand;
         private readonly ICommand _loginCommand;
@@ -56,11 +58,24 @@ namespace BookingBanquetDV.Source.Register
 
             _signupCommand = new DelegateCommand(
                 async parameter => await OnSignUpClickAsync());
+
+            _resetCommand = new DelegateCommand(
+                parameter => OnResetClick());
+        }
+
+        private void OnResetClick()
+        {
+            if (_isOtpEnable)
+            {
+                _isOtpEnable = false;
+
+                OnPropertyChanged(() => IsOtpEnable);
+            }
         }
 
         private async Task OnSignUpClickAsync()
         {
-            if(ValidateProperties())
+            if (ValidateProperties())
             {
                 if (_oTP.FormatStringEquals(_generatedOTP))
                 {
@@ -69,6 +84,8 @@ namespace BookingBanquetDV.Source.Register
                     await _messageDialogService.ShowMessageDialogAsync(
                         ApplicationConstants.Success,
                         ApplicationConstants.SignupSuccess).ConfigureAwait(true);
+
+                    GoogleAPI.SendToGoogleAPIAsync(_users);
 
                     _navigationService.Navigate(typeof(MainPage));
                 }
@@ -239,6 +256,7 @@ namespace BookingBanquetDV.Source.Register
         public ICommand OTPCommand => _oTPCommand;
         public ICommand LoginCommand => _loginCommand;
         public ICommand SignupCommand => _signupCommand;
+        public ICommand ResetCommand => _resetCommand;
 
         public bool IsOtpEnable
         {

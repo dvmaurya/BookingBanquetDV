@@ -1,8 +1,8 @@
-﻿using BookingBanquetDV.Utility;
-using BookingServices.Interfaces;
-using BookingServices.SQLite;
-using CommonServices.ConstantData;
+﻿using CommonServices.ConstantData;
+using CommonServices.Extensions;
 using CommonServices.Logger;
+using CommonServices.Utilities;
+using DataAccessLibrary;
 using System;
 using ViewModelsAndValidation;
 using ViewModelsAndValidation.Services;
@@ -15,8 +15,6 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using DataAccessLibrary;
-using CommonServices.Extensions;
 
 namespace BookingBanquetDV
 {
