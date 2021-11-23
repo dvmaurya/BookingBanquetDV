@@ -154,7 +154,9 @@
     <Compile Include="Validation\ValidationManager.cs" />
     <Compile Include="ViewModelBase.cs" />
     <Compile Include="ViewModelState.cs" />
+    <Compile Include="ViewModels\ICameraViewModel.cs" />
     <Compile Include="ViewModels\ILoginViewModel.cs" />
+    <Compile Include="ViewModels\INewBookingViewModel.cs" />
     <Compile Include="ViewModels\ISignupViewModel.cs" />
     <Compile Include="ViewModels\IMainViewModel.cs" />
     <Compile Include="ViewModels\IRecoverUserViewModel.cs" />
@@ -175,6 +177,12 @@
     <PackageReference Include="Unity">
       <Version>5.8.11</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CommonServices\CommonServices.csproj">
+      <Project>{F779B6F8-B41D-4F80-A10A-313F2A08E1F0}</Project>
+      <Name>CommonServices</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

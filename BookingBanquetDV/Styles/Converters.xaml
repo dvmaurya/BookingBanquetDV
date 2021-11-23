@@ -6,4 +6,5 @@
     <converters:TextToHeaderVisibilityConverter x:Key="TextToHeaderVisibilityConverter" />
     <converters:NotBooleanToVisibilityConverter x:Key="NotBooleanToVisibilityConverter" />
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    <converters:VisibleWhenNotNullConverter x:Key="VisibleWhenNotNullConverter" />
 </ResourceDictionary>

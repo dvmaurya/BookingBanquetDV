@@ -135,6 +135,7 @@
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\NotBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\TextToHeaderVisibilityConverter.cs" />
+    <Compile Include="Converters\VisibleWhenNotNullConverter.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Initiator.cs" />
     <Compile Include="MainPage.xaml.cs">
@@ -144,6 +145,9 @@
     <Compile Include="Navigation\NavigationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\MessageDialogService.cs" />
+    <Compile Include="Source\Camera\CameraUtility.cs" />
+    <Compile Include="Source\Camera\CameraViewModel.cs" />
+    <Compile Include="Source\Camera\PhotoUtility.cs" />
     <Compile Include="Source\Login\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
@@ -162,11 +166,18 @@
       <DependentUpon>Signup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Register\SignupViewModel.cs" />
-    <Compile Include="Source\WelcomePage.xaml.cs">
+    <Compile Include="Source\Welcome\Model\NewBookingOption.cs" />
+    <Compile Include="Source\Welcome\NewBooking.xaml.cs">
+      <DependentUpon>NewBooking.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Welcome\NewBookingViewModel.cs" />
+    <Compile Include="Source\Welcome\WelcomePage.xaml.cs">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Welcome\WelcomeViewModel.cs" />
+    <Compile Include="Utility\ComboBoxExt.cs" />
     <Compile Include="Utility\EmailUtility.cs" />
+    <Compile Include="Validation\DateRequiredAttribute.cs" />
     <Compile Include="Validation\EmailValidationAttribute.cs" />
     <Compile Include="Validation\MobileNoValidationAttribute.cs" />
     <Compile Include="Validation\NameValidationAttribute.cs" />
@@ -225,7 +236,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Source\WelcomePage.xaml">
+    <Page Include="Source\Welcome\NewBooking.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Welcome\WelcomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

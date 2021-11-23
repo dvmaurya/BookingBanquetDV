@@ -1,4 +1,5 @@
 ﻿using BookingBanquetDV.Services;
+using BookingBanquetDV.Source.Camera;
 using BookingBanquetDV.Source.Login;
 using BookingBanquetDV.Source.Recover;
 using BookingBanquetDV.Source.Register;
@@ -29,6 +30,7 @@ namespace BookingBanquetDV
         private static void RegisterRepositories()
         {
             DIContainer.RegisterType<IOfflineDatabaseProvider, OfflineDatabaseProvider>();
+            DIContainer.RegisterType<IEncryptionProvider, EncryptionProvider>();
             DIContainer.RegisterSingletonType<IDbContext, SQLiteContext>(
                  new InjectionConstructor(
                      Path.Combine(ApplicationData.Current.LocalFolder.Path, "Banquet.sqlite"),
@@ -43,6 +45,8 @@ namespace BookingBanquetDV
             DIContainer.RegisterType<ISignupViewModel, SignupViewModel>();
             DIContainer.RegisterType<IRecoverUserViewModel, RecoverUserViewModel>();
             DIContainer.RegisterType<IWelcomeViewModel, WelcomeViewModel>();
+            DIContainer.RegisterType<INewBookingViewModel, NewBookingViewModel>();
+            DIContainer.RegisterType<ICameraViewModel, CameraViewModel>();
         }
 
         private static void RegisterServices()

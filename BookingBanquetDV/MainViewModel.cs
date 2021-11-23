@@ -20,17 +20,18 @@ namespace BookingBanquetDV
 {
     public class MainViewModel : ValidationViewModelBase, IMainViewModel
     {
+        private string _userId = "8318412422";
+        private string _password = "123";
+        private bool _isRememberChecked;
+        private bool _isCredentialWrong;
         private readonly ICommand _loginCommand;
         private readonly ICommand _signupCommand;
         private readonly ICommand _forgotPasswordCommand;
-        private string _password;
-        private string _userId;
-        private bool _isRememberChecked;
-        private bool _isCredentialWrong;
+        
         private readonly INavigationService _navigationService;
         private readonly ILoginViewModel _loginViewModel;
         private readonly IOfflineDatabaseProvider _offlineDatabaseProvider;
-        private IAnalyticsManager _analyticsManager;
+        private readonly IAnalyticsManager _analyticsManager;
 
         public MainViewModel(
             INavigationService navigationService,

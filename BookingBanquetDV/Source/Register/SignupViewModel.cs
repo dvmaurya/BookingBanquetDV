@@ -33,7 +33,7 @@ namespace BookingBanquetDV.Source.Register
         private string _oTP;
         private string _generatedOTP;
         private Users _users;
-        private ICommand _resetCommand;
+        private readonly ICommand _resetCommand;
         private readonly ICommand _signupCommand;
         private readonly ICommand _oTPCommand;
         private readonly ICommand _loginCommand;
