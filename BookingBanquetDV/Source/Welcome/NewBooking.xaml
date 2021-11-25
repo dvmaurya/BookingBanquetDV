@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Add new booking"
+    Name="BookingDialog"
     Width="600"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     BorderBrush="Green"
@@ -35,17 +35,27 @@
                 <RowDefinition Height="65" />
                 <RowDefinition Height="65" />
             </Grid.RowDefinitions>
-            <TextBlock
-                Grid.Row="0"
-                Grid.Column="0"
-                Margin="0,10,0,0"
-                Text="Customer Name:"
-                TextWrapping="Wrap" />
+            <Grid Grid.Row="0" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    Foreground="Red"
+                    Text="*"
+                    Visibility="{Binding BookingParameter.IsViewBooking, Converter={StaticResource InverseBooleanConverter}}" />
+                <TextBlock
+                    Grid.Column="1"
+                    Text="Customer's name:"
+                    TextWrapping="Wrap" />
+            </Grid>
             <StackPanel
                 Grid.Row="0"
                 Grid.Column="1"
                 Margin="0,0,10,0">
                 <TextBox
+                    IsReadOnly="{Binding BookingParameter.IsViewBooking}"
                     MaxLength="50"
                     PlaceholderText="Enter customer name"
                     Text="{Binding CustomerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -62,56 +72,60 @@
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="0"
-                Text="Number of rooms:"
+                Text="Total rooms:"
                 TextWrapping="Wrap" />
             <StackPanel
                 Grid.Row="1"
                 Grid.Column="1"
-                Margin="0,0,10,0">
+                Margin="0,0,10,20">
                 <TextBox
                     InputScope="Number"
+                    IsReadOnly="{Binding BookingParameter.IsViewBooking}"
                     MaxLength="2"
                     PlaceholderText="Number of rooms"
-                    Text="{Binding NumberOfRooms, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    Text="{Binding TotalRooms, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <interactivity:Interaction.Behaviors>
                         <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
                         <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[NumberOfRooms]}" />
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
-                <TextBlock
-                    Style="{StaticResource ErrorMessageStyle}"
-                    Text="{Binding Errors[NumberOfRooms], Converter={StaticResource FirstErrorConverter}}"
-                    TextWrapping="Wrap" />
             </StackPanel>
             <TextBlock
                 Grid.Row="2"
                 Grid.Column="0"
-                Text="Number of  flours:"
+                Text="Total flours:"
                 TextWrapping="Wrap" />
             <StackPanel
                 Grid.Row="2"
                 Grid.Column="1"
-                Margin="0,0,10,0">
+                Margin="0,0,10,20">
                 <TextBox
                     InputScope="Number"
-                    MaxLength="2"
+                    IsReadOnly="{Binding BookingParameter.IsViewBooking}"
+                    MaxLength="1"
                     PlaceholderText="Number of flours"
-                    Text="{Binding NumberOfFlours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    Text="{Binding TotalFlours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <interactivity:Interaction.Behaviors>
                         <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
                         <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[NumberOfFlours]}" />
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
-                <TextBlock
-                    Style="{StaticResource ErrorMessageStyle}"
-                    Text="{Binding Errors[NumberOfFlours], Converter={StaticResource FirstErrorConverter}}"
-                    TextWrapping="Wrap" />
             </StackPanel>
-            <TextBlock
-                Grid.Row="3"
-                Grid.Column="0"
-                Text="Date for  booking:"
-                TextWrapping="Wrap" />
+            <Grid Grid.Row="3" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    Foreground="Red"
+                    Text="*"
+                    Visibility="{Binding BookingParameter.IsViewBooking, Converter={StaticResource InverseBooleanConverter}}" />
+                <TextBlock
+                    Grid.Column="1"
+                    Text="Date for  booking:"
+                    TextWrapping="Wrap" />
+            </Grid>
             <StackPanel
                 Grid.Row="3"
                 Grid.Column="1"
@@ -123,10 +137,11 @@
                     Width="365"
                     Date="{Binding BookingDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     DateFormat="{}{dayofweek.abbreviated(3)}‎, ‎{day.integer} ‎{month.abbreviated(3)}‎ ‎{year.full}"
+                    IsEnabled="{Binding BookingParameter.IsViewBooking, Converter={StaticResource InverseBooleanConverter}}"
                     MinDate="{Binding MinDateTime, Mode=TwoWay}" />
                 <TextBlock
                     x:Name="DateText"
-                    Margin="0,0,10,0"
+                    Margin="0"
                     Foreground="Red"
                     Style="{StaticResource ErrorMessageStyle}"
                     Text="{Binding Errors[BookingDate], Converter={StaticResource FirstErrorConverter}}" />
@@ -142,11 +157,21 @@
                 Margin="0,0,10,20">
                 <TextBox IsReadOnly="True" Text="{Binding BookedBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
-            <TextBlock
-                Grid.Row="5"
-                Grid.Column="0"
-                Margin="0,10,0,0"
-                Text="Total amount:" />
+            <Grid Grid.Row="5" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    Foreground="Red"
+                    Text="*"
+                    Visibility="{Binding BookingParameter.IsViewBooking, Converter={StaticResource InverseBooleanConverter}}" />
+                <TextBlock
+                    Grid.Column="1"
+                    Text="Total amount:"
+                    TextWrapping="Wrap" />
+            </Grid>
             <StackPanel
                 Grid.Row="5"
                 Grid.Column="1"
@@ -154,8 +179,9 @@
                 <TextBox
                     x:Name="TotalAmount"
                     InputScope="Number"
+                    IsReadOnly="{Binding BookingParameter.IsViewBooking}"
                     KeyUp="TextBox_KeyUp"
-                    MaxLength="10"
+                    MaxLength="7"
                     PlaceholderText="Enter total amount"
                     Text="{Binding TotalAmount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <interactivity:Interaction.Behaviors>
@@ -164,31 +190,48 @@
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
                 <TextBlock
+                    Margin="0"
                     Style="{StaticResource ErrorMessageStyle}"
                     Text="{Binding Errors[TotalAmount], Converter={StaticResource FirstErrorConverter}}"
                     TextWrapping="Wrap" />
             </StackPanel>
-            <TextBlock
-                Grid.Row="6"
-                Grid.Column="0"
-                Text="Advance  amount:"
-                TextWrapping="Wrap" />
+            <Grid Grid.Row="6" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    Foreground="Red"
+                    Text="*"
+                    Visibility="{Binding BookingParameter.IsViewBooking, Converter={StaticResource InverseBooleanConverter}}" />
+                <TextBlock
+                    Grid.Column="1"
+                    Text="Advance:"
+                    TextWrapping="Wrap" />
+            </Grid>
             <StackPanel
                 Grid.Row="6"
                 Grid.Column="1"
-                Margin="0,0,10,20">
+                Margin="0,0,10,0">
                 <TextBox
                     x:Name="Advance"
                     InputScope="Number"
+                    IsReadOnly="{Binding BookingParameter.IsViewBooking}"
                     KeyUp="TextBox_KeyUp"
-                    MaxLength="10"
+                    MaxLength="7"
                     PlaceholderText="Enter advance amount if any"
                     Text="{Binding Advanced, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <interactivity:Interaction.Behaviors>
                         <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
-                        <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[Balance]}" />
+                        <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[Advanced]}" />
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
+                <TextBlock
+                    Margin="0"
+                    Style="{StaticResource ErrorMessageStyle}"
+                    Text="{Binding Errors[Advanced], Converter={StaticResource FirstErrorConverter}}"
+                    TextWrapping="Wrap" />
             </StackPanel>
             <TextBlock
                 Grid.Row="7"
@@ -203,7 +246,6 @@
                     x:Name="RemainingAmount"
                     InputScope="Number"
                     IsReadOnly="True"
-                    MaxLength="10"
                     PlaceholderText="Remaining amount"
                     Text="{Binding Balance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
@@ -215,9 +257,10 @@
             <StackPanel
                 Grid.Row="8"
                 Grid.Column="1"
-                Margin="0,0,10,0">
+                Margin="0,0,10,20">
                 <commoncontrols:ComboBoxExt
                     Width="365"
+                    IsEnabled="{Binding BookingParameter.IsViewBooking, Converter={StaticResource InverseBooleanConverter}}"
                     ItemsSource="{Binding ConfirmList}"
                     PlaceholderText="Is booking confirmed ?"
                     SelectedItem="{Binding SelecteConfirmation, Mode=TwoWay}">
@@ -228,11 +271,6 @@
                             PropertyErrors="{Binding Errors[SelecteConfirmation]}" />
                     </interactivity:Interaction.Behaviors>
                 </commoncontrols:ComboBoxExt>
-                <TextBlock
-                    x:Name="statusText"
-                    Margin="0,0,0,10"
-                    Style="{StaticResource ErrorMessageStyle}"
-                    Text="{Binding Errors[SelecteConfirmation], Converter={StaticResource FirstErrorConverter}}" />
             </StackPanel>
         </Grid>
     </ScrollViewer>

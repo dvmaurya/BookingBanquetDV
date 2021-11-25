@@ -134,7 +134,9 @@
     <Compile Include="Converters\FirstErrorConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\NotBooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\NumberingConvertor.cs" />
     <Compile Include="Converters\TextToHeaderVisibilityConverter.cs" />
+    <Compile Include="Converters\VisibleWhenNotEmptyStringConverter.cs" />
     <Compile Include="Converters\VisibleWhenNotNullConverter.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Initiator.cs" />
@@ -148,6 +150,9 @@
     <Compile Include="Source\Camera\CameraUtility.cs" />
     <Compile Include="Source\Camera\CameraViewModel.cs" />
     <Compile Include="Source\Camera\PhotoUtility.cs" />
+    <Compile Include="Source\Camera\PreviewPhoto.xaml.cs">
+      <DependentUpon>PreviewPhoto.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Login\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
@@ -195,6 +200,7 @@
   <ItemGroup>
     <Content Include="Assets\background.jpg" />
     <Content Include="Assets\email.jpg" />
+    <Content Include="Assets\EYE_UWP.png" />
     <Content Include="Assets\mobileNo.png" />
     <Content Include="Assets\password.png" />
     <Content Include="Assets\username.png" />
@@ -215,6 +221,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Camera\PreviewPhoto.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Source\Login\LoginPage.xaml">
       <SubType>Designer</SubType>

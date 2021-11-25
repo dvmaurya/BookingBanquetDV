@@ -28,10 +28,13 @@ namespace BookingBanquetDV.Validation
                 {
                     if (signupView.IsOtpEnable)
                     {
-                        if (string.IsNullOrEmpty(signupView.OTP))
-                            return new ValidationResult(ApplicationConstants.OTPRequired);
-                        else if (!signupView.OTP.FormatStringEquals(signupView.GeneratedOTP))
-                            return new ValidationResult(this.ErrorMessage);
+                        if (!signupView.IsResendOTP)
+                        {
+                            if (string.IsNullOrEmpty(signupView.OTP))
+                                return new ValidationResult(ApplicationConstants.OTPRequired);
+                            else if (!signupView.OTP.FormatStringEquals(signupView.GeneratedOTP))
+                                return new ValidationResult(this.ErrorMessage);
+                        }
                     }
                 }
             }

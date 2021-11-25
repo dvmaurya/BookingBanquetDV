@@ -7,7 +7,7 @@ namespace BookingServices.Interfaces
 {
     public interface IOfflineDatabaseProvider
     {
-        Task CreateOfflineDatabaseAsync();
+        void CreateOfflineDatabase();
         bool AddOrUpdateUsers(Users users);
         List<string> GetAllUsers();
         void AddOrUpdateLoginDetail(LoginDetail loginDetail);

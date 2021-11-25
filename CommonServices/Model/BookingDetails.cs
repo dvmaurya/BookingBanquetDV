@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CommonServices.Model
+﻿namespace CommonServices.Model
 {
     public class BookingDetails
     {
+        public int Id { get; set; }
         public string CustomerName { get; set; }
         public string BookingDate { get; set; }
         public string BookedBy { get; set; }
@@ -17,5 +12,9 @@ namespace CommonServices.Model
         public string Advanced { get; set; }
         public string Balance { get; set; }
         public string Confirmation { get; set; }
+        public string CreationDate { get; set; }
+        public string PhotoName { get; set; }
+        public string UserId { get; set; }
+        public bool CanShowPhoto { get; set; }
     }
 }

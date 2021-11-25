@@ -139,6 +139,7 @@
     <Compile Include="Logger\FileLogger.cs" />
     <Compile Include="Logger\ILogger.cs" />
     <Compile Include="Model\BookingDetails.cs" />
+    <Compile Include="Model\BookingParameter.cs" />
     <Compile Include="Model\LoginDetail.cs" />
     <Compile Include="Model\NotificationModel.cs" />
     <Compile Include="Model\PhotoDetails.cs" />

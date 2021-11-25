@@ -7,4 +7,6 @@
     <converters:NotBooleanToVisibilityConverter x:Key="NotBooleanToVisibilityConverter" />
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
     <converters:VisibleWhenNotNullConverter x:Key="VisibleWhenNotNullConverter" />
+    <converters:VisibleWhenNotEmptyStringConverter x:Key="VisibleWhenNotEmptyStringConverter" />
+    <converters:NumberingConvertor x:Key="NumberingConvertor" />
 </ResourceDictionary>

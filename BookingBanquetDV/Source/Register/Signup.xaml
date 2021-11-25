@@ -43,6 +43,7 @@
                         </Grid>
                         <TextBox
                             Grid.Column="1"
+                            IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
                             PlaceholderText="Enter full name"
                             Text="{Binding FullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <interactivity:Interaction.Behaviors>
@@ -71,6 +72,7 @@
                         </Grid>
                         <TextBox
                             Grid.Column="1"
+                            IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
                             PlaceholderText="Email id"
                             Text="{Binding EmailId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <interactivity:Interaction.Behaviors>
@@ -100,6 +102,7 @@
                         <TextBox
                             Grid.Column="1"
                             InputScope="Number"
+                            IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
                             MaxLength="10"
                             PlaceholderText="Mobile number"
                             Text="{Binding MobileNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -128,6 +131,7 @@
                         </Grid>
                         <PasswordBox
                             Grid.Column="1"
+                            IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
                             Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             PlaceholderText="Password" />
                     </Grid>
@@ -150,6 +154,7 @@
                         </Grid>
                         <PasswordBox
                             Grid.Column="1"
+                            IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
                             Password="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             PlaceholderText="Confirm password" />
                     </Grid>
@@ -171,12 +176,21 @@
                             IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}" />
                         <Button
                             Width="100"
-                            Margin="0,0,50,0"
+                            Margin="0,0,10,0"
                             Background="#2596BE"
                             Command="{Binding ResetCommand}"
                             Content="Reset"
                             FontSize="16"
                             Foreground="#FFFFFF" />
+                        <Button
+                            Margin="0,0,50,0"
+                            Background="#2596BE"
+                            Command="{Binding OTPCommand}"
+                            CommandParameter="ResendOtp"
+                            Content="Re-send OTP"
+                            FontSize="16"
+                            Foreground="#FFFFFF"
+                            Visibility="{Binding IsOtpEnable}" />
                     </StackPanel>
                     <StackPanel Margin="0,20,50,0" Visibility="{Binding IsOtpEnable}">
                         <TextBlock

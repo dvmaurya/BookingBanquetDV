@@ -1,4 +1,6 @@
 ﻿using BookingServices.Interfaces;
+using BookingServices.Repository.Interface;
+using CommonServices.ConstantData;
 using CommonServices.Extensions;
 using CommonServices.Logger;
 using CommonServices.Model;
@@ -12,20 +14,27 @@ namespace BookingServices.DataProvider
     public class OfflineDatabaseProvider : IOfflineDatabaseProvider
     {
         private readonly IDbContext _dbContext;
+        private readonly IUserRepository _userRepository;
+        private readonly ILoginRepository _loginRepository;
 
-        public OfflineDatabaseProvider(IDbContext dbContext)
+        public OfflineDatabaseProvider(
+            IDbContext dbContext,
+            IUserRepository userRepository,
+            ILoginRepository loginRepository)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _loginRepository = loginRepository ?? throw new ArgumentNullException(nameof(loginRepository));
         }
 
-        public async Task CreateOfflineDatabaseAsync()
+        public void CreateOfflineDatabase()
         {
             try
             {
-                using (_dbContext)
-                {
-                    await _dbContext.CreateTables(GetTables()).ConfigureAwait(false);
-                }
+                IList<string> tables = GetTables();
+
+                foreach (var table in tables)
+                    DataAccess.CreateTables(table);
             }
             catch (Exception ex)
             {
@@ -35,24 +44,31 @@ namespace BookingServices.DataProvider
 
         public bool AddOrUpdateUsers(Users users)
         {
-            return DataAccess.AddOrUpdateUsers(users);
+            return _userRepository.AddOrUpdateUsers(users);
         }
 
         public List<String> GetAllUsers()
         {
-            return DataAccess.GetAllUsers();
+            return _userRepository.GetAllUsers();
+        }
+
+        public IDictionary<string, string> GetDataForOTP(string emailId, string mobileNo)
+        {
+            return _userRepository.GetDataForOTP(emailId, mobileNo);
         }
 
         public IDictionary<string, string> GetDataForLogin(string userName, string password)
         {
-            return DataAccess.GetDataForLogin(userName, password);
+            return _loginRepository.GetDataForLogin(userName, password);
         }
 
-        private IList<Type> GetTables()
+        private IList<string> GetTables()
         {
-            List<Type> tableTypes = new List<Type>
+            List<string> tableTypes = new List<string>
             {
-                typeof(Users)
+                nameof(Users),
+                nameof(LoginDetail),
+                nameof(BookingDetails)
             };
 
             return tableTypes;
@@ -60,17 +76,12 @@ namespace BookingServices.DataProvider
 
         public void AddOrUpdateLoginDetail(LoginDetail loginDetail)
         {
-            DataAccess.AddOrUpdateLoginDetail(loginDetail);
+            _loginRepository.AddOrUpdateLoginDetail(loginDetail);
         }
 
         public IDictionary<string, string> GetPreviousLoginDetail()
         {
-            return DataAccess.GetPreviousLoginDetail();
-        }
-
-        public IDictionary<string, string> GetDataForOTP(string emailId, string mobileNo)
-        {
-            return DataAccess.GetDataForOTP(emailId, mobileNo);
-        }
+            return _loginRepository.GetPreviousLoginDetail();
+        }        
     }
 }

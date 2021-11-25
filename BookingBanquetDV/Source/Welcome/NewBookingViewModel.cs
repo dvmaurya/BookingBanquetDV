@@ -1,8 +1,10 @@
 ﻿using BookingBanquetDV.Validation;
 using CommonServices.ConstantData;
+using CommonServices.Extensions;
 using CommonServices.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Windows.Input;
 using ViewModelsAndValidation;
 using ViewModelsAndValidation.Command;
@@ -12,10 +14,10 @@ namespace BookingBanquetDV.Source.Welcome
 {
     public class NewBookingViewModel : ValidationViewModelBase, INewBookingViewModel
     {
-        private string _name;
+        private string _customerName;
         private string _bookedBy;
-        private string _numberOfRooms;
-        private string _numberOfFlours;
+        private string _totalRooms;
+        private string _totalFlours;
         private string _amount;
         private string _advanced;
         private string _balance;
@@ -24,31 +26,73 @@ namespace BookingBanquetDV.Source.Welcome
         private DateTimeOffset _maxDate;
         private DateTimeOffset _minDateTime;
         private DateTimeOffset _bookingDate;
-        private LoginDetail _loginDetail;
+        private BookingParameter _bookingParameter;
         private string _selecteConfirmation;
+        private bool _isValidationSuccess;
+        private ICommand _saveCommand;
+        private List<BookingDetails> _bookingDetailList;
+        private DateTimeOffset _creationDate;
+        private int _id;
+        private string _photoName;
         private readonly ICommand _dialogLoadingCommand;
 
         public NewBookingViewModel()
         {
             _dialogLoadingCommand = new DelegateCommand(parameter => OnDialogLoading());
+            _saveCommand = new DelegateCommand(parameter => OnSaveNewBooking());
         }
 
         private void OnDialogLoading()
         {
-            if (_loginDetail != null)
+            if (_bookingParameter != null)
             {
-                _bookedBy = _loginDetail.UserName;
+                _bookedBy = _bookingParameter.LoginDetail?.UserName;
                 _maxDate = DateTimeOffset.Now.Date;
                 _minDateTime = DateTimeOffset.Now.Date;
-                _bookingDate = DateTimeOffset.Now.Date;
-
                 GetConfirmationList();
+
+                if(!_bookingParameter.IsEditBooking && !_bookingParameter.IsViewBooking)
+                    _bookingDate = DateTimeOffset.Now.Date;
+
+                if(_bookingParameter.BookingDetails != null)
+                    SetBookingDetail(_bookingParameter.BookingDetails);
 
                 OnPropertyChanged(() => BookedBy);
                 OnPropertyChanged(() => MaxDate);
                 OnPropertyChanged(() => MinDateTime);
                 OnPropertyChanged(() => BookingDate);
             }
+        }
+
+        private void SetBookingDetail(BookingDetails bookingDetails)
+        {
+            _id = BookingParameter.BookingDetails.Id;
+            _customerName = bookingDetails.CustomerName;
+            _bookingDate = bookingDetails.BookingDate.ConvertToDateTime();
+            _creationDate = bookingDetails.CreationDate.ConvertToDateTime();
+            _totalRooms = bookingDetails.NumberOfRooms;
+            _totalFlours = bookingDetails.NumberOfFlours;
+            _amount = bookingDetails.TotalAmount;
+            _advanced = bookingDetails.Advanced;
+            _balance = bookingDetails.Balance;
+            _selecteConfirmation = bookingDetails.Confirmation;
+            _photoName = bookingDetails.PhotoName;
+
+            OnPropertyChanged(() => CustomerName);
+            OnPropertyChanged(() => BookingDate);
+            OnPropertyChanged(() => TotalRooms);
+            OnPropertyChanged(() => TotalFlours);
+            OnPropertyChanged(() => TotalAmount);
+            OnPropertyChanged(() => Balance);
+            OnPropertyChanged(() => SelecteConfirmation);
+        }
+
+        public void OnSaveNewBooking()
+        {
+            if (ValidateProperties())
+                _isValidationSuccess = true;
+            else
+                _isValidationSuccess = false;
         }
 
         private void GetConfirmationList()
@@ -61,11 +105,16 @@ namespace BookingBanquetDV.Source.Welcome
             };
         }
 
+        [Required(ErrorMessage = ApplicationConstants.NameRequired)]
         public string CustomerName
         {
-            get => _name;
-            set => _name = value;
+            get => _customerName;
+            set => _customerName = value;
         }
+
+        public int Id => _id;
+
+        public string PhotoName => _photoName;
 
         [DateRequiredAttribute(ErrorMessage = ApplicationConstants.DateRequired)]
         public DateTimeOffset BookingDate
@@ -73,6 +122,8 @@ namespace BookingBanquetDV.Source.Welcome
             get { return _bookingDate; }
             set { SetValue(() => BookingDate, ref _bookingDate, value); }
         }
+
+         public DateTimeOffset CreationDate => _creationDate;
 
         public DateTimeOffset MaxDate
         {
@@ -92,24 +143,26 @@ namespace BookingBanquetDV.Source.Welcome
             set => _bookedBy = value;
         }
 
-        public string NumberOfRooms
+        public string TotalRooms
         {
-            get => _numberOfRooms;
-            set => _numberOfRooms = value;
+            get => _totalRooms;
+            set => _totalRooms = value;
         }
 
-        public string NumberOfFlours
+        public string TotalFlours
         {
-            get => _numberOfFlours;
-            set => _numberOfFlours = value;
+            get => _totalFlours;
+            set => _totalFlours = value;
         }
 
+        [Required(ErrorMessage = ApplicationConstants.TotalAmountError)]
         public string TotalAmount
         {
             get => _amount;
             set => _amount = value;
         }
 
+        [Required(ErrorMessage = ApplicationConstants.AdvanceAmountError)]
         public string Advanced
         {
             get => _advanced;
@@ -124,10 +177,10 @@ namespace BookingBanquetDV.Source.Welcome
 
         public List<string> ConfirmList => _confirmList;
 
-        public LoginDetail LoginDetail
+        public BookingParameter BookingParameter
         {
-            get => _loginDetail;
-            set => _loginDetail = value;
+            get => _bookingParameter;
+            set => _bookingParameter = value;
         }
 
         public string SelecteConfirmation
@@ -137,5 +190,9 @@ namespace BookingBanquetDV.Source.Welcome
         }
 
         public ICommand DialogLoadingCommand => _dialogLoadingCommand;
+
+        public ICommand SaveCommand => _saveCommand;
+
+        public bool IsValidationSuccess { get { return _isValidationSuccess; } }
     }
 }

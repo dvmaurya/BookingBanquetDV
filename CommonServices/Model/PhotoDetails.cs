@@ -17,7 +17,6 @@ namespace CommonServices.Model
         private string _date;
 
         public int PhotoId { get; set; }
-        public long ConsultationId { get; set; }
         public string PhotoName
         {
             get { return _photoName; }
@@ -29,7 +28,6 @@ namespace CommonServices.Model
         }
         public string FileType { get; set; }
         public long Size { get; set; }
-        public string Consent { get; set; }
         public bool IsAvailable { get; set; }
 
         public string Date

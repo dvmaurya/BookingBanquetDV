@@ -140,13 +140,20 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DataProvider\BookingDataProvider.cs" />
     <Compile Include="DataProvider\EncryptionProvider.cs" />
     <Compile Include="DataProvider\OfflineDatabaseProvider.cs" />
-    <Compile Include="Interfaces\IAddBooking.cs" />
+    <Compile Include="Interfaces\IBookingDataProvider.cs" />
     <Compile Include="Interfaces\IDbContext.cs" />
     <Compile Include="Interfaces\IEncryptionProvider.cs" />
     <Compile Include="Interfaces\IOfflineDatabaseProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\BookingRepository.cs" />
+    <Compile Include="Repository\Interface\IBookingRepository.cs" />
+    <Compile Include="Repository\Interface\ILoginRepository.cs" />
+    <Compile Include="Repository\Interface\IUserRepository.cs" />
+    <Compile Include="Repository\LoginRepository.cs" />
+    <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="SQLite\SqliteConnection.cs" />
     <Compile Include="SQLite\SQLiteContext.cs" />
     <EmbeddedResource Include="Properties\BookingServices.rd.xml" />

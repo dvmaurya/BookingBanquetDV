@@ -1,4 +1,5 @@
-﻿using CommonServices.ConstantData;
+﻿using BookingServices.Interfaces;
+using CommonServices.ConstantData;
 using CommonServices.Extensions;
 using CommonServices.Logger;
 using CommonServices.Utilities;
@@ -76,9 +77,8 @@ namespace BookingBanquetDV
                     SystemNavigationManager.GetForCurrentView().BackRequested -= App_BackRequested;
                     SystemNavigationManager.GetForCurrentView().BackRequested += App_BackRequested;
 
-                    //await DIContainer.GetInstance<IOfflineDatabaseProvider>().CreateOfflineDatabaseAsync();
-                    DataAccess.InitializeDatabase(ApplicationConstants.Signup);
-
+                    DIContainer.GetInstance<IOfflineDatabaseProvider>().CreateOfflineDatabase();
+                    
                     //await CheckForAppUpdates();
                     ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
 

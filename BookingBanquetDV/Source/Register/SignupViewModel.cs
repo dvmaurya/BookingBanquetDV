@@ -33,6 +33,7 @@ namespace BookingBanquetDV.Source.Register
         private string _oTP;
         private string _generatedOTP;
         private Users _users;
+        private bool _isResendOTP;
         private readonly ICommand _resetCommand;
         private readonly ICommand _signupCommand;
         private readonly ICommand _oTPCommand;
@@ -51,7 +52,7 @@ namespace BookingBanquetDV.Source.Register
             _messageDialogService = messageDialogService ?? throw new ArgumentNullException(nameof(messageDialogService));
 
             _oTPCommand = new DelegateCommand(
-                async parameter => await OnOTPClickAsync());
+                async parameter => await OnOTPClickAsync(parameter));
 
             _loginCommand = new DelegateCommand(
                 parameter => OnLoginClick());
@@ -67,9 +68,15 @@ namespace BookingBanquetDV.Source.Register
         {
             if (_isOtpEnable)
             {
+                _fullName = _emailId = _mobileNo = _password = _confirmPassword = string.Empty;
                 _isOtpEnable = false;
 
                 OnPropertyChanged(() => IsOtpEnable);
+                OnPropertyChanged(() => FullName);
+                OnPropertyChanged(() => EmailId);
+                OnPropertyChanged(() => MobileNo);
+                OnPropertyChanged(() => Password);
+                OnPropertyChanged(() => ConfirmPassword);
             }
         }
 
@@ -85,7 +92,7 @@ namespace BookingBanquetDV.Source.Register
                         ApplicationConstants.Success,
                         ApplicationConstants.SignupSuccess).ConfigureAwait(true);
 
-                    GoogleAPI.SendToGoogleAPIAsync(_users);
+                    //GoogleAPI.SendToGoogleAPIAsync(_users);
 
                     _navigationService.Navigate(typeof(MainPage));
                 }
@@ -103,9 +110,11 @@ namespace BookingBanquetDV.Source.Register
             _navigationService.Navigate(typeof(MainPage));
         }
 
-        private async Task OnOTPClickAsync()
+        private async Task OnOTPClickAsync(object parameter)
         {
             CheckUserExist();
+            if (parameter is string resendOtp && resendOtp.FormatStringEquals("ResendOtp"))
+                _isResendOTP = true;
 
             if (ValidateProperties())
             {
@@ -268,6 +277,12 @@ namespace BookingBanquetDV.Source.Register
         {
             get => _somethingWrongMessage;
             set => _somethingWrongMessage = value;
+        }
+
+        public bool IsResendOTP
+        {
+            get => _isResendOTP;
+            set => _isResendOTP = value;
         }
     }
 }

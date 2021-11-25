@@ -17,7 +17,8 @@ namespace BookingBanquetDV.Source.Camera
 
         private readonly IMessageDialogService _messageDialogService;
         private StorageFile _storeFile;
-        
+        private PhotoDetails _photoDetails;
+
         public CameraViewModel(
             IMessageDialogService messageDialogService)
         {
@@ -39,13 +40,13 @@ namespace BookingBanquetDV.Source.Camera
             throw new NotImplementedException();
         }
 
-        private async Task OnClickTakeAPhotoCommandAsync()
+        public async Task<PhotoDetails> OnClickTakeAPhotoCommandAsync()
         {
             _storeFile = await CameraUtility.OpenCameraAndCapturePhotoAsync();
 
             if(_storeFile != null)
             {
-                PhotoDetails photoDetails = new PhotoDetails
+                _photoDetails = new PhotoDetails
                 {
                     StorageFile = _storeFile,
                     ImageSource = await PhotoUtility.GetBitmapImageAsync(_storeFile),
@@ -56,9 +57,11 @@ namespace BookingBanquetDV.Source.Camera
                 //previewPhoto.PhotoCaptured +=
                 //    async (sender, eventArgs) => await OnPhotoCapturedCompleted(sender, eventArgs);
                 await PhotoUtility.SavePhotoAsync(
-                    photoDetails.StorageFile,
-                    photoDetails.LocalPhotoName);
+                    _photoDetails.StorageFile,
+                    _photoDetails.LocalPhotoName);
             }
+
+            return _photoDetails;
         }
 
         public ICommand CameraClickCommand => _cameraClickCommand;

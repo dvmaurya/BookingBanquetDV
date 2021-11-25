@@ -1,5 +1,8 @@
-﻿using CommonServices.Extensions;
+﻿using CommonServices.ConstantData;
+using CommonServices.Extensions;
 using CommonServices.Model;
+using System.Collections.ObjectModel;
+using System.Linq;
 using ViewModelsAndValidation.ViewModels;
 using Windows.UI.Xaml.Controls;
 
@@ -10,34 +13,61 @@ namespace BookingBanquetDV.Source.Welcome
     public sealed partial class NewBooking : ContentDialog
     {
         private BookingDetails _bookingDetails;
-        private LoginDetail _loginDetail;
+        private bool _isValidationSuccess;
+        private BookingParameter _bookingParameter;
 
-        public NewBooking(LoginDetail loginDetail)
+        public NewBooking(BookingParameter bookingParameter)
         {
             this.InitializeComponent();
             this.DataContext = ViewModelLocator.NewBookingViewModel;
-            _loginDetail = loginDetail;
+
+            _bookingParameter = bookingParameter;
             _bookingDetails = new BookingDetails();
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (sender != null &&
-                args != null &&
-                this.DataContext is INewBookingViewModel newBookingViewModel)
+            if(_bookingParameter != null && !_bookingParameter.IsViewBooking)
             {
-                _bookingDetails.CustomerName = !string.IsNullOrEmpty(newBookingViewModel.CustomerName) ? newBookingViewModel.CustomerName : string.Empty;
-                _bookingDetails.BookingDate = !string.IsNullOrEmpty(newBookingViewModel.BookingDate.ConvertToString()) ? newBookingViewModel.BookingDate.ConvertToString() : string.Empty;
-                _bookingDetails.BookedBy = !string.IsNullOrEmpty(newBookingViewModel.BookedBy) ? newBookingViewModel.BookedBy : string.Empty;
-                _bookingDetails.NumberOfRooms = !string.IsNullOrEmpty(newBookingViewModel.NumberOfRooms) ? newBookingViewModel.NumberOfRooms : string.Empty;
-                _bookingDetails.NumberOfFlours = !string.IsNullOrEmpty(newBookingViewModel.NumberOfFlours) ? newBookingViewModel.NumberOfFlours : string.Empty;
-                _bookingDetails.TotalAmount = !string.IsNullOrEmpty(newBookingViewModel.TotalAmount) ? newBookingViewModel.TotalAmount : string.Empty;
-                _bookingDetails.Advanced = !string.IsNullOrEmpty(newBookingViewModel.Advanced) ? newBookingViewModel.Advanced : string.Empty;
-                _bookingDetails.Balance = !string.IsNullOrEmpty(newBookingViewModel.Balance) ? newBookingViewModel.Balance : string.Empty;
-                _bookingDetails.Confirmation = !string.IsNullOrEmpty(newBookingViewModel.SelecteConfirmation) ? newBookingViewModel.SelecteConfirmation : string.Empty;
-            }
+                if (sender != null &&
+                    args != null &&
+                    this.DataContext is INewBookingViewModel viewModel)
+                {
+                    viewModel.SaveCommand.Execute(null);
+                    _isValidationSuccess = viewModel.IsValidationSuccess;
 
-            this.Hide();
+                    if (_isValidationSuccess)
+                    {
+                        _bookingDetails.Id = viewModel.Id;
+                        _bookingDetails.CustomerName = !string.IsNullOrEmpty(viewModel.CustomerName) ? viewModel.CustomerName : string.Empty;
+
+                        _bookingDetails.BookingDate = !string.IsNullOrEmpty(viewModel.BookingDate.ConvertToString()) ?
+                            viewModel.BookingDate.ConvertToString(
+                            ApplicationConstants.DatabaseDateFormat) : string.Empty;
+
+                        _bookingDetails.CreationDate = viewModel.CreationDate.ConvertToString(ApplicationConstants.DatabaseDateTimeFormat);
+                        _bookingDetails.BookedBy = !string.IsNullOrEmpty(viewModel.BookedBy) ? viewModel.BookedBy : string.Empty;
+                        _bookingDetails.NumberOfRooms = !string.IsNullOrEmpty(viewModel.TotalRooms) ? viewModel.TotalRooms : string.Empty;
+                        _bookingDetails.NumberOfFlours = !string.IsNullOrEmpty(viewModel.TotalFlours) ? viewModel.TotalFlours : string.Empty;
+                        _bookingDetails.TotalAmount = !string.IsNullOrEmpty(viewModel.TotalAmount) ? viewModel.TotalAmount : string.Empty;
+                        _bookingDetails.Advanced = !string.IsNullOrEmpty(viewModel.Advanced) ? viewModel.Advanced : string.Empty;
+                        _bookingDetails.Balance = !string.IsNullOrEmpty(viewModel.Balance) ? viewModel.Balance : string.Empty;
+                        _bookingDetails.Confirmation = !string.IsNullOrEmpty(viewModel.SelecteConfirmation) ? viewModel.SelecteConfirmation : "Not Decided";
+                        _bookingDetails.PhotoName = viewModel.PhotoName;
+
+                        this.Hide();
+                    }
+                    else
+                    {
+                        args.Cancel = true;
+                    }
+                }
+
+            }
+            else
+            {
+                this.Hide();
+            }
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -56,7 +86,16 @@ namespace BookingBanquetDV.Source.Welcome
             if (sender != null &&
                 this.DataContext is INewBookingViewModel viewModel)
             {
-                viewModel.LoginDetail = _loginDetail;
+                if(_bookingParameter != null)
+                {
+                    if (_bookingParameter.IsViewBooking)
+                        BookingDialog.Title = "View booking";
+                    else if (_bookingParameter.IsEditBooking)
+                        BookingDialog.Title = "Update booking";
+                    else
+                        BookingDialog.Title = "Add new booking";
+                }
+                viewModel.BookingParameter = _bookingParameter;
                 viewModel.DialogLoadingCommand.Execute(null);
             }
 

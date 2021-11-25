@@ -6,6 +6,8 @@ using BookingBanquetDV.Source.Register;
 using BookingBanquetDV.Source.Welcome;
 using BookingServices.DataProvider;
 using BookingServices.Interfaces;
+using BookingServices.Repository;
+using BookingServices.Repository.Interface;
 using BookingServices.SQLite;
 using CommonServices.Analytcis;
 using CommonServices.Logger;
@@ -30,6 +32,12 @@ namespace BookingBanquetDV
         private static void RegisterRepositories()
         {
             DIContainer.RegisterType<IOfflineDatabaseProvider, OfflineDatabaseProvider>();
+            DIContainer.RegisterType<IEncryptionProvider, EncryptionProvider>();
+            DIContainer.RegisterType<IBookingDataProvider, BookingDataProvider>();
+
+            DIContainer.RegisterType<ILoginRepository, LoginRepository>();
+            DIContainer.RegisterType<IUserRepository, UserRepository>();
+            DIContainer.RegisterType<IBookingRepository, BookingRepository>();
             DIContainer.RegisterType<IEncryptionProvider, EncryptionProvider>();
             DIContainer.RegisterSingletonType<IDbContext, SQLiteContext>(
                  new InjectionConstructor(

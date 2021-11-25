@@ -14,6 +14,7 @@ namespace ViewModelsAndValidation.ViewModels
         bool IsEmailExist { get; set; }
         bool IsOtpEnable { get; set; }
         bool SomethingWrongMessage { get; set; }
+        bool IsResendOTP { get; set; }
         ICommand OTPCommand { get; }
         ICommand LoginCommand { get; }
         ICommand SignupCommand { get; }
