@@ -147,6 +147,7 @@
     <Compile Include="DIContainer.cs" />
     <Compile Include="IViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IContentDialogService.cs" />
     <Compile Include="Services\INavigationService.cs" />
     <Compile Include="Services\IMessageDialogService.cs" />
     <Compile Include="ValidationViewModelBase.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="ViewModels\ISignupViewModel.cs" />
     <Compile Include="ViewModels\IMainViewModel.cs" />
     <Compile Include="ViewModels\IRecoverUserViewModel.cs" />
+    <Compile Include="ViewModels\IUserDetailViewModel.cs" />
     <Compile Include="ViewModels\IWelcomeViewModel.cs" />
     <Compile Include="Views\IAppFrame.cs" />
     <Compile Include="Views\IView.cs" />

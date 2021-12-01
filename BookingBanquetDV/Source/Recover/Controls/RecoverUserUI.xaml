@@ -115,6 +115,7 @@
                     </Grid>
                     <PasswordBox
                         Grid.Column="1"
+                        MaxLength="6"
                         Password="{Binding OTP, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         PlaceholderText="Enter One Time Password" />
                 </Grid>

@@ -1,4 +1,5 @@
 ﻿using BookingBanquetDV.Navigation;
+using BookingBanquetDV.Source.CommonControls;
 using Unity.Injection;
 using ViewModelsAndValidation;
 using ViewModelsAndValidation.Services;
@@ -12,7 +13,7 @@ namespace BookingBanquetDV
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page, IView
+    public sealed partial class MainPage : Page, IView, IAppFrame
     {
         public Frame AppFrame { get { return appLoginFrame; } }
 
@@ -25,5 +26,20 @@ namespace BookingBanquetDV
         }
 
         public ViewModelBase ViewModel => this.DataContext as MainViewModel;
+
+        public void ShowLoadingIndicator(string contentText)
+        {
+            LoadingIndicator.ShowLoadingIndicator(contentText);
+        }
+
+        public void ChangeLoadingIndicatorText(string contentText)
+        {
+            LoadingIndicator.ChangeLoadingIndicatorText(contentText);
+        }
+
+        public void HideLoadingIndicator()
+        {
+            LoadingIndicator.HideLoadingIndicator();
+        }
     }
 }

@@ -8,6 +8,7 @@ using DataAccessLibrary.DML;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BookingServices.Repository
 {
@@ -47,6 +48,12 @@ namespace BookingServices.Repository
                     insertCommand.Parameters.AddWithValue("@" + nameof(users.CreationDate), users.CreationDate);
                     insertCommand.Parameters.AddWithValue("@" + nameof(users.IsActivate), users.IsActivate);
                     insertCommand.Parameters.AddWithValue("@" + nameof(users.PasswordChanged), users.PasswordChanged);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(users.PhoneCode), users.PhoneCode);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(users.Address), users.Address);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(users.Country), users.Country);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(users.State), users.State);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(users.City), users.City);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(users.PhotoName), users.PhotoName);
 
                     insertCommand.ExecuteReader();
                     db.Close();
@@ -56,7 +63,7 @@ namespace BookingServices.Repository
             }
             catch (Exception ex)
             {
-                FileLogger.Logger.Info("Exception: ".ConcatString(ex.Message));
+                FileLogger.Logger.Info("User Exception: ".ConcatString(ex.Message));
                 return false;
             }
         }
@@ -120,6 +127,52 @@ namespace BookingServices.Repository
             }
 
             return entries;
+        }
+
+        public Users GetUsersDetail(string userId)
+        {
+            Users users = new Users();
+
+            if (userId != null)
+            {
+                string emailOrMobile = userId.All(char.IsDigit)
+                    ?
+                    nameof(Users.Mobile)
+                    :
+                    nameof(Users.EmailId);
+
+                _dbpath = DataAccess.GetDbPath();
+
+                using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
+                {
+                    db.Open();
+
+                    SqliteCommand selectCommand = new SqliteCommand
+                        (SignupQuery.GetUserDetailBuUserId.
+                        FormatString(emailOrMobile, userId), db);
+
+                    SqliteDataReader query = selectCommand.ExecuteReader();
+
+                    while (query.Read())
+                    {
+                        users.UserId = query.GetString(0);
+                        users.FullName = query.GetString(1);
+                        users.EmailId = query.GetString(2);
+                        users.Mobile = query.GetString(3);
+                        users.CreationDate = query.GetString(4);
+                        users.PhoneCode = query.GetString(5);
+                        users.Address = query.GetString(6);
+                        users.Country = query.GetString(7);
+                        users.State = query.GetString(8);
+                        users.City = query.GetString(9);
+                        users.PhotoName = query.GetString(10);
+                    }
+
+                    db.Close();
+                }
+            }
+
+            return users;
         }
     }
 }

@@ -20,20 +20,38 @@ namespace BookingBanquetDV.Validation
                 
                 if (validationContext.ObjectInstance is INewBookingViewModel newBooking)
                 {
-                    if (newBooking.BookingParameter != null && !newBooking.BookingParameter.IsEditBooking)
+                    if (newBooking.BookingParameter != null)
                     {
-                        List<string> allBookingDates =
-                            newBooking.BookingParameter?.BookingDetailList?.Select(date => date.BookingDate).ToList();
+                        IList<string> allBookingDates =
+                            newBooking.BookingParameter.MasterBookingList?.Select(date => date.BookingDate).ToList();
 
-                        string existDate = allBookingDates?.FirstOrDefault(
-                            date => date.FormatStringEquals(
-                                dateTime.ConvertToString(ApplicationConstants.DatabaseDateFormat)));
-
-                        if (!string.IsNullOrEmpty(existDate))
-                            return new ValidationResult(ApplicationConstants.DateBooked);
+                        if (newBooking.BookingParameter.IsEditBooking)
+                        {
+                            if(newBooking.BookingParameter.BookingDetailList.FirstOrDefault(
+                                booking =>
+                                booking.Id != newBooking.BookingParameter.BookingDetails?.Id &&
+                                booking.BookingDate.FormatStringEquals(newBooking.BookingParameter.BookingDetails.BookingDate)) != null)
+                                return CheckExistingDate(allBookingDates, dateTime);
+                        }
+                        else
+                        {
+                            return CheckExistingDate(allBookingDates, dateTime);
+                        }
                     }
                 }
             }
+
+            return ValidationResult.Success;
+        }
+
+        private ValidationResult CheckExistingDate(IList<string> allBookingDates, DateTimeOffset dateTime)
+        {
+            string existDate = allBookingDates?.FirstOrDefault(
+                date => date.FormatStringEquals(
+                    dateTime.ConvertToString(ApplicationConstants.DatabaseDateFormat)));
+
+            if (!string.IsNullOrEmpty(existDate))
+                return new ValidationResult(ApplicationConstants.DateBooked);
 
             return ValidationResult.Success;
         }

@@ -4,6 +4,7 @@ using BookingBanquetDV.Source.Login;
 using BookingBanquetDV.Source.Recover;
 using BookingBanquetDV.Source.Register;
 using BookingBanquetDV.Source.Welcome;
+using BookingBanquetDV.Source.Welcome.Controls;
 using BookingServices.DataProvider;
 using BookingServices.Interfaces;
 using BookingServices.Repository;
@@ -34,11 +35,15 @@ namespace BookingBanquetDV
             DIContainer.RegisterType<IOfflineDatabaseProvider, OfflineDatabaseProvider>();
             DIContainer.RegisterType<IEncryptionProvider, EncryptionProvider>();
             DIContainer.RegisterType<IBookingDataProvider, BookingDataProvider>();
+            DIContainer.RegisterType<ICountryDataProvider, CountryDataProvider>();
 
-            DIContainer.RegisterType<ILoginRepository, LoginRepository>();
             DIContainer.RegisterType<IUserRepository, UserRepository>();
+            DIContainer.RegisterType<ILoginRepository, LoginRepository>();
             DIContainer.RegisterType<IBookingRepository, BookingRepository>();
             DIContainer.RegisterType<IEncryptionProvider, EncryptionProvider>();
+            DIContainer.RegisterType<ICountryRepository, CountryRepository>();
+            DIContainer.RegisterType<IStateRepository, StateRepository>();
+            DIContainer.RegisterType<ICityRepository, CityRepository>();
             DIContainer.RegisterSingletonType<IDbContext, SQLiteContext>(
                  new InjectionConstructor(
                      Path.Combine(ApplicationData.Current.LocalFolder.Path, "Banquet.sqlite"),
@@ -55,6 +60,7 @@ namespace BookingBanquetDV
             DIContainer.RegisterType<IWelcomeViewModel, WelcomeViewModel>();
             DIContainer.RegisterType<INewBookingViewModel, NewBookingViewModel>();
             DIContainer.RegisterType<ICameraViewModel, CameraViewModel>();
+            DIContainer.RegisterType<IUserDetailViewModel, UserDetailViewModel>();
         }
 
         private static void RegisterServices()
@@ -62,6 +68,7 @@ namespace BookingBanquetDV
             DIContainer.RegisterInstance<ILogger>(App.Logger);
             DIContainer.RegisterSingletonType<IMessageDialogService, MessageDialogService>();
             DIContainer.RegisterInstance<IAnalyticsManager>(AnalyticsManager.Instance);
+            DIContainer.RegisterSingletonType<IContentDialogService, ContentDialogService>();
         }
     }
 }

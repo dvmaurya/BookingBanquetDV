@@ -34,6 +34,13 @@ namespace BookingBanquetDV.Validation
                     else if (!regex.IsMatch(recoverUser.MobileNo))
                         return new ValidationResult(this.ErrorMessage);
                 }
+                else if (validationContext.ObjectInstance is INewBookingViewModel newBooking)
+                {
+                    if (string.IsNullOrEmpty(newBooking.MobileNo))
+                        return new ValidationResult(ApplicationConstants.MobileRequired);
+                    else if (!regex.IsMatch(newBooking.MobileNo))
+                        return new ValidationResult(this.ErrorMessage);
+                }
             }
 
             return ValidationResult.Success;

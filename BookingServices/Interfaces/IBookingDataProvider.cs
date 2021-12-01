@@ -6,7 +6,7 @@ namespace BookingServices.Interfaces
     public interface IBookingDataProvider
     {
         void AddOrUpdateBooking(BookingDetails bookingDetails);
-        IList<BookingDetails> GetAllBookings(string userId);
+        IList<BookingDetails> GetAllBookings();
         BookingDetails GetBooking(int id);
         void DeleteBooking(BookingDetails bookingDetails);
     }

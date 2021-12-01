@@ -11,6 +11,9 @@
         public const string EmailIdExist = "This email id is already exist. Please use different email id.";
         public const string EmailRegex = @"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*";
         public const string InvalidEmail = "Enter valid email id";
+        public const string AddressRequired = "Address is required";
+        public const string AddressLimitError = "Address limit should not be exceed";
+        public const string CountryRequired = "Country is required";
         public const string MobileExist = "This mobile number is already exist. Please use different mobile number.";
         public const string MobileRequired = "Enter mobile number";
         public const string MobileRegex = "^[6-9]\\d{9}$";
@@ -35,7 +38,7 @@
         public const string Users = "Users";
         public const string LoginDetail = "LoginDetail";
         public const string BookingDetails = "BookingDetails";
-        public const string LowInternet = "You are in low internet area. Please connect with internet.";
+        public const string LowInternet = "You are in low internet area. Please connect with high speed internet.";
         public const string PasswordUpdated = "Password updated successfully.";
         public const string Close = "Close";
         public const string DateRequired = "Select booked date";
@@ -46,5 +49,24 @@
         public const string TotalAmountError = "Enter total amount";
         public const string AdvanceAmountError = "Enter advance amount";
         public const string DateBooked = "This date has already booked. Please choose another date.";
+        public const string Cancel = "Cancel";
+        public const string No = "No";
+        public const string Yes = "Yes";
+        public const string DeleteWarning = "Are you sure that you want to delete this booking?";
+        public const string Logout = "Logout";
+        public const string LogoutWarning = "Are you sure that you want to logout?";
+        public const string Congrats = "Congratulation!!!";
+        public const string BookingSuccess = "You booking has done successfully for date {0}. Please check your email id.";
+        public const string Loading = "Loading";
+        public const string SendingEmail = "Sending an email. Please wait...";
+        public const int DefaultApiTimeout = 60000;
+        public const string InvalidAccessToken = "invalid_bearer_token";
+        public const string AccessToken = "https://www.universal-tutorial.com/api/getaccesstoken";
+        public const string StateAndCityUrl = "https://api.countrystatecity.in/v1/countries";
+        public const string StateAndCityUrl1 = "https://api.countrystatecity.in/v1/countries";
+        public const long AddressLimit = 100;
+        public const string PhoneCodeRequired = "Phone code is required";
+        public const string TakeAPhoto = "Capture a photo";
+        public const string GoForPhoto = "Now you will be redirecting for adding a photo. If not interested close the camera";
     }
 }

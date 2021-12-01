@@ -26,9 +26,9 @@ namespace BookingServices.DataProvider
             _addBookingRepository.DeleteBookingAsync(bookingDetails);
         }
 
-        public IList<BookingDetails> GetAllBookings(string userId)
+        public IList<BookingDetails> GetAllBookings()
         {
-            return _addBookingRepository.GetAllBookings(userId);
+            return _addBookingRepository.GetAllBookings();
         }
 
         public BookingDetails GetBooking(int id)

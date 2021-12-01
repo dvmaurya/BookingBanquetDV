@@ -106,16 +106,17 @@ namespace BookingBanquetDV.Source.Recover
                     _invalidCredential = false;
                     _generatedOTP = Utilities.GenerateOTP();
 
-                    ContactEmail contactEmail = new ContactEmail
+                    EmailParameter emailParameter = new EmailParameter
                     {
-                        Address = _emailId,
-                        Description = _generatedOTP,
-                        Kind = ContactEmailKind.Work
+                        EmailAddress = _emailId,
+                        IsRecovery = true,
+                        Otp = _generatedOTP,
+                        UserName = _userDetails[UsersEnum.FullName.ToString()]
                     };
 
-                    bool isEmailSent = EmailUtility.SendEmails(
-                        contactEmail, _generatedOTP, _userDetails[UsersEnum.FullName.ToString()]);
-
+                    App.ShowLoadingIndicator(ApplicationConstants.SendingEmail);
+                    bool isEmailSent = await EmailUtility.SendEmailsAsync(emailParameter);
+                    App.HideLoadingIndicator();
                     if (isEmailSent)
                     {
                         _isOtpEnable = true;

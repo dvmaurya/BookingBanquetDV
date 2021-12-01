@@ -2,14 +2,21 @@
 using CommonServices.ConstantData;
 using CommonServices.Extensions;
 using CommonServices.Logger;
+using MimeKit;
+using MimeKit.IO;
+using MimeKit.IO.Filters;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ViewModelsAndValidation;
 using ViewModelsAndValidation.Services;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace BookingBanquetDV.Source.Camera
@@ -107,45 +114,55 @@ namespace BookingBanquetDV.Source.Camera
             return null;
         }
 
-        public static async Task<BitmapImage> GetBitmapImageFromHtml(StorageFile storageFile)
+        public static MimeEntity AddMimeEntity(string fileName, byte[] data, ContentType contentType)
         {
-            try
+            using (MemoryStream stream = new MemoryStream(data, false))
             {
-                string text = await DecryptedPhotoAsync(storageFile.Name);
-
-                if (!string.IsNullOrEmpty(text))
-                {
-                    if (text.Contains("html"))
-                    {
-                        Regex regex = new Regex(baseG4Regex);
-
-                        if (regex.IsMatch(text))
-                        {
-                            Match matches = regex.Match(text);
-
-                            string base64string = matches.Groups[2].Value;
-
-                            using (InMemoryRandomAccessStream inMemoryRandomAccessStream = new InMemoryRandomAccessStream())
-                            {
-                                using (DataWriter writer = new DataWriter(inMemoryRandomAccessStream.GetOutputStreamAt(0)))
-                                {
-                                    writer.WriteBytes(Convert.FromBase64String(base64string));
-
-                                    await writer.StoreAsync();
-                                }
-
-                                return await GetBitmapImage(inMemoryRandomAccessStream);
-                            }
-                        }
-                    }
-                }
+                MimePart attachment = CreateAttachment(contentType, fileName, stream);
+                return attachment;
             }
-            catch
+        }
+
+        private static MimePart CreateAttachment(ContentType contentType, string fileName, Stream stream)
+        {
+            MimePart attachment;
+
+            if (contentType.IsMimeType("text", "*"))
             {
-                return null;
+                attachment = new TextPart(contentType.MediaSubtype);
+                foreach (Parameter param in contentType.Parameters)
+                    attachment.ContentType.Parameters.Add(param);
+            }
+            else
+            {
+                attachment = new MimePart(contentType);
             }
 
-            return null;
+            attachment.FileName = Path.GetFileName(fileName);
+            LoadContent(attachment, stream);
+
+            return attachment;
+        }
+
+        static void LoadContent(MimePart attachment, Stream stream)
+        {
+            MemoryBlockStream content = new MemoryBlockStream();
+            BestEncodingFilter filter = new BestEncodingFilter();
+            byte[] buf = new byte[4096];
+            int index, length;
+            int nread;
+
+            while ((nread = stream.Read(buf, 0, buf.Length)) > 0)
+            {
+                filter.Filter(buf, 0, nread, out index, out length);
+                content.Write(buf, 0, nread);
+            }
+
+            filter.Flush(buf, 0, 0, out index, out length);
+            content.Position = 0;
+
+            attachment.ContentTransferEncoding = filter.GetBestEncoding(EncodingConstraint.SevenBit);
+            attachment.ContentObject = new ContentObject(content);
         }
 
         public static async Task<BitmapImage> GetBitmapImageAsync(StorageFile storageFile)

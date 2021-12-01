@@ -15,17 +15,14 @@ namespace BookingBanquetDV.Validation
             {
                 Regex regex = new Regex(ApplicationConstants.EmailRegex);
 
-                if (validationContext.ObjectInstance is ISignupViewModel signup)
+                if (validationContext.ObjectInstance is ISignupViewModel signup && !signup.IsOtpEnable)
                 {
-                    if (!signup.IsOtpEnable)
-                    {
-                        if (string.IsNullOrEmpty(signup.EmailId))
-                            return new ValidationResult(ApplicationConstants.EmailRequired);
-                        else if (!regex.IsMatch(signup.EmailId))
-                            return new ValidationResult(this.ErrorMessage);
-                        else if (signup.IsEmailExist)
-                            return new ValidationResult(ApplicationConstants.EmailIdExist);
-                    }
+                    if (string.IsNullOrEmpty(signup.EmailId))
+                        return new ValidationResult(ApplicationConstants.EmailRequired);
+                    else if (!regex.IsMatch(signup.EmailId))
+                        return new ValidationResult(this.ErrorMessage);
+                    else if (signup.IsEmailExist)
+                        return new ValidationResult(ApplicationConstants.EmailIdExist);
                 }
                 else if (validationContext.ObjectInstance is IMainViewModel mainView)
                 {
@@ -37,6 +34,13 @@ namespace BookingBanquetDV.Validation
                     if (string.IsNullOrEmpty(recoverUser.EmailId))
                         return new ValidationResult(ApplicationConstants.EmailRequired);
                     else if (!regex.IsMatch(recoverUser.EmailId))
+                        return new ValidationResult(this.ErrorMessage);
+                }
+                else if (validationContext.ObjectInstance is INewBookingViewModel newBooking)
+                {
+                    if (string.IsNullOrEmpty(newBooking.EmailId))
+                        return new ValidationResult(ApplicationConstants.EmailRequired);
+                    else if (!regex.IsMatch(newBooking.EmailId))
                         return new ValidationResult(this.ErrorMessage);
                 }
             }

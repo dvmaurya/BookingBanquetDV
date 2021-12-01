@@ -8,5 +8,6 @@ namespace BookingServices.Repository.Interface
         bool AddOrUpdateUsers(Users users);
         List<string> GetAllUsers();
         IDictionary<string, string> GetDataForOTP(string emailId, string mobileNo);
+        Users GetUsersDetail(string userId);
     }
 }

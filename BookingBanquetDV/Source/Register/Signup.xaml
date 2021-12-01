@@ -3,206 +3,217 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="using:BookingBanquetDV.Behavior"
+    xmlns:commoncontrols="using:BookingBanquetDV.Utility"
+    xmlns:controls1="using:BookingBanquetDV.Source.Register"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
-    <Grid Background="AliceBlue">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <Image
-            Grid.Column="1"
-            Margin="0,0,50,0"
-            Source="ms-appx:///Assets/background.jpg" />
-        <Grid
-            Grid.Column="0"
-            Margin="50,0,0,0"
-            BorderBrush="LightGray"
-            BorderThickness="1">
-            <StackPanel Margin="50,40,0,0">
-                <TextBlock
-                    Margin="0,0,0,20"
-                    FontWeight="Bold"
-                    Text="All fields are mandatory" />
-                <StackPanel Margin="0,0,50,20">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid
-                            Grid.Column="0"
-                            Height="32"
-                            Margin="0,5,0,0"
-                            BorderBrush="Gray"
-                            BorderThickness="2,2,0,2">
-                            <Image Height="27" Source="ms-appx:///Assets/username.png" />
-                        </Grid>
-                        <TextBox
-                            Grid.Column="1"
-                            IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
-                            PlaceholderText="Enter full name"
-                            Text="{Binding FullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <interactivity:Interaction.Behaviors>
-                                <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[FullName]}" />
-                            </interactivity:Interaction.Behaviors>
-                        </TextBox>
-                    </Grid>
+    <ScrollViewer>
+        <Grid Background="AliceBlue">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Image
+                Grid.Column="1"
+                Margin="0,0,50,0"
+                Source="ms-appx:///Assets/background.jpg" />
+            <Grid
+                Grid.Column="0"
+                Margin="50,0,0,0"
+                BorderBrush="LightGray"
+                BorderThickness="1">
+                <StackPanel Margin="50,20,0,0">
                     <TextBlock
-                        Style="{StaticResource ErrorMessageStyle}"
-                        Text="{Binding Errors[FullName], Converter={StaticResource FirstErrorConverter}}"
-                        TextWrapping="Wrap" />
-                </StackPanel>
-                <StackPanel Margin="0,0,50,20">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid
-                            Grid.Column="0"
-                            Height="32"
-                            Margin="0,5,0,0"
-                            BorderBrush="Gray"
-                            BorderThickness="2,2,0,2">
-                            <Image Height="27" Source="ms-appx:///Assets/email.jpg" />
+                        Margin="0,0,0,20"
+                        FontWeight="Bold"
+                        Text="All fields are mandatory" />
+                    <StackPanel Margin="0,0,50,20">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid
+                                Grid.Column="0"
+                                Height="32"
+                                Margin="0,5,0,0"
+                                BorderBrush="Gray"
+                                BorderThickness="2,2,0,2">
+                                <Image Height="27" Source="ms-appx:///Assets/username.png" />
+                            </Grid>
+                            <TextBox
+                                Grid.Column="1"
+                                IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
+                                PlaceholderText="Enter full name"
+                                Text="{Binding FullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <interactivity:Interaction.Behaviors>
+                                    <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[FullName]}" />
+                                </interactivity:Interaction.Behaviors>
+                            </TextBox>
                         </Grid>
-                        <TextBox
-                            Grid.Column="1"
-                            IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
-                            PlaceholderText="Email id"
-                            Text="{Binding EmailId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <interactivity:Interaction.Behaviors>
-                                <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[EmailId]}" />
-                            </interactivity:Interaction.Behaviors>
-                        </TextBox>
-                    </Grid>
-                    <TextBlock
-                        Style="{StaticResource ErrorMessageStyle}"
-                        Text="{Binding Errors[EmailId], Converter={StaticResource FirstErrorConverter}}"
-                        TextWrapping="Wrap" />
-                </StackPanel>
-                <StackPanel Margin="0,0,50,20">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid
-                            Grid.Column="0"
-                            Height="32"
-                            Margin="0,5,0,0"
-                            BorderBrush="Gray"
-                            BorderThickness="2,2,0,2">
-                            <Image Height="27" Source="ms-appx:///Assets/mobileNo.png" />
-                        </Grid>
-                        <TextBox
-                            Grid.Column="1"
-                            InputScope="Number"
-                            IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
-                            MaxLength="10"
-                            PlaceholderText="Mobile number"
-                            Text="{Binding MobileNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <interactivity:Interaction.Behaviors>
-                                <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
-                                <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[MobileNo]}" />
-                            </interactivity:Interaction.Behaviors>
-                        </TextBox>
-                    </Grid>
-                    <TextBlock
-                        Style="{StaticResource ErrorMessageStyle}"
-                        Text="{Binding Errors[MobileNo], Converter={StaticResource FirstErrorConverter}}"
-                        TextWrapping="Wrap" />
-                </StackPanel>
-                <StackPanel Margin="0,0,50,20">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid
-                            Grid.Column="0"
-                            BorderBrush="Gray"
-                            BorderThickness="2,2,0,2">
-                            <Image Height="30" Source="ms-appx:///Assets/password.png" />
-                        </Grid>
-                        <PasswordBox
-                            Grid.Column="1"
-                            IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
-                            Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            PlaceholderText="Password" />
-                    </Grid>
-                    <TextBlock
-                        Style="{StaticResource ErrorMessageStyle}"
-                        Text="{Binding Errors[Password], Converter={StaticResource FirstErrorConverter}}"
-                        TextWrapping="Wrap" />
-                </StackPanel>
-                <StackPanel Margin="0,0,50,20">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid
-                            Grid.Column="0"
-                            BorderBrush="Gray"
-                            BorderThickness="2,2,0,2">
-                            <Image Height="30" Source="ms-appx:///Assets/password.png" />
-                        </Grid>
-                        <PasswordBox
-                            Grid.Column="1"
-                            IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
-                            Password="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            PlaceholderText="Confirm password" />
-                    </Grid>
-                    <TextBlock
-                        Style="{StaticResource ErrorMessageStyle}"
-                        Text="{Binding Errors[ConfirmPassword], Converter={StaticResource FirstErrorConverter}}"
-                        TextWrapping="Wrap" />
-                </StackPanel>
-                <StackPanel>
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <Button
-                            Width="100"
-                            Margin="0,0,10,0"
-                            Background="#2596BE"
-                            Command="{Binding OTPCommand}"
-                            Content="Get OTP"
-                            FontSize="16"
-                            Foreground="#FFFFFF"
-                            IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}" />
-                        <Button
-                            Width="100"
-                            Margin="0,0,10,0"
-                            Background="#2596BE"
-                            Command="{Binding ResetCommand}"
-                            Content="Reset"
-                            FontSize="16"
-                            Foreground="#FFFFFF" />
-                        <Button
-                            Margin="0,0,50,0"
-                            Background="#2596BE"
-                            Command="{Binding OTPCommand}"
-                            CommandParameter="ResendOtp"
-                            Content="Re-send OTP"
-                            FontSize="16"
-                            Foreground="#FFFFFF"
-                            Visibility="{Binding IsOtpEnable}" />
+                        <TextBlock
+                            Style="{StaticResource ErrorMessageStyle}"
+                            Text="{Binding Errors[FullName], Converter={StaticResource FirstErrorConverter}}"
+                            TextWrapping="Wrap" />
                     </StackPanel>
-                    <StackPanel Margin="0,20,50,0" Visibility="{Binding IsOtpEnable}">
+                    <StackPanel Margin="0,0,50,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid
+                                Grid.Column="0"
+                                Height="32"
+                                Margin="0,5,0,0"
+                                BorderBrush="Gray"
+                                BorderThickness="2,2,0,2">
+                                <Image Height="27" Source="ms-appx:///Assets/email.jpg" />
+                            </Grid>
+                            <TextBox
+                                Grid.Column="1"
+                                IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
+                                PlaceholderText="Email id"
+                                Text="{Binding EmailId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <interactivity:Interaction.Behaviors>
+                                    <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[EmailId]}" />
+                                </interactivity:Interaction.Behaviors>
+                            </TextBox>
+                        </Grid>
                         <TextBlock
-                            Margin="0,0,0,5"
-                            Foreground="Green"
-                            Text="OTP has been sent to your email id"
-                            Visibility="{Binding IsOtpEnable}" />
+                            Style="{StaticResource ErrorMessageStyle}"
+                            Text="{Binding Errors[EmailId], Converter={StaticResource FirstErrorConverter}}"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,50,20">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50" />
+                                <ColumnDefinition Width="70" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid
+                                Grid.Column="0"
+                                Height="32"
+                                Margin="0,5,0,0"
+                                BorderBrush="Gray"
+                                BorderThickness="2,2,0,2">
+                                <Image Height="27" Source="ms-appx:///Assets/mobileNo.png" />
+                            </Grid>
+                            <StackPanel Grid.Column="1" Margin="0,25,0,0">
+                                <commoncontrols:ComboBoxExt
+                                    Width="241"
+                                    IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
+                                    ItemsSource="{Binding PhoneCodeList}"
+                                    PlaceholderText="Code"
+                                    SelectedItem="{Binding SelectedPhoneCode, Mode=TwoWay}">
+                                    <interactivity:Interaction.Behaviors>
+                                        <behaviors:HighlightFormFieldOnErrors
+                                            HighlightStyleName="HighlightComboBoxStyle"
+                                            OriginalStyleName="BaseComboBoxStyle"
+                                            PropertyErrors="{Binding Errors[SelectedPhoneCode]}" />
+                                    </interactivity:Interaction.Behaviors>
+                                </commoncontrols:ComboBoxExt>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Margin="0,21,0,0">
+                                <TextBox
+                                    InputScope="Number"
+                                    IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
+                                    MaxLength="10"
+                                    PlaceholderText="Mobile number"
+                                    Text="{Binding MobileNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <interactivity:Interaction.Behaviors>
+                                        <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
+                                        <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[MobileNo]}" />
+                                    </interactivity:Interaction.Behaviors>
+                                </TextBox>
+                                <TextBlock
+                                    Margin="0"
+                                    Style="{StaticResource ErrorMessageStyle}"
+                                    Text="{Binding Errors[MobileNo], Converter={StaticResource FirstErrorConverter}}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,50,20">
+                        <controls1:NotesControl
+                            x:Name="NotesText"
+                            Grid.Column="1"
+                            IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
+                            NotesText="{Binding Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            PlaceholderText="Enter address" />
                         <TextBlock
-                            Margin="0,0,0,5"
-                            Foreground="Green"
-                            Text="Something went wrong"
-                            Visibility="{Binding SomethingWrongMessage}" />
+                            Margin="0"
+                            Style="{StaticResource ErrorMessageStyle}"
+                            Text="{Binding Errors[Address], Converter={StaticResource FirstErrorConverter}}"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                    <Grid Margin="0,0,50,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <commoncontrols:ComboBoxExt
+                                Width="177"
+                                DisplayMemberPath="Name"
+                                IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
+                                ItemsSource="{Binding CountryList}"
+                                PlaceholderText="Country"
+                                SelectedItem="{Binding SelectedCountry, Mode=TwoWay}">
+                                <interactivity:Interaction.Behaviors>
+                                    <behaviors:HighlightFormFieldOnErrors
+                                        HighlightStyleName="HighlightComboBoxStyle"
+                                        OriginalStyleName="BaseComboBoxStyle"
+                                        PropertyErrors="{Binding Errors[SelectedCountry]}" />
+                                    <core:EventTriggerBehavior EventName="SelectionChanged">
+                                        <core:EventTriggerBehavior.Actions>
+                                            <core:InvokeCommandAction Command="{Binding ChangedCountryCommand}" CommandParameter="{Binding SelectedCountry}" />
+                                        </core:EventTriggerBehavior.Actions>
+                                    </core:EventTriggerBehavior>
+                                </interactivity:Interaction.Behaviors>
+                            </commoncontrols:ComboBoxExt>
+                            <TextBlock
+                                Margin="0"
+                                Style="{StaticResource ErrorMessageStyle}"
+                                Text="{Binding Errors[SelectedCountry], Converter={StaticResource FirstErrorConverter}}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <commoncontrols:ComboBoxExt
+                                Width="177"
+                                DisplayMemberPath="Name"
+                                IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
+                                ItemsSource="{Binding StateList}"
+                                PlaceholderText="State"
+                                SelectedItem="{Binding SelectedState, Mode=TwoWay}"
+                                Visibility="{Binding IsStateVisible}">
+                                <interactivity:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="SelectionChanged">
+                                        <core:EventTriggerBehavior.Actions>
+                                            <core:InvokeCommandAction Command="{Binding ChangedStateCommand}" CommandParameter="{Binding SelectedState}" />
+                                        </core:EventTriggerBehavior.Actions>
+                                    </core:EventTriggerBehavior>
+                                </interactivity:Interaction.Behaviors>
+                            </commoncontrols:ComboBoxExt>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <commoncontrols:ComboBoxExt
+                                Width="177"
+                                DisplayMemberPath="Name"
+                                IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
+                                ItemsSource="{Binding CityList}"
+                                PlaceholderText="City"
+                                SelectedItem="{Binding SelectedCity, Mode=TwoWay}"
+                                Visibility="{Binding IsCityVisible}" />
+                        </StackPanel>
+                    </Grid>
+                    <StackPanel Margin="0,0,50,20">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50" />
@@ -216,34 +227,121 @@
                             </Grid>
                             <PasswordBox
                                 Grid.Column="1"
-                                Password="{Binding OTP, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                PlaceholderText="Enter One Time Password" />
+                                IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
+                                Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                PlaceholderText="Password" />
                         </Grid>
                         <TextBlock
                             Style="{StaticResource ErrorMessageStyle}"
-                            Text="{Binding Errors[OTP], Converter={StaticResource FirstErrorConverter}}"
+                            Text="{Binding Errors[Password], Converter={StaticResource FirstErrorConverter}}"
                             TextWrapping="Wrap" />
-                        <Button
+                    </StackPanel>
+                    <StackPanel Margin="0,0,50,20">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid
+                                Grid.Column="0"
+                                BorderBrush="Gray"
+                                BorderThickness="2,2,0,2">
+                                <Image Height="30" Source="ms-appx:///Assets/password.png" />
+                            </Grid>
+                            <PasswordBox
+                                Grid.Column="1"
+                                IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
+                                Password="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                PlaceholderText="Confirm password" />
+                        </Grid>
+                        <TextBlock
+                            Style="{StaticResource ErrorMessageStyle}"
+                            Text="{Binding Errors[ConfirmPassword], Converter={StaticResource FirstErrorConverter}}"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                    <StackPanel>
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                            <Button
+                                Width="100"
+                                Margin="0,0,10,0"
+                                Background="#2596BE"
+                                Command="{Binding OTPCommand}"
+                                Content="Get OTP"
+                                FontSize="16"
+                                Foreground="#FFFFFF"
+                                IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}" />
+                            <Button
+                                Width="100"
+                                Margin="0,0,10,0"
+                                Background="#2596BE"
+                                Command="{Binding ResetCommand}"
+                                Content="Reset"
+                                FontSize="16"
+                                Foreground="#FFFFFF" />
+                            <Button
+                                Margin="0,0,50,0"
+                                Background="#2596BE"
+                                Command="{Binding OTPCommand}"
+                                CommandParameter="ResendOtp"
+                                Content="Re-send OTP"
+                                FontSize="16"
+                                Foreground="#FFFFFF"
+                                Visibility="{Binding IsOtpEnable}" />
+                        </StackPanel>
+                        <StackPanel Margin="0,20,50,0" Visibility="{Binding IsOtpEnable}">
+                            <TextBlock
+                                Margin="0,0,0,5"
+                                Foreground="Green"
+                                Text="OTP has been sent to your email id"
+                                Visibility="{Binding IsOtpEnable}" />
+                            <TextBlock
+                                Margin="0,0,0,5"
+                                Foreground="Green"
+                                Text="Something went wrong"
+                                Visibility="{Binding SomethingWrongMessage}" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid
+                                    Grid.Column="0"
+                                    BorderBrush="Gray"
+                                    BorderThickness="2,2,0,2">
+                                    <Image Height="30" Source="ms-appx:///Assets/password.png" />
+                                </Grid>
+                                <PasswordBox
+                                    Grid.Column="1"
+                                    MaxLength="6"
+                                    Password="{Binding OTP, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    PlaceholderText="Enter One Time Password" />
+                            </Grid>
+                            <TextBlock
+                                Style="{StaticResource ErrorMessageStyle}"
+                                Text="{Binding Errors[OTP], Converter={StaticResource FirstErrorConverter}}"
+                                TextWrapping="Wrap" />
+                            <Button
+                                Margin="0,20,0,0"
+                                HorizontalAlignment="Center"
+                                Background="#2596BE"
+                                Command="{Binding SignupCommand}"
+                                Content="SIGN UP"
+                                FontSize="16"
+                                Foreground="#FFFFFF" />
+                        </StackPanel>
+                        <StackPanel
                             Margin="0,20,0,0"
                             HorizontalAlignment="Center"
-                            Background="#2596BE"
-                            Command="{Binding SignupCommand}"
-                            Content="SIGN UP"
-                            FontSize="16"
-                            Foreground="#FFFFFF" />
-                    </StackPanel>
-                    <StackPanel
-                        Margin="0,20,0,0"
-                        HorizontalAlignment="Center"
-                        Orientation="Horizontal">
-                        <TextBlock Text="Have already account?" />
-                        <HyperlinkButton
-                            Margin="2,-5,0,0"
-                            Command="{Binding LoginCommand}"
-                            Content="Click here to login" />
+                            Orientation="Horizontal">
+                            <TextBlock Text="Have already account?" />
+                            <HyperlinkButton
+                                Margin="2,-5,0,0"
+                                Command="{Binding LoginCommand}"
+                                Content="Click here to login" />
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
-            </StackPanel>
+            </Grid>
         </Grid>
-    </Grid>
+    </ScrollViewer>
 </Page>

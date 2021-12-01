@@ -13,5 +13,11 @@ namespace CommonServices.Model
         public string CreationDate { get; set; }
         public bool IsActivate { get; set; }
         public int PasswordChanged { get; set; }
+        public string PhoneCode { get; set; }
+        public string Address { get; set; }
+        public string Country { get; set; }
+        public string State { get; set; }
+        public string City { get; set; }
+        public string PhotoName { get; set; }
     }
 }

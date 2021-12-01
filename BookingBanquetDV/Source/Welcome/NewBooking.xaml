@@ -34,6 +34,8 @@
                 <RowDefinition Height="65" />
                 <RowDefinition Height="65" />
                 <RowDefinition Height="65" />
+                <RowDefinition Height="65" />
+                <RowDefinition Height="65" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Grid.Column="0">
                 <Grid.ColumnDefinitions>
@@ -69,13 +71,83 @@
                     Text="{Binding Errors[CustomerName], Converter={StaticResource FirstErrorConverter}}"
                     TextWrapping="Wrap" />
             </StackPanel>
-            <TextBlock
+            <Grid Grid.Row="1" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    Foreground="Red"
+                    Text="*"
+                    Visibility="{Binding BookingParameter.IsViewBooking, Converter={StaticResource InverseBooleanConverter}}" />
+                <TextBlock
+                    Grid.Column="1"
+                    Text="Customer's Mobile:"
+                    TextWrapping="Wrap" />
+            </Grid>
+            <StackPanel
                 Grid.Row="1"
+                Grid.Column="1"
+                Margin="0,0,10,0">
+                <TextBox
+                    InputScope="Number"
+                    IsReadOnly="{Binding BookingParameter.IsViewBooking}"
+                    MaxLength="10"
+                    PlaceholderText="Mobile number"
+                    Text="{Binding MobileNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <interactivity:Interaction.Behaviors>
+                        <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
+                        <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[MobileNo]}" />
+                    </interactivity:Interaction.Behaviors>
+                </TextBox>
+                <TextBlock
+                    Margin="0"
+                    Style="{StaticResource ErrorMessageStyle}"
+                    Text="{Binding Errors[MobileNo], Converter={StaticResource FirstErrorConverter}}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+            <Grid Grid.Row="2" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    Foreground="Red"
+                    Text="*"
+                    Visibility="{Binding BookingParameter.IsViewBooking, Converter={StaticResource InverseBooleanConverter}}" />
+                <TextBlock
+                    Grid.Column="1"
+                    Text="Customer's EmailId:"
+                    TextWrapping="Wrap" />
+            </Grid>
+            <StackPanel
+                Grid.Row="2"
+                Grid.Column="1"
+                Margin="0,0,10,0">
+                <TextBox
+                    Grid.Column="1"
+                    IsReadOnly="{Binding BookingParameter.IsViewBooking}"
+                    PlaceholderText="Email id"
+                    Text="{Binding EmailId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <interactivity:Interaction.Behaviors>
+                        <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[EmailId]}" />
+                    </interactivity:Interaction.Behaviors>
+                </TextBox>
+                <TextBlock
+                    Margin="0"
+                    Style="{StaticResource ErrorMessageStyle}"
+                    Text="{Binding Errors[EmailId], Converter={StaticResource FirstErrorConverter}}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+            <TextBlock
+                Grid.Row="3"
                 Grid.Column="0"
                 Text="Total rooms:"
                 TextWrapping="Wrap" />
             <StackPanel
-                Grid.Row="1"
+                Grid.Row="3"
                 Grid.Column="1"
                 Margin="0,0,10,20">
                 <TextBox
@@ -86,17 +158,17 @@
                     Text="{Binding TotalRooms, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <interactivity:Interaction.Behaviors>
                         <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
-                        <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[NumberOfRooms]}" />
+                        <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[TotalRooms]}" />
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
             </StackPanel>
             <TextBlock
-                Grid.Row="2"
+                Grid.Row="4"
                 Grid.Column="0"
                 Text="Total flours:"
                 TextWrapping="Wrap" />
             <StackPanel
-                Grid.Row="2"
+                Grid.Row="4"
                 Grid.Column="1"
                 Margin="0,0,10,20">
                 <TextBox
@@ -107,11 +179,11 @@
                     Text="{Binding TotalFlours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <interactivity:Interaction.Behaviors>
                         <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
-                        <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[NumberOfFlours]}" />
+                        <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[TotalFlours]}" />
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
             </StackPanel>
-            <Grid Grid.Row="3" Grid.Column="0">
+            <Grid Grid.Row="5" Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -127,7 +199,7 @@
                     TextWrapping="Wrap" />
             </Grid>
             <StackPanel
-                Grid.Row="3"
+                Grid.Row="5"
                 Grid.Column="1"
                 Margin="0,0,10,0"
                 Orientation="Vertical">
@@ -147,17 +219,17 @@
                     Text="{Binding Errors[BookingDate], Converter={StaticResource FirstErrorConverter}}" />
             </StackPanel>
             <TextBlock
-                Grid.Row="4"
+                Grid.Row="6"
                 Grid.Column="0"
                 Margin="0,0,0,0"
                 Text="Booked by:" />
             <StackPanel
-                Grid.Row="4"
+                Grid.Row="6"
                 Grid.Column="1"
                 Margin="0,0,10,20">
                 <TextBox IsReadOnly="True" Text="{Binding BookedBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
-            <Grid Grid.Row="5" Grid.Column="0">
+            <Grid Grid.Row="7" Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -173,7 +245,7 @@
                     TextWrapping="Wrap" />
             </Grid>
             <StackPanel
-                Grid.Row="5"
+                Grid.Row="7"
                 Grid.Column="1"
                 Margin="0,0,10,0">
                 <TextBox
@@ -195,7 +267,7 @@
                     Text="{Binding Errors[TotalAmount], Converter={StaticResource FirstErrorConverter}}"
                     TextWrapping="Wrap" />
             </StackPanel>
-            <Grid Grid.Row="6" Grid.Column="0">
+            <Grid Grid.Row="8" Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -211,7 +283,7 @@
                     TextWrapping="Wrap" />
             </Grid>
             <StackPanel
-                Grid.Row="6"
+                Grid.Row="8"
                 Grid.Column="1"
                 Margin="0,0,10,0">
                 <TextBox
@@ -234,12 +306,12 @@
                     TextWrapping="Wrap" />
             </StackPanel>
             <TextBlock
-                Grid.Row="7"
+                Grid.Row="9"
                 Grid.Column="0"
                 Text="Remaining amount:"
                 TextWrapping="Wrap" />
             <StackPanel
-                Grid.Row="7"
+                Grid.Row="9"
                 Grid.Column="1"
                 Margin="0,0,10,0">
                 <TextBox
@@ -250,12 +322,12 @@
                     Text="{Binding Balance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
             <TextBlock
-                Grid.Row="8"
+                Grid.Row="10"
                 Grid.Column="0"
                 Margin="0,10,0,0"
                 Text="Confirm ?" />
             <StackPanel
-                Grid.Row="8"
+                Grid.Row="10"
                 Grid.Column="1"
                 Margin="0,0,10,20">
                 <commoncontrols:ComboBoxExt

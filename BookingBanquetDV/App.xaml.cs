@@ -1,12 +1,15 @@
 ﻿using BookingServices.Interfaces;
 using CommonServices.ConstantData;
 using CommonServices.Extensions;
+using CommonServices.FileReaders;
 using CommonServices.Logger;
+using CommonServices.Model.City;
 using CommonServices.Utilities;
-using DataAccessLibrary;
 using System;
+using System.Collections.Generic;
 using ViewModelsAndValidation;
 using ViewModelsAndValidation.Services;
+using ViewModelsAndValidation.Views;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Graphics.Display;
@@ -16,6 +19,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using DBModel = CommonServices.Model.DbModel;
 
 namespace BookingBanquetDV
 {
@@ -28,6 +32,8 @@ namespace BookingBanquetDV
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
+        /// 
+
         public App()
         {
             this.InitializeComponent();
@@ -78,6 +84,7 @@ namespace BookingBanquetDV
                     SystemNavigationManager.GetForCurrentView().BackRequested += App_BackRequested;
 
                     DIContainer.GetInstance<IOfflineDatabaseProvider>().CreateOfflineDatabase();
+                    GetConutryStateAndCityData();
                     
                     //await CheckForAppUpdates();
                     ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
@@ -100,6 +107,12 @@ namespace BookingBanquetDV
             }
         }
 
+        private void GetConutryStateAndCityData()
+        {
+            List<Country> country = CountryStateAndCity.GetStateAndCity();
+            DIContainer.GetInstance<IOfflineDatabaseProvider>().StoreCountryData(country);
+        }
+
         private void RegisterAppLoginPage()
         {
             if (!(Window.Current.Content is MainPage rootFrame))
@@ -109,6 +122,18 @@ namespace BookingBanquetDV
                 DIContainer.GetInstance<INavigationService>().Navigate(typeof(MainPage));
                 Window.Current.Activate();
             }
+        }
+
+        public static void ShowLoadingIndicator(string contentText)
+        {
+            if (Window.Current.Content is IAppFrame frame)
+                frame.ShowLoadingIndicator(contentText);
+        }
+
+        public static void HideLoadingIndicator()
+        {
+            if (Window.Current.Content is IAppFrame frame)
+                frame.HideLoadingIndicator();
         }
 
         private async void App_BackRequested(object sender, BackRequestedEventArgs e)

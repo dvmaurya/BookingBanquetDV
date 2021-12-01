@@ -141,9 +141,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="DataAccess.cs" />
+    <Compile Include="DML\CityQuery.cs" />
+    <Compile Include="DML\CountryQuery.cs" />
     <Compile Include="DML\LoginQuery.cs" />
     <Compile Include="DML\BookingQuery.cs" />
     <Compile Include="DML\SignupQuery.cs" />
+    <Compile Include="DML\StateQuery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\DataAccessLibrary.rd.xml" />
   </ItemGroup>

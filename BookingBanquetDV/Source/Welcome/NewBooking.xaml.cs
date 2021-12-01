@@ -1,6 +1,9 @@
-﻿using CommonServices.ConstantData;
+﻿using BookingBanquetDV.Utility;
+using CommonServices.ConstantData;
+using CommonServices.Enums;
 using CommonServices.Extensions;
 using CommonServices.Model;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ViewModelsAndValidation.ViewModels;
@@ -15,6 +18,8 @@ namespace BookingBanquetDV.Source.Welcome
         private BookingDetails _bookingDetails;
         private bool _isValidationSuccess;
         private BookingParameter _bookingParameter;
+
+        public event EventHandler<AddBookingEventArgs> BookingEvent;
 
         public NewBooking(BookingParameter bookingParameter)
         {
@@ -47,22 +52,27 @@ namespace BookingBanquetDV.Source.Welcome
 
                         _bookingDetails.CreationDate = viewModel.CreationDate.ConvertToString(ApplicationConstants.DatabaseDateTimeFormat);
                         _bookingDetails.BookedBy = !string.IsNullOrEmpty(viewModel.BookedBy) ? viewModel.BookedBy : string.Empty;
-                        _bookingDetails.NumberOfRooms = !string.IsNullOrEmpty(viewModel.TotalRooms) ? viewModel.TotalRooms : string.Empty;
-                        _bookingDetails.NumberOfFlours = !string.IsNullOrEmpty(viewModel.TotalFlours) ? viewModel.TotalFlours : string.Empty;
+                        _bookingDetails.MobileNo = !string.IsNullOrEmpty(viewModel.MobileNo) ? viewModel.MobileNo : string.Empty;
+                        _bookingDetails.EmailId = !string.IsNullOrEmpty(viewModel.EmailId) ? viewModel.EmailId : string.Empty;
+                        _bookingDetails.TotalRooms = !string.IsNullOrEmpty(viewModel.TotalRooms) ? viewModel.TotalRooms : string.Empty;
+                        _bookingDetails.TotalFlours = !string.IsNullOrEmpty(viewModel.TotalFlours) ? viewModel.TotalFlours : string.Empty;
                         _bookingDetails.TotalAmount = !string.IsNullOrEmpty(viewModel.TotalAmount) ? viewModel.TotalAmount : string.Empty;
                         _bookingDetails.Advanced = !string.IsNullOrEmpty(viewModel.Advanced) ? viewModel.Advanced : string.Empty;
                         _bookingDetails.Balance = !string.IsNullOrEmpty(viewModel.Balance) ? viewModel.Balance : string.Empty;
                         _bookingDetails.Confirmation = !string.IsNullOrEmpty(viewModel.SelecteConfirmation) ? viewModel.SelecteConfirmation : "Not Decided";
-                        _bookingDetails.PhotoName = viewModel.PhotoName;
+                        _bookingDetails.PhotoName = !string.IsNullOrEmpty(viewModel.PhotoName) ? viewModel.PhotoName : string.Empty;
+                        _bookingDetails.IsEmailSent = viewModel.IsEmailSent;
 
                         this.Hide();
+                        BookingEvent?.Invoke(
+                            this,
+                            new AddBookingEventArgs(_bookingDetails, PreviewDialogAction.Submit));
                     }
                     else
                     {
                         args.Cancel = true;
                     }
                 }
-
             }
             else
             {
@@ -78,8 +88,6 @@ namespace BookingBanquetDV.Source.Welcome
                 this.Hide();
             }
         }
-
-        public BookingDetails BookingDetails => _bookingDetails;
 
         private void ContentDialog_Loading(Windows.UI.Xaml.FrameworkElement sender, object args)
         {

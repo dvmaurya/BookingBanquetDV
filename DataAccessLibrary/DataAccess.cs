@@ -16,10 +16,6 @@ namespace DataAccessLibrary
 
         public async static void CreateTables(string tableName)
         {
-            await _localFolder.CreateFileAsync(
-                ApplicationConstants.DatabaseName,
-                CreationCollisionOption.OpenIfExists);
-
             GetDbPath();
 
             using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
@@ -29,14 +25,27 @@ namespace DataAccessLibrary
 
                 switch(tableName)
                 {
-                    case ApplicationConstants.Users:
+                    case TableName.Users:
+                        await _localFolder.CreateFileAsync(
+                        ApplicationConstants.DatabaseName,
+                        CreationCollisionOption.OpenIfExists);
+
                         tableCommand = SignupQuery.CreateSignupTable;
                         break;
-                    case ApplicationConstants.LoginDetail:
+                    case TableName.LoginDetail:
                         tableCommand = LoginQuery.CreateLoginTable;
                         break;
-                    case ApplicationConstants.BookingDetails:
+                    case TableName.BookingDetails:
                         tableCommand = BookingQuery.CreateBookingTable;
+                        break;
+                    case TableName.City:
+                        tableCommand = CityQuery.CreateCityTable;
+                        break;
+                    case TableName.State:
+                        tableCommand = StateQuery.CreateStateTable;
+                        break;
+                    case TableName.Country:
+                        tableCommand = CountryQuery.CreateCountryTable;
                         break;
                     default:
                         break;

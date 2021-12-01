@@ -9,4 +9,6 @@
     <converters:VisibleWhenNotNullConverter x:Key="VisibleWhenNotNullConverter" />
     <converters:VisibleWhenNotEmptyStringConverter x:Key="VisibleWhenNotEmptyStringConverter" />
     <converters:NumberingConvertor x:Key="NumberingConvertor" />
+    <converters:VisibleWhenZeroConverter x:Key="VisibleWhenZeroConverter" />
+    <converters:VisibleWhenNonzeroConverter x:Key="VisibleWhenNonzeroConverter" />
 </ResourceDictionary>

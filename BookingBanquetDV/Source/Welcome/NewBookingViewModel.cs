@@ -34,6 +34,9 @@ namespace BookingBanquetDV.Source.Welcome
         private DateTimeOffset _creationDate;
         private int _id;
         private string _photoName;
+        private string _mobileNo;
+        private string _emailId;
+        private bool _isEmailSent;
         private readonly ICommand _dialogLoadingCommand;
 
         public NewBookingViewModel()
@@ -68,10 +71,12 @@ namespace BookingBanquetDV.Source.Welcome
         {
             _id = BookingParameter.BookingDetails.Id;
             _customerName = bookingDetails.CustomerName;
+            _mobileNo = bookingDetails.MobileNo;
+            _emailId = bookingDetails.EmailId;
             _bookingDate = bookingDetails.BookingDate.ConvertToDateTime();
             _creationDate = bookingDetails.CreationDate.ConvertToDateTime();
-            _totalRooms = bookingDetails.NumberOfRooms;
-            _totalFlours = bookingDetails.NumberOfFlours;
+            _totalRooms = bookingDetails.TotalRooms;
+            _totalFlours = bookingDetails.TotalFlours;
             _amount = bookingDetails.TotalAmount;
             _advanced = bookingDetails.Advanced;
             _balance = bookingDetails.Balance;
@@ -79,6 +84,8 @@ namespace BookingBanquetDV.Source.Welcome
             _photoName = bookingDetails.PhotoName;
 
             OnPropertyChanged(() => CustomerName);
+            OnPropertyChanged(() => MobileNo);
+            OnPropertyChanged(() => EmailId);
             OnPropertyChanged(() => BookingDate);
             OnPropertyChanged(() => TotalRooms);
             OnPropertyChanged(() => TotalFlours);
@@ -189,10 +196,25 @@ namespace BookingBanquetDV.Source.Welcome
             set => _selecteConfirmation = value;
         }
 
+        [MobileNoValidationAttribute(ErrorMessage = ApplicationConstants.InvalidMobileNo)]
+        public string MobileNo
+        {
+            get => _mobileNo;
+            set => _mobileNo = value;
+        }
+
+        [EmailValidationAttribute(ErrorMessage = ApplicationConstants.InvalidEmail)]
+        public string EmailId
+        {
+            get => _emailId;
+            set => _emailId = value;
+        }
+
         public ICommand DialogLoadingCommand => _dialogLoadingCommand;
 
         public ICommand SaveCommand => _saveCommand;
 
         public bool IsValidationSuccess { get { return _isValidationSuccess; } }
+        public bool IsEmailSent { get { return _isEmailSent; } }
     }
 }

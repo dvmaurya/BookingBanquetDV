@@ -23,8 +23,11 @@ namespace ViewModelsAndValidation.ViewModels
         DateTimeOffset MinDateTime { get; set; }
         ICommand DialogLoadingCommand { get; }
         string SelecteConfirmation { get; set; }
+        string MobileNo { get; set; }
+        string EmailId { get; set; }
         string PhotoName { get; }
         bool IsValidationSuccess { get; }
+        bool IsEmailSent { get; }
         ICommand SaveCommand { get; }
         BookingParameter BookingParameter { get; set; }
     }

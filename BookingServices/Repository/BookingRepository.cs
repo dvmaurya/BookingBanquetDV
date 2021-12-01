@@ -46,10 +46,12 @@ namespace BookingServices.Repository
 
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Id), bookingDetails.Id);
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.CustomerName), bookingDetails.CustomerName);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.MobileNo), bookingDetails.MobileNo);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.EmailId), bookingDetails.EmailId);
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.BookingDate), bookingDetails.BookingDate);
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.BookedBy), bookingDetails.BookedBy);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.NumberOfRooms), bookingDetails.NumberOfRooms);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.NumberOfFlours), bookingDetails.NumberOfFlours);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.TotalRooms), bookingDetails.TotalRooms);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.TotalFlours), bookingDetails.TotalFlours);
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.TotalAmount), bookingDetails.TotalAmount);
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Advanced), bookingDetails.Advanced);
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Balance), bookingDetails.Balance);
@@ -57,6 +59,7 @@ namespace BookingServices.Repository
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.CreationDate), bookingDetails.CreationDate);
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.PhotoName), bookingDetails.PhotoName);
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.UserId), bookingDetails.UserId);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.IsEmailSent), bookingDetails.IsEmailSent);
 
                     insertCommand.ExecuteReader();
 
@@ -69,7 +72,7 @@ namespace BookingServices.Repository
             }
         }
 
-        public IList<BookingDetails> GetAllBookings(string userId)
+        public IList<BookingDetails> GetAllBookings()
         {
             IList<BookingDetails> bookingDetails = new List<BookingDetails>();
             BookingDetails bookingDetail;
@@ -79,7 +82,7 @@ namespace BookingServices.Repository
             {
                 db.Open();
 
-                string sqlText = BookingQuery.SelectAllFromBooking.FormatString(userId);
+                string sqlText = BookingQuery.SelectAllFromBooking;
 
                 SqliteCommand selectCommand = new SqliteCommand
                     (sqlText, db);
@@ -92,17 +95,20 @@ namespace BookingServices.Repository
                     {
                         Id = query.GetString(0).ToInt32(),
                         CustomerName = query.GetString(1),
-                        BookingDate = query.GetString(2),
-                        BookedBy = query.GetString(3),
-                        NumberOfRooms = query.GetString(4),
-                        NumberOfFlours = query.GetString(5),
-                        TotalAmount = query.GetString(6),
-                        Advanced = query.GetString(7),
-                        Balance = query.GetString(8),
-                        Confirmation = query.GetString(9),
-                        CreationDate = query.GetString(10),
-                        PhotoName = query.GetString(11),
-                        UserId = query.GetString(12)
+                        MobileNo = query.GetString(2),
+                        EmailId = query.GetString(3),
+                        BookingDate = query.GetString(4),
+                        BookedBy = query.GetString(5),
+                        TotalRooms = query.GetString(6),
+                        TotalFlours = query.GetString(7),
+                        TotalAmount = query.GetString(8),
+                        Advanced = query.GetString(9),
+                        Balance = query.GetString(10),
+                        Confirmation = query.GetString(11),
+                        CreationDate = query.GetString(12),
+                        PhotoName = query.GetString(13),
+                        UserId = query.GetString(14),
+                        IsEmailSent = query.GetBoolean(15)
                     };
 
                     bookingDetails.Add(bookingDetail);

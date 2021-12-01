@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace CommonServices.Model
 {
@@ -9,5 +10,7 @@ namespace CommonServices.Model
         public ObservableCollection<BookingDetails> BookingDetailList { get; set; }
         public bool IsViewBooking { get; set; }
         public bool IsEditBooking { get; set; }
+        public IList<BookingDetails> MasterBookingList { get; set; }
+
     }
 }
