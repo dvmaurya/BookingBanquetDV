@@ -1,0 +1,61 @@
+﻿<ContentDialog
+    x:Class="BookingBanquetDV.Source.CommonControls.SingleSelectorDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:BookingBanquetDV.Source.CommonControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="SingleSelectionTitle"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    PrimaryButtonText="Close"
+    mc:Ignorable="d">
+    <Grid Padding="18,10,18,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="2*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <AutoSuggestBox
+            x:Name="SearchTemplate"
+            Grid.Row="0"
+            Width="450"
+            QueryIcon="Find"
+            TextBoxStyle="{StaticResource PatientAutoSuggestBoxTextBoxStyle}"
+            TextChanged="SearchTemplate_TextChanged" />
+        <Grid Grid.Row="1" Margin="5,20,0,0">
+            <TextBlock x:Name="AllVisibility" FontWeight="SemiBold">
+                <Run Text="All " /></TextBlock>
+            <TextBlock x:Name="NoVisibility" FontWeight="SemiBold">
+                <Run Text="No " /></TextBlock>
+            <TextBlock Margin="25,0,0,0" FontWeight="SemiBold">
+                <Run x:Name="AllHeader" /></TextBlock>
+        </Grid>
+        <ListView
+            Name="lstCodes"
+            Grid.Row="2"
+            SelectionChanged="LstCodes_SelectionChanged"
+            SelectionMode="Single">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,15,5,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            TextWrapping="Wrap" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</ContentDialog>

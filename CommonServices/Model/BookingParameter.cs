@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CommonServices.Model.DbModel;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace CommonServices.Model

@@ -7,6 +7,7 @@ using CommonServices.Extensions;
 using CommonServices.Model;
 using CommonServices.Model.City;
 using CommonServices.Utilities;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -35,22 +36,22 @@ namespace BookingBanquetDV.Source.Register
         private bool _isOtpEnable;
         private string _oTP;
         private string _generatedOTP;
-        private Users _users;
+        private UsersCred _usersCred;
+        private UsersPersonalDetail _usersPersonalDetail;
         private bool _isResendOTP;
-        private City _selectedCity;
-        private State _selectedState;
-        private Country _selectedCountry;
+        private SingleSelection _selectedCity;
+        private SingleSelection _selectedState;
+        private SingleSelection _selectedCountry;
         private string _address;
-        private IReadOnlyCollection<Country> _countryList;
-        private IReadOnlyCollection<State> _stateList;
-        private IReadOnlyCollection<City> _cityList;
+        private IReadOnlyCollection<SingleSelection> _countryList;
+        private IReadOnlyCollection<SingleSelection> _stateList;
+        private IReadOnlyCollection<SingleSelection> _cityList;
         private bool _isCityVisible;
         private bool _isStateVisible;
-        private string _selectedPhoneCode;
         private IReadOnlyCollection<string> _phoneCodeList;
-        private string _photoName;
         private readonly ICommand _changedCountryCommand;
         private readonly ICommand _changedStateCommand;
+        private readonly ICommand _changedCityCommand;
         private readonly ICommand _resetCommand;
         private readonly ICommand _signupCommand;
         private readonly ICommand _oTPCommand;
@@ -59,21 +60,29 @@ namespace BookingBanquetDV.Source.Register
         private readonly INavigationService _navigationService;
         private readonly IOfflineDatabaseProvider _offlineDatabaseProvider;
         private readonly ICountryDataProvider _countryDataProvider;
+        private readonly IUsersPersonalDetailDataProvider _userPersonalDetailDataProvider;
+        private readonly IPhotoDetailDataProvider _photoDetailDataProvider;
+
         private ICameraViewModel _cameraViewModel;
         private bool _isEmailSent;
+        private PhotoDetails _photoDetail;
 
         public SignupViewModel(
             INavigationService navigationService,
             IOfflineDatabaseProvider offlineDatabaseProvider,
             IMessageDialogService messageDialogService,
             ICountryDataProvider countryDataProvider,
-            ICameraViewModel cameraViewModel)
+            ICameraViewModel cameraViewModel,
+            IUsersPersonalDetailDataProvider usersPersonalDetailDataProvider,
+            IPhotoDetailDataProvider photoDetailDataProvider)
         {
-            _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
-            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException(nameof(offlineDatabaseProvider));
-            _messageDialogService = messageDialogService ?? throw new ArgumentNullException(nameof(messageDialogService));
-            _countryDataProvider = countryDataProvider ?? throw new ArgumentNullException(nameof(countryDataProvider));
-            _cameraViewModel = cameraViewModel ?? throw new ArgumentNullException(nameof(cameraViewModel));
+            _navigationService = navigationService ?? throw new ArgumentNullException("navigationService");
+            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException("offlineDatabaseProvider");
+            _messageDialogService = messageDialogService ?? throw new ArgumentNullException("messageDialogService");
+            _countryDataProvider = countryDataProvider ?? throw new ArgumentNullException("countryDataProvider");
+            _cameraViewModel = cameraViewModel ?? throw new ArgumentNullException("cameraViewModel");
+            _userPersonalDetailDataProvider = usersPersonalDetailDataProvider ?? throw new ArgumentNullException("usersPersonalDetailDataProvider");
+            _photoDetailDataProvider = photoDetailDataProvider ?? throw new ArgumentNullException("photoDetailDataProvider");
 
             _oTPCommand = new DelegateCommand(
                 async parameter => await OnOTPClickAsync(parameter));
@@ -88,34 +97,65 @@ namespace BookingBanquetDV.Source.Register
                 parameter => OnResetClick());
 
             _changedCountryCommand = new DelegateCommand(
-                parameter => OnCountryChanged(parameter));
+                async parameter => await OnCountryChangedAsync());
 
             _changedStateCommand = new DelegateCommand(
-                parameter => OnStateChanged(parameter));
+                async parameter => await OnStateChangedAsync());
+
+            _changedCityCommand = new DelegateCommand(
+                async parameter => await OnCityChangedAsync());
         }
 
-        private void OnStateChanged(object parameter)
+        private async Task OnCityChangedAsync()
         {
+            _selectedCity = await SingleSelectionUtility.OnSelectSingleSelectionAsync(
+                        _cityList, ApplicationConstants.City);
+            
+            OnPropertyChanged(() => SelectedCity);
+        }
+
+        private async Task OnStateChangedAsync()
+        {
+            _selectedState = await SingleSelectionUtility.OnSelectSingleSelectionAsync(
+                        _stateList, ApplicationConstants.State);
+
             if (_selectedState != null)
             {
                 _isCityVisible = true;
-                _cityList = new ReadOnlyCollection<City>(_selectedState.Cities);
 
-                OnPropertyChanged(() => IsCityVisible);
-                OnPropertyChanged(() => CityList);
+                IReadOnlyCollection<City> cityList =
+                    JsonConvert.DeserializeObject<IReadOnlyCollection<City>>(_selectedState.JsonData);
+
+                if (cityList != null)
+                    GenerateListForSingleSelection(cityList);
+
+                await OnCityChangedAsync();
             }
+
+            OnPropertyChanged(() => IsCityVisible);
+            OnPropertyChanged(() => SelectedState);
         }
 
-        private void OnCountryChanged(object parameter)
+        private async Task OnCountryChangedAsync()
         {
+            _selectedCountry = await SingleSelectionUtility.OnSelectSingleSelectionAsync(
+                        _countryList, ApplicationConstants.Country);
+
             if (_selectedCountry != null)
             {
                 _isStateVisible = true;
-                _stateList = new ReadOnlyCollection<State>(_selectedCountry.States);
 
-                OnPropertyChanged(() => IsStateVisible);
-                OnPropertyChanged(() => StateList);
+                IReadOnlyCollection<State> stateList =
+                    JsonConvert.DeserializeObject<IReadOnlyCollection<State>>(_selectedCountry.JsonData);
+
+                if (stateList != null)
+                    GenerateListForSingleSelection(stateList);
+
+                await OnStateChangedAsync();
             }
+
+            OnPropertyChanged(() => IsStateVisible);
+            OnPropertyChanged(() => SelectedCountry);
         }
 
         private void OnResetClick()
@@ -123,10 +163,11 @@ namespace BookingBanquetDV.Source.Register
             if (!_isEmailSent)
             {
                 _fullName = _emailId = _mobileNo = _password =
-                    _confirmPassword = Address = _selectedPhoneCode = string.Empty;
+                    _confirmPassword = Address = string.Empty;
                 _selectedCountry = null;
                 _selectedState = null;
                 _selectedCity = null;
+                _isStateVisible = _isCityVisible = false;
 
                 _isOtpEnable = false;
 
@@ -136,10 +177,11 @@ namespace BookingBanquetDV.Source.Register
                 OnPropertyChanged(() => MobileNo);
                 OnPropertyChanged(() => Password);
                 OnPropertyChanged(() => ConfirmPassword);
-                OnPropertyChanged(() => SelectedPhoneCode);
                 OnPropertyChanged(() => SelectedCountry);
                 OnPropertyChanged(() => SelectedState);
                 OnPropertyChanged(() => SelectedCity);
+                OnPropertyChanged(() => IsStateVisible);
+                OnPropertyChanged(() => IsCityVisible);
             }
         }
 
@@ -155,15 +197,32 @@ namespace BookingBanquetDV.Source.Register
 
                     PhotoDetails photoDetails = await OnCameraClickAsync();
 
-                    if (photoDetails != null)
-                        _users.PhotoName = photoDetails.LocalPhotoName;
+                    if (photoDetails != null && _usersPersonalDetail != null)
+                    {
+                       _photoDetail = new PhotoDetails
+                       {
+                            LocalPhotoName = photoDetails.LocalPhotoName,
+                            Date = photoDetails.Date,
+                            FileType = photoDetails.FileType,
+                            Size = photoDetails.Size,
+                            EmailId = _emailId,
+                            IsPhotoActive = true,
+                            IsPhotoRemoved = false
+                        };
+                    }
 
                     App.ShowLoadingIndicator(ApplicationConstants.SendingEmail);
                     await SendBookingMailAsync();
                     App.HideLoadingIndicator();
 
                     _somethingWrongMessage = false;
-                    bool isSaved = _offlineDatabaseProvider.AddOrUpdateUsers(_users);
+                    bool isSaved = _offlineDatabaseProvider.AddOrUpdateUsers(_usersCred);
+                    if (isSaved)
+                    {
+                        _userPersonalDetailDataProvider.AddOrUpdateUsersPersonalDetail(_usersPersonalDetail);
+                        _photoDetailDataProvider.AddOrUpdatePhotoDetail(_photoDetail);
+                    }
+
                     await _messageDialogService.ShowMessageDialogAsync(
                         ApplicationConstants.Success,
                         ApplicationConstants.SignupSuccess);
@@ -183,13 +242,15 @@ namespace BookingBanquetDV.Source.Register
 
         private async Task<bool> SendBookingMailAsync()
         {
-            if (_users != null)
+            if (_usersCred != null)
             {
                 EmailParameter emailParameter = new EmailParameter
                 {
-                    EmailAddress = _users.EmailId,
-                    UserName = _users.FullName,
-                    Users = _users
+                    EmailAddress = _usersCred.EmailId,
+                    UserName = _usersPersonalDetail.FullName,
+                    UsersCred = _usersCred,
+                    UsersPersonalDetail = _usersPersonalDetail,
+                    PhotoDetails = _photoDetail
                 };
 
                 return await EmailUtility.SendEmailsAsync(emailParameter);
@@ -211,22 +272,27 @@ namespace BookingBanquetDV.Source.Register
 
             if (ValidateProperties())
             {
-                _users = new Users
+                _usersCred = new UsersCred
                 {
                     EmailId = _emailId,
-                    FullName = _fullName,
                     Mobile = _mobileNo,
                     Password = _password,
                     UserId = _emailId,
                     CreationDate = DateTime.Now.ConvertToString(
                         ApplicationConstants.DatabaseDateTimeFormat),
-                    IsActivate = false,
-                    PasswordChanged = 0,
+                    IsAdmin = false,
+                    PasswordChanged = 0
+                };
+
+                _usersPersonalDetail = new UsersPersonalDetail
+                {
                     Address = _address,
-                    City = _selectedCity.Name,
-                    Country = _selectedCountry.Name,
-                    State = _selectedState.Name,
-                    PhoneCode = _selectedPhoneCode,
+                    Country = _selectedCountry?.Name,
+                    State = _selectedState?.Name,
+                    City = _selectedCity?.Name,
+                    EmailId = _emailId,
+                    FullName = _fullName,
+                    Mobile = _mobileNo,
                 };
 
                 await SendOtpAsync();
@@ -311,11 +377,50 @@ namespace BookingBanquetDV.Source.Register
 
         private void InitializeListData()
         {
-            _countryList = new ReadOnlyCollection<Country>(_countryDataProvider.GetCountryData());
-            if(_countryList != null && _countryList.Any())
+            ReadOnlyCollection<Country> countryList = 
+                new ReadOnlyCollection<Country>(_countryDataProvider.GetCountryData());
+            if (countryList != null && countryList.Any())
             {
-                _phoneCodeList = _countryList.Select(phone => phone.PhoneCode).ToList();
+                _phoneCodeList = countryList.Select(phone => phone.PhoneCode).ToList();
                 _phoneCodeList = _phoneCodeList.OrderBy(phone => phone).ToList();
+
+                GenerateListForSingleSelection(countryList);
+            }
+        }
+
+        private void GenerateListForSingleSelection(IReadOnlyCollection<object> singleCode)
+        {
+            if (singleCode is IReadOnlyCollection<Country> countryList)
+            {
+                _countryList = countryList.
+                    Select(code =>
+                        new SingleSelection
+                        {
+                            Id = code.Id,
+                            Name = code.Name,
+                            JsonData = JsonConvert.SerializeObject(code.States)
+                        }).ToList();
+            }
+            else if (singleCode is IReadOnlyCollection<State> stateList)
+            {
+                _stateList = stateList.
+                    Select(code =>
+                        new SingleSelection
+                        {
+                            Id = code.Id,
+                            Name = code.Name,
+                            JsonData = JsonConvert.SerializeObject(code.Cities)
+                        }).ToList();
+            }
+            else if (singleCode is IReadOnlyCollection<City> cityList)
+            {
+                _cityList = cityList.
+                    Select(code =>
+                        new SingleSelection
+                        {
+                            Id = code.Id,
+                            Name = code.Name
+                        }).ToList();
             }
         }
 
@@ -413,44 +518,37 @@ namespace BookingBanquetDV.Source.Register
         }
 
         [Required(ErrorMessage = ApplicationConstants.CountryRequired)]
-        public Country SelectedCountry
+        public SingleSelection SelectedCountry
         {
             get => _selectedCountry;
             set => _selectedCountry = value;
         }
 
-        public State SelectedState
+        public SingleSelection SelectedState
         {
             get => _selectedState;
             set => _selectedState = value;
         }
 
-        public City SelectedCity
+        public SingleSelection SelectedCity
         {
             get => _selectedCity;
             set => _selectedCity = value;
         }
 
-        [Required(ErrorMessage = ApplicationConstants.PhoneCodeRequired)]
-        public string SelectedPhoneCode
-        {
-            get => _selectedPhoneCode;
-            set => _selectedPhoneCode = value;
-        }
-
-        public IReadOnlyCollection<Country> CountryList
+        public IReadOnlyCollection<SingleSelection> CountryList
         {
             get => _countryList;
             set => _countryList = value;
         }
 
-        public IReadOnlyCollection<State> StateList
+        public IReadOnlyCollection<SingleSelection> StateList
         {
             get => _stateList;
             set => _stateList = value;
         }
 
-        public IReadOnlyCollection<City> CityList
+        public IReadOnlyCollection<SingleSelection> CityList
         {
             get => _cityList;
             set => _cityList = value;
@@ -471,6 +569,8 @@ namespace BookingBanquetDV.Source.Register
         public ICommand ChangedCountryCommand => _changedCountryCommand;
 
         public ICommand ChangedStateCommand => _changedStateCommand;
+
+        public ICommand ChangedCityCommand => _changedCityCommand;
 
         public IReadOnlyCollection<string> PhoneCodeList
         {

@@ -1,9 +1,5 @@
-﻿using CommonServices.Model;
-using System;
+﻿using CommonServices.Model.DbModel;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BookingServices.Repository.Interface
 {

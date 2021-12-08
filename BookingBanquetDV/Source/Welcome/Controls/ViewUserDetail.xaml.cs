@@ -7,16 +7,16 @@ using Windows.UI.Xaml.Controls;
 
 namespace BookingBanquetDV.Source.Welcome.Controls
 {
-    public sealed partial class UserDetailView : ContentDialog
+    public sealed partial class ViewUserDetail : ContentDialog
     {
-        private Users _users;
+        private UsersPersonalDetail _usersPersonalDetail;
 
-        public UserDetailView(Users userDetail)
+        public ViewUserDetail(UsersPersonalDetail userDetail)
         {
             this.InitializeComponent();
-            this.DataContext = ViewModelLocator.userDetailViewModel;
+            this.DataContext = ViewModelLocator.UserDetailViewModel;
 
-            _users = userDetail;
+            _usersPersonalDetail = userDetail;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -29,8 +29,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
             if (sender != null &&
                 this.DataContext is IUserDetailViewModel viewModel)
             {
-                viewModel.Users = _users;
-                viewModel.OnDialogLoadCommand.Execute(null);
+                viewModel.UsersPersonalDetail = _usersPersonalDetail;
             }
 
             if (args != null) { }

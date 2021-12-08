@@ -7,8 +7,10 @@
     <converters:NotBooleanToVisibilityConverter x:Key="NotBooleanToVisibilityConverter" />
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
     <converters:VisibleWhenNotNullConverter x:Key="VisibleWhenNotNullConverter" />
+    <converters:VisibleWhenNullConverter x:Key="VisibleWhenNullConverter" />
     <converters:VisibleWhenNotEmptyStringConverter x:Key="VisibleWhenNotEmptyStringConverter" />
     <converters:NumberingConvertor x:Key="NumberingConvertor" />
     <converters:VisibleWhenZeroConverter x:Key="VisibleWhenZeroConverter" />
     <converters:VisibleWhenNonzeroConverter x:Key="VisibleWhenNonzeroConverter" />
+    <converters:ByteToMegabyteVisibilityConverter x:Key="ByteToMegabyteVisibilityConverter" />
 </ResourceDictionary>

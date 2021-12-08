@@ -4,11 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="using:BookingBanquetDV.Behavior"
     xmlns:commoncontrols="using:BookingBanquetDV.Utility"
+    xmlns:controls1="using:BookingBanquetDV.Source.Register"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Name="BookingDialog"
-    Width="600"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     BorderBrush="Green"
     BorderThickness="10"
@@ -25,6 +26,10 @@
                 <ColumnDefinition Width="375" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="65" />
+                <RowDefinition Height="65" />
+                <RowDefinition Height="65" />
+                <RowDefinition Height="120" />
                 <RowDefinition Height="65" />
                 <RowDefinition Height="65" />
                 <RowDefinition Height="65" />
@@ -141,13 +146,144 @@
                     Text="{Binding Errors[EmailId], Converter={StaticResource FirstErrorConverter}}"
                     TextWrapping="Wrap" />
             </StackPanel>
+            <Grid Grid.Row="3" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    Foreground="Red"
+                    Text="*"
+                    Visibility="{Binding BookingParameter.IsViewBooking, Converter={StaticResource InverseBooleanConverter}}" />
+                <TextBlock
+                    Grid.Column="1"
+                    Text="Address:"
+                    TextWrapping="Wrap" />
+            </Grid>
+            <StackPanel Grid.Row="3" Grid.Column="1">
+                <controls1:NotesControl
+                    x:Name="NotesText"
+                    Grid.Column="1"
+                    IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
+                    NotesText="{Binding Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    PlaceholderText="Enter address" />
+                <TextBlock
+                    Margin="0"
+                    Style="{StaticResource ErrorMessageStyle}"
+                    Text="{Binding Errors[Address], Converter={StaticResource FirstErrorConverter}}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+            <Grid Grid.Row="4" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    Foreground="Red"
+                    Text="*"
+                    Visibility="{Binding BookingParameter.IsViewBooking, Converter={StaticResource InverseBooleanConverter}}" />
+                <TextBlock
+                    Grid.Column="1"
+                    Text="Country:"
+                    TextWrapping="Wrap" />
+            </Grid>
+            <StackPanel Grid.Row="4" Grid.Column="1">
+                <commoncontrols:ComboBoxExt
+                    Width="368"
+                    DisplayMemberPath="Name"
+                    IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
+                    ItemsSource="{Binding CountryList}"
+                    PlaceholderText="Country"
+                    SelectedItem="{Binding SelectedCountry, Mode=TwoWay}">
+                    <interactivity:Interaction.Behaviors>
+                        <behaviors:HighlightFormFieldOnErrors
+                            HighlightStyleName="HighlightComboBoxStyle"
+                            OriginalStyleName="BaseComboBoxStyle"
+                            PropertyErrors="{Binding Errors[SelectedCountry]}" />
+                        <core:EventTriggerBehavior EventName="SelectionChanged">
+                            <core:EventTriggerBehavior.Actions>
+                                <core:InvokeCommandAction Command="{Binding ChangedCountryCommand}" CommandParameter="{Binding SelectedCountry}" />
+                            </core:EventTriggerBehavior.Actions>
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </commoncontrols:ComboBoxExt>
+                <TextBlock
+                    Margin="0"
+                    Style="{StaticResource ErrorMessageStyle}"
+                    Text="{Binding Errors[SelectedCountry], Converter={StaticResource FirstErrorConverter}}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
             <TextBlock
-                Grid.Row="3"
+                Grid.Row="5"
+                Grid.Column="0"
+                Text="State:"
+                TextWrapping="Wrap" />
+            <StackPanel Grid.Row="5" Grid.Column="1">
+                <commoncontrols:ComboBoxExt
+                    Width="368"
+                    DisplayMemberPath="Name"
+                    IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
+                    ItemsSource="{Binding CountryList}"
+                    PlaceholderText="Country"
+                    SelectedItem="{Binding SelectedCountry, Mode=TwoWay}">
+                    <interactivity:Interaction.Behaviors>
+                        <behaviors:HighlightFormFieldOnErrors
+                            HighlightStyleName="HighlightComboBoxStyle"
+                            OriginalStyleName="BaseComboBoxStyle"
+                            PropertyErrors="{Binding Errors[SelectedCountry]}" />
+                        <core:EventTriggerBehavior EventName="SelectionChanged">
+                            <core:EventTriggerBehavior.Actions>
+                                <core:InvokeCommandAction Command="{Binding ChangedCountryCommand}" CommandParameter="{Binding SelectedCountry}" />
+                            </core:EventTriggerBehavior.Actions>
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </commoncontrols:ComboBoxExt>
+                <TextBlock
+                    Margin="0"
+                    Style="{StaticResource ErrorMessageStyle}"
+                    Text="{Binding Errors[SelectedCountry], Converter={StaticResource FirstErrorConverter}}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+            <TextBlock
+                Grid.Row="6"
+                Grid.Column="0"
+                Text="City:"
+                TextWrapping="Wrap" />
+            <StackPanel Grid.Row="6" Grid.Column="1">
+                <commoncontrols:ComboBoxExt
+                    Width="368"
+                    DisplayMemberPath="Name"
+                    IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
+                    ItemsSource="{Binding CountryList}"
+                    PlaceholderText="Country"
+                    SelectedItem="{Binding SelectedCountry, Mode=TwoWay}">
+                    <interactivity:Interaction.Behaviors>
+                        <behaviors:HighlightFormFieldOnErrors
+                            HighlightStyleName="HighlightComboBoxStyle"
+                            OriginalStyleName="BaseComboBoxStyle"
+                            PropertyErrors="{Binding Errors[SelectedCountry]}" />
+                        <core:EventTriggerBehavior EventName="SelectionChanged">
+                            <core:EventTriggerBehavior.Actions>
+                                <core:InvokeCommandAction Command="{Binding ChangedCountryCommand}" CommandParameter="{Binding SelectedCountry}" />
+                            </core:EventTriggerBehavior.Actions>
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </commoncontrols:ComboBoxExt>
+                <TextBlock
+                    Margin="0"
+                    Style="{StaticResource ErrorMessageStyle}"
+                    Text="{Binding Errors[SelectedCountry], Converter={StaticResource FirstErrorConverter}}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+            <TextBlock
+                Grid.Row="7"
                 Grid.Column="0"
                 Text="Total rooms:"
                 TextWrapping="Wrap" />
             <StackPanel
-                Grid.Row="3"
+                Grid.Row="7"
                 Grid.Column="1"
                 Margin="0,0,10,20">
                 <TextBox
@@ -163,12 +299,12 @@
                 </TextBox>
             </StackPanel>
             <TextBlock
-                Grid.Row="4"
+                Grid.Row="8"
                 Grid.Column="0"
                 Text="Total flours:"
                 TextWrapping="Wrap" />
             <StackPanel
-                Grid.Row="4"
+                Grid.Row="8"
                 Grid.Column="1"
                 Margin="0,0,10,20">
                 <TextBox
@@ -183,7 +319,7 @@
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
             </StackPanel>
-            <Grid Grid.Row="5" Grid.Column="0">
+            <Grid Grid.Row="9" Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -199,7 +335,7 @@
                     TextWrapping="Wrap" />
             </Grid>
             <StackPanel
-                Grid.Row="5"
+                Grid.Row="9"
                 Grid.Column="1"
                 Margin="0,0,10,0"
                 Orientation="Vertical">
@@ -219,17 +355,17 @@
                     Text="{Binding Errors[BookingDate], Converter={StaticResource FirstErrorConverter}}" />
             </StackPanel>
             <TextBlock
-                Grid.Row="6"
+                Grid.Row="10"
                 Grid.Column="0"
                 Margin="0,0,0,0"
                 Text="Booked by:" />
             <StackPanel
-                Grid.Row="6"
+                Grid.Row="10"
                 Grid.Column="1"
                 Margin="0,0,10,20">
                 <TextBox IsReadOnly="True" Text="{Binding BookedBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
-            <Grid Grid.Row="7" Grid.Column="0">
+            <Grid Grid.Row="11" Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -245,7 +381,7 @@
                     TextWrapping="Wrap" />
             </Grid>
             <StackPanel
-                Grid.Row="7"
+                Grid.Row="11"
                 Grid.Column="1"
                 Margin="0,0,10,0">
                 <TextBox
@@ -267,7 +403,7 @@
                     Text="{Binding Errors[TotalAmount], Converter={StaticResource FirstErrorConverter}}"
                     TextWrapping="Wrap" />
             </StackPanel>
-            <Grid Grid.Row="8" Grid.Column="0">
+            <Grid Grid.Row="12" Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -283,7 +419,7 @@
                     TextWrapping="Wrap" />
             </Grid>
             <StackPanel
-                Grid.Row="8"
+                Grid.Row="12"
                 Grid.Column="1"
                 Margin="0,0,10,0">
                 <TextBox
@@ -306,12 +442,12 @@
                     TextWrapping="Wrap" />
             </StackPanel>
             <TextBlock
-                Grid.Row="9"
+                Grid.Row="13"
                 Grid.Column="0"
                 Text="Remaining amount:"
                 TextWrapping="Wrap" />
             <StackPanel
-                Grid.Row="9"
+                Grid.Row="13"
                 Grid.Column="1"
                 Margin="0,0,10,0">
                 <TextBox
@@ -322,12 +458,12 @@
                     Text="{Binding Balance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
             <TextBlock
-                Grid.Row="10"
+                Grid.Row="14"
                 Grid.Column="0"
                 Margin="0,10,0,0"
                 Text="Confirm ?" />
             <StackPanel
-                Grid.Row="10"
+                Grid.Row="14"
                 Grid.Column="1"
                 Margin="0,0,10,20">
                 <commoncontrols:ComboBoxExt
@@ -335,12 +471,12 @@
                     IsEnabled="{Binding BookingParameter.IsViewBooking, Converter={StaticResource InverseBooleanConverter}}"
                     ItemsSource="{Binding ConfirmList}"
                     PlaceholderText="Is booking confirmed ?"
-                    SelectedItem="{Binding SelecteConfirmation, Mode=TwoWay}">
+                    SelectedItem="{Binding SelectConfirmation, Mode=TwoWay}">
                     <interactivity:Interaction.Behaviors>
                         <behaviors:HighlightFormFieldOnErrors
                             HighlightStyleName="HighlightComboBoxStyle"
                             OriginalStyleName="BaseComboBoxStyle"
-                            PropertyErrors="{Binding Errors[SelecteConfirmation]}" />
+                            PropertyErrors="{Binding Errors[SelectConfirmation]}" />
                     </interactivity:Interaction.Behaviors>
                 </commoncontrols:ComboBoxExt>
             </StackPanel>

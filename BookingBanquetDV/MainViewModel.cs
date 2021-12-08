@@ -4,7 +4,7 @@ using BookingServices.Interfaces;
 using CommonServices.Analytcis;
 using CommonServices.ConstantData;
 using CommonServices.Extensions;
-using CommonServices.Model;
+using CommonServices.Model.DbModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -74,14 +74,16 @@ namespace BookingBanquetDV
 
         private void OnClickSignup()
         {
+            App.ShowLoadingIndicator(ApplicationConstants.Loading);
             _navigationService.Navigate(typeof(Signup));
+            App.HideLoadingIndicator();
         }
 
         private async Task OnClickLoginAsync(object parameter)
         {
             if (ValidateProperties())
             {
-                _isCredentialWrong = await _loginViewModel.NavigateToWelcomePageAsync(parameter).ConfigureAwait(true);
+                _isCredentialWrong = await _loginViewModel.NavigateToWelcomePageAsync(parameter);
 
                 _isCredentialWrong = !_isCredentialWrong;
                 OnPropertyChanged(() => IsCredentialWrong);

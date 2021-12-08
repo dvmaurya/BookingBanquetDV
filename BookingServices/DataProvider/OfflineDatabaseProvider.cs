@@ -13,24 +13,18 @@ namespace BookingServices.DataProvider
 {
     public class OfflineDatabaseProvider : IOfflineDatabaseProvider
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUserCredRepository _userRepository;
         private readonly ILoginRepository _loginRepository;
         private readonly ICountryRepository _countryRepository;
-        private readonly IStateRepository _stateRepository;
-        private readonly ICityRepository _cityRepository;
 
         public OfflineDatabaseProvider(
-            IUserRepository userRepository,
+            IUserCredRepository userRepository,
             ILoginRepository loginRepository,
-            ICountryRepository countryRepository,
-            IStateRepository stateRepository,
-            ICityRepository cityRepository)
+            ICountryRepository countryRepository)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _loginRepository = loginRepository ?? throw new ArgumentNullException(nameof(loginRepository));
             _countryRepository = countryRepository ?? throw new ArgumentNullException(nameof(countryRepository));
-            _stateRepository = stateRepository ?? throw new ArgumentNullException(nameof(stateRepository));
-            _cityRepository = cityRepository ?? throw new ArgumentNullException(nameof(cityRepository));
         }
 
         public void CreateOfflineDatabase()
@@ -39,7 +33,7 @@ namespace BookingServices.DataProvider
             {
                 IList<string> tables = GetTables();
 
-                foreach (var table in tables)
+                foreach (string table in tables)
                     DataAccess.CreateTables(table);
             }
             catch (Exception ex)
@@ -65,9 +59,10 @@ namespace BookingServices.DataProvider
             }
         }
 
-        public bool AddOrUpdateUsers(Users users)
+        public bool AddOrUpdateUsers(UsersCred usersCred)
         {
-            return _userRepository.AddOrUpdateUsers(users);
+            DBModel.UsersCred dbUserCred = usersCred.ToDbUsers();
+            return _userRepository.AddOrUpdateUsersCred(dbUserCred);
         }
 
         public List<String> GetAllUsers()
@@ -75,9 +70,9 @@ namespace BookingServices.DataProvider
             return _userRepository.GetAllUsers();
         }
 
-        public IDictionary<string, string> GetDataForOTP(string emailId, string mobileNo)
+        public IDictionary<string, string> GetUserDetails(string emailId, string mobileNo)
         {
-            return _userRepository.GetDataForOTP(emailId, mobileNo);
+            return _userRepository.GetUserDetails(emailId, mobileNo);
         }
 
         public IDictionary<string, string> GetDataForLogin(string userName, string password)
@@ -89,12 +84,12 @@ namespace BookingServices.DataProvider
         {
             List<string> tableTypes = new List<string>
             {
-                nameof(Users),
-                nameof(LoginDetail),
-                nameof(BookingDetails),
-                nameof(Country),
-                nameof(State),
-                nameof(City)
+                nameof(DBModel.UsersCred),
+                nameof(DBModel.UsersPersonalDetail),
+                nameof(DBModel.LoginDetail),
+                nameof(DBModel.BookingDetails),
+                nameof(DBModel.Country),
+                nameof(DBModel.PhotoDetails)
             };
 
             return tableTypes;
@@ -102,7 +97,7 @@ namespace BookingServices.DataProvider
 
         public void AddOrUpdateLoginDetail(LoginDetail loginDetail)
         {
-            _loginRepository.AddOrUpdateLoginDetail(loginDetail);
+            _loginRepository.AddOrUpdateLoginDetail(loginDetail.ToDbLoginDetail());
         }
 
         public IDictionary<string, string> GetPreviousLoginDetail()
@@ -110,9 +105,11 @@ namespace BookingServices.DataProvider
             return _loginRepository.GetPreviousLoginDetail();
         }
 
-        public Users GetUsersDetail(string userId)
+        public UsersCred GetUsersDetail(string userId)
         {
-            return _userRepository.GetUsersDetail(userId);
+            DBModel.UsersCred userCredDetail = _userRepository.GetUsersDetail(userId);
+
+            return userCredDetail.ToUsersCred();
         }
     }
 }

@@ -25,12 +25,15 @@ namespace DataAccessLibrary
 
                 switch(tableName)
                 {
-                    case TableName.Users:
+                    case TableName.UsersCred:
                         await _localFolder.CreateFileAsync(
                         ApplicationConstants.DatabaseName,
                         CreationCollisionOption.OpenIfExists);
 
                         tableCommand = SignupQuery.CreateSignupTable;
+                        break;
+                    case TableName.UsersPersonalDetail:
+                        tableCommand = UsersPersonalDetailQuery.CreateUsersPersonalDetailTable;
                         break;
                     case TableName.LoginDetail:
                         tableCommand = LoginQuery.CreateLoginTable;
@@ -38,22 +41,22 @@ namespace DataAccessLibrary
                     case TableName.BookingDetails:
                         tableCommand = BookingQuery.CreateBookingTable;
                         break;
-                    case TableName.City:
-                        tableCommand = CityQuery.CreateCityTable;
-                        break;
-                    case TableName.State:
-                        tableCommand = StateQuery.CreateStateTable;
-                        break;
                     case TableName.Country:
                         tableCommand = CountryQuery.CreateCountryTable;
+                        break;
+                    case TableName.PhotoDetails:
+                        tableCommand = PhotoDetailQuery.CreatePhotoDetailTable;
                         break;
                     default:
                         break;
                 }
 
-                SqliteCommand createTable = new SqliteCommand(tableCommand, db);
+                if (!string.IsNullOrEmpty(tableCommand))
+                {
+                    SqliteCommand createTable = new SqliteCommand(tableCommand, db);
 
-                createTable.ExecuteReader();
+                    createTable.ExecuteReader();
+                }
                 db.Close();
             }
         }

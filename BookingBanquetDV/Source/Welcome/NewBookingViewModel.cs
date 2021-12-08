@@ -28,15 +28,12 @@ namespace BookingBanquetDV.Source.Welcome
         private DateTimeOffset _bookingDate;
         private BookingParameter _bookingParameter;
         private string _selecteConfirmation;
-        private bool _isValidationSuccess;
-        private ICommand _saveCommand;
-        private List<BookingDetails> _bookingDetailList;
+        private readonly ICommand _saveCommand;
         private DateTimeOffset _creationDate;
         private int _id;
         private string _photoName;
         private string _mobileNo;
         private string _emailId;
-        private bool _isEmailSent;
         private readonly ICommand _dialogLoadingCommand;
 
         public NewBookingViewModel()
@@ -69,37 +66,59 @@ namespace BookingBanquetDV.Source.Welcome
 
         private void SetBookingDetail(BookingDetails bookingDetails)
         {
-            _id = BookingParameter.BookingDetails.Id;
-            _customerName = bookingDetails.CustomerName;
-            _mobileNo = bookingDetails.MobileNo;
-            _emailId = bookingDetails.EmailId;
-            _bookingDate = bookingDetails.BookingDate.ConvertToDateTime();
-            _creationDate = bookingDetails.CreationDate.ConvertToDateTime();
-            _totalRooms = bookingDetails.TotalRooms;
-            _totalFlours = bookingDetails.TotalFlours;
-            _amount = bookingDetails.TotalAmount;
-            _advanced = bookingDetails.Advanced;
-            _balance = bookingDetails.Balance;
-            _selecteConfirmation = bookingDetails.Confirmation;
-            _photoName = bookingDetails.PhotoName;
+            if (BookingParameter != null && BookingParameter.BookingDetails != null)
+            {
+                _id = BookingParameter.BookingDetails.Id;
+                _customerName = BookingParameter.BookingDetails.CustomerName;
+                _mobileNo = BookingParameter.BookingDetails.MobileNo;
+                _emailId = BookingParameter.BookingDetails.EmailId;
+                _bookingDate = BookingParameter.BookingDetails.BookingDate.ConvertToDateTime();
+                _creationDate = BookingParameter.BookingDetails.CreationDate.ConvertToDateTime();
+                _totalRooms = BookingParameter.BookingDetails.TotalRooms;
+                _totalFlours = BookingParameter.BookingDetails.TotalFlours;
+                _amount = BookingParameter.BookingDetails.TotalAmount;
+                _advanced = BookingParameter.BookingDetails.Advanced;
+                _balance = BookingParameter.BookingDetails.Balance;
+                _selecteConfirmation = BookingParameter.BookingDetails.Confirmation;
+                _photoName = BookingParameter.BookingDetails.PhotoName;
 
-            OnPropertyChanged(() => CustomerName);
-            OnPropertyChanged(() => MobileNo);
-            OnPropertyChanged(() => EmailId);
-            OnPropertyChanged(() => BookingDate);
-            OnPropertyChanged(() => TotalRooms);
-            OnPropertyChanged(() => TotalFlours);
-            OnPropertyChanged(() => TotalAmount);
-            OnPropertyChanged(() => Balance);
-            OnPropertyChanged(() => SelecteConfirmation);
+                OnPropertyChanged(() => CustomerName);
+                OnPropertyChanged(() => MobileNo);
+                OnPropertyChanged(() => EmailId);
+                OnPropertyChanged(() => BookingDate);
+                OnPropertyChanged(() => TotalRooms);
+                OnPropertyChanged(() => TotalFlours);
+                OnPropertyChanged(() => TotalAmount);
+                OnPropertyChanged(() => Balance);
+                OnPropertyChanged(() => SelectConfirmation);
+            }
         }
 
         public void OnSaveNewBooking()
         {
             if (ValidateProperties())
-                _isValidationSuccess = true;
-            else
-                _isValidationSuccess = false;
+            {
+                if(_bookingParameter != null)
+                {
+                    _bookingParameter.BookingDetails = new BookingDetails
+                    {
+                        Advanced = _advanced,
+                        Balance = _balance,
+                        BookedBy = _bookedBy,
+                        BookingDate = _bookingDate.ConvertToString(ApplicationConstants.DatabaseDateFormat),
+                        Confirmation = _selecteConfirmation,
+                        CreationDate = _creationDate.ConvertToString(ApplicationConstants.DatabaseDateTimeFormat),
+                        CustomerName = _customerName,
+                        EmailId = _emailId,
+                        Id = _id,
+                        MobileNo = _mobileNo,
+                        PhotoName = _photoName ?? string.Empty,
+                        TotalAmount = _amount,
+                        TotalFlours = _totalFlours,
+                        TotalRooms = _totalRooms
+                    };
+                }
+            }
         }
 
         private void GetConfirmationList()
@@ -190,7 +209,7 @@ namespace BookingBanquetDV.Source.Welcome
             set => _bookingParameter = value;
         }
 
-        public string SelecteConfirmation
+        public string SelectConfirmation
         {
             get => _selecteConfirmation;
             set => _selecteConfirmation = value;
@@ -214,7 +233,8 @@ namespace BookingBanquetDV.Source.Welcome
 
         public ICommand SaveCommand => _saveCommand;
 
-        public bool IsValidationSuccess { get { return _isValidationSuccess; } }
-        public bool IsEmailSent { get { return _isEmailSent; } }
+        public bool IsValidationSuccess { get; }
+
+        public bool IsEmailSent { get; }
     }
 }

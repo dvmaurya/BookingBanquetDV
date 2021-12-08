@@ -16,6 +16,7 @@ using ViewModelsAndValidation.Command;
 using ViewModelsAndValidation.Services;
 using ViewModelsAndValidation.ViewModels;
 using Windows.ApplicationModel.Contacts;
+using Windows.UI.Xaml.Navigation;
 
 namespace BookingBanquetDV.Source.Recover
 {
@@ -62,18 +63,17 @@ namespace BookingBanquetDV.Source.Recover
         {
             if (ValidateProperties())
             {
-                Users users = new Users
+                UsersCred users = new UsersCred
                 {
                     Id = _userDetails[UsersEnum.Id.ConvertToString()].ToInt32(),
                     EmailId = _userDetails[UsersEnum.EmailId.ConvertToString()],
-                    FullName = _userDetails[UsersEnum.FullName.ConvertToString()],
                     UserId = _userDetails[UsersEnum.UserId.ConvertToString()],
                     Mobile = _userDetails[UsersEnum.Mobile.ConvertToString()],
                     Password = _password,
                     CreationDate = _userDetails[UsersEnum.CreationDate.ConvertToString()],
-                    IsActivate = _userDetails[UsersEnum.IsActivated.ConvertToString()] == "0"
+                    IsAdmin = _userDetails[UsersEnum.IsAdmin.ConvertToString()] == "0"
                                 ? false : true,
-                    PasswordChanged = _userDetails[UsersEnum.PasswordChanged.ConvertToString()].ToInt32() + 1
+                    PasswordChanged = _userDetails[UsersEnum.PasswordChanged.ConvertToString()].ToInt32() + 1,
                 };
 
                 bool isPasswordUpdated = _offlineDatabaseProvider.AddOrUpdateUsers(users);
@@ -95,11 +95,16 @@ namespace BookingBanquetDV.Source.Recover
             }
         }
 
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode navigationMode)
+        {
+            await base.OnNavigatedToAsync(parameter, navigationMode).ConfigureAwait(false);
+        }
+
         private async Task OnClickGetOTPAsync()
         {
             if (ValidateProperties())
             {
-                _userDetails = _offlineDatabaseProvider.GetDataForOTP(_emailId, _mobileNo);
+                _userDetails = _offlineDatabaseProvider.GetUserDetails(_emailId, _mobileNo);
 
                 if (_userDetails != null && _userDetails.Any())
                 {

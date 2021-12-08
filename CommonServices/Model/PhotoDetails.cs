@@ -11,19 +11,10 @@ namespace CommonServices.Model
         private BitmapImage _imageSource;
         private string _date;
 
-        public int PhotoId { get; set; }
-        public string PhotoName
-        {
-            get { return _photoName; }
-            set
-            {
-                _photoName = value;
-                OnPropertyChanged("PhotoName");
-            }
-        }
+        public int Id { get; set; }
         public string FileType { get; set; }
-        public long Size { get; set; }
-        public bool IsAvailable { get; set; }
+        public ulong Size { get; set; }
+        public string EmailId { get; set; }
 
         public string Date
         {
@@ -51,7 +42,18 @@ namespace CommonServices.Model
 
         public string LocalPhotoName
         {
-            get { return PhotoGuid.ConcatString(ApplicationConstants.FileFormat); }
+            get { return _photoName; }
+            set
+            {
+                _photoName = value;
+                OnPropertyChanged("PhotoName");
+            }
         }
+
+        public bool IsPhotoActive { get; set; }
+
+        public bool IsPhotoRemoved { get; set; }
+
+        public bool IsChecked { get; set; }
     }
 }

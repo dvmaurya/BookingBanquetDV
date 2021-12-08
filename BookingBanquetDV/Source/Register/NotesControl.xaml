@@ -15,8 +15,9 @@
             <TextBox
                 Name="addNotes"
                 Height="Auto"
-                Width="530"
+                MinWidth="415"
                 MinHeight="74"
+                MaxWidth="530"
                 HorizontalAlignment="Left"
                 AcceptsReturn="True"
                 GotFocus="ShowNotesLength"

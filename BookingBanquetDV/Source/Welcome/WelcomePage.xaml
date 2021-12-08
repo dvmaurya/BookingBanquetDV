@@ -11,9 +11,9 @@
             Margin="10,20"
             BorderBrush="LightGray"
             BorderThickness="1">
-            <Grid Margin="20,30">
+            <Grid Margin="20,10">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="50" />
+                    <RowDefinition Height="100" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
@@ -23,19 +23,44 @@
                     </Grid.RowDefinitions>
                     <Button
                         Grid.Row="0"
-                        VerticalAlignment="Top"
                         Background="#2596BE"
                         Command="{Binding NewBookingCommand}"
                         Content="Add New Booking"
                         Foreground="#FFFFFF" />
-                    <Button
-                        Grid.Row="0"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Top"
-                        Background="#2596BE"
-                        Command="{Binding LogoutCommand}"
-                        Content="Logout"
-                        Foreground="#FFFFFF" />
+                    <Grid Grid.Row="0" HorizontalAlignment="Right">
+                        <Button
+                            Margin="0,0,10,10"
+                            BorderBrush="Green"
+                            BorderThickness="1">
+                            <ToolTipService.ToolTip>
+                                <TextBlock Text="{Binding UsersPersonalDetail.FullName}" />
+                            </ToolTipService.ToolTip>
+                            <Grid>
+                                <Image Source="{Binding UsersPersonalDetail.ImageSource}" Visibility="{Binding UsersPersonalDetail.ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding UsersPersonalDetail.FullName}"
+                                    Visibility="{Binding UsersPersonalDetail.ImageSource, Converter={StaticResource VisibleWhenNullConverter}}" />
+                            </Grid>
+                            <Button.Flyout>
+                                <MenuFlyout Placement="Bottom">
+                                    <MenuFlyoutItem>
+                                        <MenuFlyoutItem.Template>
+                                            <ControlTemplate TargetType="MenuFlyoutItem">
+                                                <StackPanel Margin="10">
+                                                    <TextBlock Text="{Binding UsersPersonalDetail.FullName}" />
+                                                    <HyperlinkButton Command="{Binding ViewProfileCommand}" Content="View profile" />
+                                                    <HyperlinkButton Command="{Binding EditProfileCommand}" Content="Edit profile" />
+                                                    <HyperlinkButton Command="{Binding LogoutCommand}" Content="Logout" />
+                                                </StackPanel>
+                                            </ControlTemplate>
+                                        </MenuFlyoutItem.Template>
+                                    </MenuFlyoutItem>
+                                </MenuFlyout>
+                            </Button.Flyout>
+                        </Button>
+                    </Grid>
                     <Line
                         Grid.Row="1"
                         Stroke="Black"
@@ -252,7 +277,7 @@
                                             <HyperlinkButton
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
-                                                Command="{Binding DataContext.BookedByDetailCommand, ElementName=BookingList}"
+                                                Command="{Binding DataContext.ViewProfileCommand, ElementName=BookingList}"
                                                 CommandParameter="{Binding}"
                                                 Content="{Binding BookedBy}" />
                                         </Border>

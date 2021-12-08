@@ -31,7 +31,8 @@
                         Margin="0,0,0,20"
                         FontWeight="Bold"
                         Text="All fields are mandatory" />
-                    <StackPanel Margin="0,0,50,20">
+                    <StackPanel Margin="0,0,50,0">
+                        <TextBlock Text="Full name" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50" />
@@ -47,6 +48,7 @@
                             </Grid>
                             <TextBox
                                 Grid.Column="1"
+                                Background="#FFFFFF"
                                 IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
                                 PlaceholderText="Enter full name"
                                 Text="{Binding FullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -61,6 +63,7 @@
                             TextWrapping="Wrap" />
                     </StackPanel>
                     <StackPanel Margin="0,0,50,0">
+                        <TextBlock Text="Email id" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50" />
@@ -76,6 +79,7 @@
                             </Grid>
                             <TextBox
                                 Grid.Column="1"
+                                Background="#FFFFFF"
                                 IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
                                 PlaceholderText="Email id"
                                 Text="{Binding EmailId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -90,37 +94,23 @@
                             TextWrapping="Wrap" />
                     </StackPanel>
                     <StackPanel Margin="0,0,50,20">
+                        <TextBlock Text="Mobile number" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50" />
-                                <ColumnDefinition Width="70" />
-                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <Grid
                                 Grid.Column="0"
                                 Height="32"
-                                Margin="0,5,0,0"
+                                Margin="0,4,0,0"
                                 BorderBrush="Gray"
                                 BorderThickness="2,2,0,2">
                                 <Image Height="27" Source="ms-appx:///Assets/mobileNo.png" />
                             </Grid>
-                            <StackPanel Grid.Column="1" Margin="0,25,0,0">
-                                <commoncontrols:ComboBoxExt
-                                    Width="241"
-                                    IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
-                                    ItemsSource="{Binding PhoneCodeList}"
-                                    PlaceholderText="Code"
-                                    SelectedItem="{Binding SelectedPhoneCode, Mode=TwoWay}">
-                                    <interactivity:Interaction.Behaviors>
-                                        <behaviors:HighlightFormFieldOnErrors
-                                            HighlightStyleName="HighlightComboBoxStyle"
-                                            OriginalStyleName="BaseComboBoxStyle"
-                                            PropertyErrors="{Binding Errors[SelectedPhoneCode]}" />
-                                    </interactivity:Interaction.Behaviors>
-                                </commoncontrols:ComboBoxExt>
-                            </StackPanel>
-                            <StackPanel Grid.Column="2" Margin="0,21,0,0">
+                            <StackPanel Grid.Column="2">
                                 <TextBox
+                                    Background="#FFFFFF"
                                     InputScope="Number"
                                     IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
                                     MaxLength="10"
@@ -131,15 +121,16 @@
                                         <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[MobileNo]}" />
                                     </interactivity:Interaction.Behaviors>
                                 </TextBox>
-                                <TextBlock
-                                    Margin="0"
-                                    Style="{StaticResource ErrorMessageStyle}"
-                                    Text="{Binding Errors[MobileNo], Converter={StaticResource FirstErrorConverter}}"
-                                    TextWrapping="Wrap" />
                             </StackPanel>
                         </Grid>
+                        <TextBlock
+                            Grid.Row="1"
+                            Style="{StaticResource ErrorMessageStyle}"
+                            Text="{Binding Errors[MobileNo], Converter={StaticResource FirstErrorConverter}}"
+                            TextWrapping="Wrap" />
                     </StackPanel>
                     <StackPanel Margin="0,0,50,20">
+                        <TextBlock Text="Address" />
                         <controls1:NotesControl
                             x:Name="NotesText"
                             Grid.Column="1"
@@ -152,68 +143,123 @@
                             Text="{Binding Errors[Address], Converter={StaticResource FirstErrorConverter}}"
                             TextWrapping="Wrap" />
                     </StackPanel>
-                    <Grid Margin="0,0,50,20">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0">
-                            <commoncontrols:ComboBoxExt
-                                Width="177"
-                                DisplayMemberPath="Name"
-                                IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
-                                ItemsSource="{Binding CountryList}"
-                                PlaceholderText="Country"
-                                SelectedItem="{Binding SelectedCountry, Mode=TwoWay}">
-                                <interactivity:Interaction.Behaviors>
-                                    <behaviors:HighlightFormFieldOnErrors
-                                        HighlightStyleName="HighlightComboBoxStyle"
-                                        OriginalStyleName="BaseComboBoxStyle"
-                                        PropertyErrors="{Binding Errors[SelectedCountry]}" />
-                                    <core:EventTriggerBehavior EventName="SelectionChanged">
-                                        <core:EventTriggerBehavior.Actions>
-                                            <core:InvokeCommandAction Command="{Binding ChangedCountryCommand}" CommandParameter="{Binding SelectedCountry}" />
-                                        </core:EventTriggerBehavior.Actions>
-                                    </core:EventTriggerBehavior>
-                                </interactivity:Interaction.Behaviors>
-                            </commoncontrols:ComboBoxExt>
+                    <StackPanel Margin="0,0,50,20">
+                        <StackPanel>
+                            <TextBlock Text="Country" />
+                            <StackPanel Orientation="Horizontal">
+                                <Border
+                                    Width="490"
+                                    Margin="0,5,0,0"
+                                    Background="#FFFFFF"
+                                    BorderBrush="Gray"
+                                    BorderThickness="2">
+                                    <TextBlock
+                                        Margin="5"
+                                        Text="{Binding SelectedCountry.Name}"
+                                        TextWrapping="Wrap" />
+                                </Border>
+                                <HyperlinkButton
+                                    Margin="10,0,0,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Command="{Binding ChangedCountryCommand}"
+                                    IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}">
+                                    <Grid>
+                                        <FontIcon
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="30"
+                                            Foreground="#0078D7"
+                                            Glyph="&#xEC14;" />
+                                        <FontIcon
+                                            Margin="0,0,0,2"
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="15"
+                                            Foreground="White"
+                                            Glyph="&#xE710;" />
+                                    </Grid>
+                                </HyperlinkButton>
+                            </StackPanel>
                             <TextBlock
                                 Margin="0"
                                 Style="{StaticResource ErrorMessageStyle}"
                                 Text="{Binding Errors[SelectedCountry], Converter={StaticResource FirstErrorConverter}}"
                                 TextWrapping="Wrap" />
                         </StackPanel>
-                        <StackPanel Grid.Column="1">
-                            <commoncontrols:ComboBoxExt
-                                Width="177"
-                                DisplayMemberPath="Name"
-                                IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
-                                ItemsSource="{Binding StateList}"
-                                PlaceholderText="State"
-                                SelectedItem="{Binding SelectedState, Mode=TwoWay}"
-                                Visibility="{Binding IsStateVisible}">
-                                <interactivity:Interaction.Behaviors>
-                                    <core:EventTriggerBehavior EventName="SelectionChanged">
-                                        <core:EventTriggerBehavior.Actions>
-                                            <core:InvokeCommandAction Command="{Binding ChangedStateCommand}" CommandParameter="{Binding SelectedState}" />
-                                        </core:EventTriggerBehavior.Actions>
-                                    </core:EventTriggerBehavior>
-                                </interactivity:Interaction.Behaviors>
-                            </commoncontrols:ComboBoxExt>
+                        <StackPanel Visibility="{Binding IsStateVisible}">
+                            <TextBlock Text="State" />
+                            <StackPanel Orientation="Horizontal">
+                                <Border
+                                    Width="490"
+                                    Margin="0,5,0,0"
+                                    Background="#FFFFFF"
+                                    BorderBrush="Gray"
+                                    BorderThickness="2">
+                                    <TextBlock
+                                        Margin="5"
+                                        Text="{Binding SelectedState.Name}"
+                                        TextWrapping="Wrap" />
+                                </Border>
+                                <HyperlinkButton
+                                    Margin="10,0,0,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Command="{Binding ChangedStateCommand}"
+                                    IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}">
+                                    <Grid>
+                                        <FontIcon
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="30"
+                                            Foreground="#0078D7"
+                                            Glyph="&#xEC14;" />
+                                        <FontIcon
+                                            Margin="0,0,0,2"
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="15"
+                                            Foreground="White"
+                                            Glyph="&#xE710;" />
+                                    </Grid>
+                                </HyperlinkButton>
+                            </StackPanel>
                         </StackPanel>
-                        <StackPanel Grid.Column="2">
-                            <commoncontrols:ComboBoxExt
-                                Width="177"
-                                DisplayMemberPath="Name"
-                                IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
-                                ItemsSource="{Binding CityList}"
-                                PlaceholderText="City"
-                                SelectedItem="{Binding SelectedCity, Mode=TwoWay}"
-                                Visibility="{Binding IsCityVisible}" />
+                        <StackPanel Margin="0,15,0,10" Visibility="{Binding IsCityVisible}">
+                            <TextBlock Text="City" />
+                            <StackPanel Orientation="Horizontal">
+                                <Border
+                                    Width="490"
+                                    Margin="0,5,0,0"
+                                    Background="#FFFFFF"
+                                    BorderBrush="Gray"
+                                    BorderThickness="2">
+                                    <TextBlock
+                                        Margin="5"
+                                        Text="{Binding SelectedCity.Name}"
+                                        TextWrapping="Wrap" />
+                                </Border>
+                                <HyperlinkButton
+                                    Margin="10,0,0,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Command="{Binding ChangedCityCommand}"
+                                    IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}">
+                                    <Grid>
+                                        <FontIcon
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="30"
+                                            Foreground="#0078D7"
+                                            Glyph="&#xEC14;" />
+                                        <FontIcon
+                                            Margin="0,0,0,2"
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="15"
+                                            Foreground="White"
+                                            Glyph="&#xE710;" />
+                                    </Grid>
+                                </HyperlinkButton>
+                            </StackPanel>
                         </StackPanel>
-                    </Grid>
+                    </StackPanel>
                     <StackPanel Margin="0,0,50,20">
+                        <TextBlock Margin="0,0,0,5" Text="Password" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50" />
@@ -227,6 +273,7 @@
                             </Grid>
                             <PasswordBox
                                 Grid.Column="1"
+                                Background="#FFFFFF"
                                 IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
                                 Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 PlaceholderText="Password" />
@@ -237,6 +284,7 @@
                             TextWrapping="Wrap" />
                     </StackPanel>
                     <StackPanel Margin="0,0,50,20">
+                        <TextBlock Margin="0,0,0,5" Text="Confirm password" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50" />
@@ -250,6 +298,7 @@
                             </Grid>
                             <PasswordBox
                                 Grid.Column="1"
+                                Background="#FFFFFF"
                                 IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
                                 Password="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 PlaceholderText="Confirm password" />

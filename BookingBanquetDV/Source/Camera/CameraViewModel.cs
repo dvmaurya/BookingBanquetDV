@@ -1,4 +1,6 @@
-﻿using CommonServices.Model;
+﻿using CommonServices.ConstantData;
+using CommonServices.Extensions;
+using CommonServices.Model;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -7,6 +9,7 @@ using ViewModelsAndValidation.Command;
 using ViewModelsAndValidation.Services;
 using ViewModelsAndValidation.ViewModels;
 using Windows.Storage;
+using Windows.Storage.FileProperties;
 
 namespace BookingBanquetDV.Source.Camera
 {
@@ -44,24 +47,34 @@ namespace BookingBanquetDV.Source.Camera
         {
             _storeFile = await CameraUtility.OpenCameraAndCapturePhotoAsync();
 
-            if(_storeFile != null)
+            if (_storeFile != null)
             {
+                ulong photoSize = await GetCapturedPhotoSizeAsync(_storeFile);
                 _photoDetails = new PhotoDetails
                 {
                     StorageFile = _storeFile,
+                    Date = _storeFile.DateCreated.ConvertToString(
+                        ApplicationConstants.DatabaseDateTimeFormat),
+                    FileType = _storeFile.FileType,
+                    Size = photoSize,
                     ImageSource = await PhotoUtility.GetBitmapImageAsync(_storeFile),
-                    PhotoGuid = Guid.NewGuid().ToString().ToLower()
-            };
+                    PhotoGuid = Guid.NewGuid().ToString().ToLower(),
+                };
 
-                //PreviewPhoto previewPhoto = new PreviewPhoto(photoDetails);
-                //previewPhoto.PhotoCaptured +=
-                //    async (sender, eventArgs) => await OnPhotoCapturedCompleted(sender, eventArgs);
+                _photoDetails.LocalPhotoName = _photoDetails.PhotoGuid.ConcatString(ApplicationConstants.FileFormat);
+
                 await PhotoUtility.SavePhotoAsync(
                     _photoDetails.StorageFile,
                     _photoDetails.LocalPhotoName);
             }
 
             return _photoDetails;
+        }
+
+        private async Task<ulong> GetCapturedPhotoSizeAsync(StorageFile storeFile)
+        {
+            BasicProperties basicProperties = await _storeFile.GetBasicPropertiesAsync();
+            return basicProperties.Size;
         }
 
         public ICommand CameraClickCommand => _cameraClickCommand;

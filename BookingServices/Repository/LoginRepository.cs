@@ -1,9 +1,8 @@
 ﻿using BookingServices.Repository.Interface;
-using CommonServices.ConstantData;
 using CommonServices.Enums;
 using CommonServices.Extensions;
 using CommonServices.Logger;
-using CommonServices.Model;
+using CommonServices.Model.DbModel;
 using DataAccessLibrary;
 using DataAccessLibrary.DML;
 using Microsoft.Data.Sqlite;
@@ -47,7 +46,6 @@ namespace BookingServices.Repository
                         CommandText = InsertOrUpdate
                     };
 
-                    insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.UserName), loginDetail.UserName);
                     insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.UserId), loginDetail.UserId);
                     insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.IsRememberChecked), loginDetail.IsRememberChecked);
                     insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.NumberOfLogin), loginDetail.NumberOfLogin);
@@ -87,11 +85,10 @@ namespace BookingServices.Repository
                 while (query.Read())
                 {
                     entries.Add(nameof(LoginDetail.Id), query.GetString(0));
-                    entries.Add(nameof(LoginDetail.UserName), query.GetString(1));
-                    entries.Add(nameof(LoginDetail.UserId), query.GetString(2));
-                    entries.Add(nameof(LoginDetail.IsRememberChecked), query.GetString(3));
-                    entries.Add(nameof(LoginDetail.NumberOfLogin), query.GetString(4));
-                    entries.Add(nameof(LoginDetail.LastLogin), query.GetString(5));
+                    entries.Add(nameof(LoginDetail.UserId), query.GetString(1));
+                    entries.Add(nameof(LoginDetail.IsRememberChecked), query.GetString(2));
+                    entries.Add(nameof(LoginDetail.NumberOfLogin), query.GetString(3));
+                    entries.Add(nameof(LoginDetail.LastLogin), query.GetString(4));
                 }
 
                 db.Close();
@@ -108,9 +105,9 @@ namespace BookingServices.Repository
             {
                 string emailOrMobile = userName.All(char.IsDigit)
                     ?
-                    nameof(Users.Mobile)
+                    nameof(UsersCred.Mobile)
                     :
-                    nameof(Users.EmailId);
+                    nameof(UsersCred.EmailId);
 
                 _dbpath = DataAccess.GetDbPath();
 
@@ -127,12 +124,14 @@ namespace BookingServices.Repository
 
                     while (query.Read())
                     {
-                        foreach (UsersEnum users in Enum.GetValues(typeof(UsersEnum)))
-                        {
-                            if (!users.ConvertToString().FormatStringEquals(nameof(Users.Id)) &&
-                                !users.ConvertToString().FormatStringEquals(nameof(Users.Password)))
-                                entries.Add(users.ConvertToString(), query.GetString(users.ToInt32()));
-                        }
+                        entries.Add(nameof(UsersCred.Id), query.GetString(0));
+                        entries.Add(nameof(UsersCred.UserId), query.GetString(1));
+                        entries.Add(nameof(UsersCred.EmailId), query.GetString(2));
+                        entries.Add(nameof(UsersCred.Mobile), query.GetString(3));
+                        entries.Add(nameof(UsersCred.Password), query.GetString(4));
+                        entries.Add(nameof(UsersCred.CreationDate), query.GetString(5));
+                        entries.Add(nameof(UsersCred.IsAdmin), query.GetString(6));
+                        entries.Add(nameof(UsersCred.PasswordChanged), query.GetString(7));
                     }
 
                     db.Close();
@@ -159,11 +158,10 @@ namespace BookingServices.Repository
                 while (query.Read())
                 {
                     entries.Add(nameof(LoginDetail.Id), query.GetString(0));
-                    entries.Add(nameof(LoginDetail.UserName), query.GetString(1));
-                    entries.Add(nameof(LoginDetail.UserId), query.GetString(2));
-                    entries.Add(nameof(LoginDetail.IsRememberChecked), query.GetString(3));
-                    entries.Add(nameof(LoginDetail.NumberOfLogin), query.GetString(4));
-                    entries.Add(nameof(LoginDetail.LastLogin), query.GetString(5));
+                    entries.Add(nameof(LoginDetail.UserId), query.GetString(1));
+                    entries.Add(nameof(LoginDetail.IsRememberChecked), query.GetString(2));
+                    entries.Add(nameof(LoginDetail.NumberOfLogin), query.GetString(3));
+                    entries.Add(nameof(LoginDetail.LastLogin), query.GetString(4));
 
                     break;
                 }

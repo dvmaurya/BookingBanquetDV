@@ -1,8 +1,10 @@
 ﻿using BookingServices.Interfaces;
 using BookingServices.Repository.Interface;
+using CommonServices.Extensions;
 using CommonServices.Model;
 using System;
 using System.Collections.Generic;
+using DbModel = CommonServices.Model.DbModel;
 
 namespace BookingServices.DataProvider
 {
@@ -18,22 +20,29 @@ namespace BookingServices.DataProvider
 
         public void AddOrUpdateBooking(BookingDetails bookingDetails)
         {
-            _addBookingRepository.AddOrUpdateBooking(bookingDetails);
+            _addBookingRepository.AddOrUpdateBooking(bookingDetails.ToDbBookingDetails());
         }
 
         public void DeleteBooking(BookingDetails bookingDetails)
         {
-            _addBookingRepository.DeleteBookingAsync(bookingDetails);
+            _addBookingRepository.DeleteBookingAsync(bookingDetails.ToDbBookingDetails());
         }
 
         public IList<BookingDetails> GetAllBookings()
         {
-            return _addBookingRepository.GetAllBookings();
+            IList<DbModel.BookingDetails> getAllbooking = _addBookingRepository.GetAllBookings();
+            IList<BookingDetails> bookingDetailList = new List<BookingDetails>();
+
+            foreach (DbModel.BookingDetails getBooking in getAllbooking)
+                bookingDetailList.Add(getBooking.ToBookingDetails());
+
+            return bookingDetailList;
         }
 
-        public BookingDetails GetBooking(int id)
+        public BookingDetails GetBookingById(int id)
         {
-            return _addBookingRepository.GetBooking(id);
+            var GetBooking = _addBookingRepository.GetBookingById(id);
+            return GetBooking.ToBookingDetails();
         }
     }
 }

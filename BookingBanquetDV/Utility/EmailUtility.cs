@@ -53,9 +53,9 @@ namespace BookingBanquetDV.Utility
 
                 message.Body = new TextPart("plain")
                 {
-                    Text = "Hi " + emailParameter.UserName + ", " +
-                    "\r\r\tYour One Time Password for your account creation is: " + emailParameter.Otp +
-                    "\r\rThanks and regards\nAdmin"
+                    Text = "Hi ".ConcatString(emailParameter.UserName, ", ",
+                    "\r\r\tYour One Time Password for your account creation is: ", emailParameter.Otp,
+                    "\r\rThanks and regards\nAdmin")
                 };
             }
             else if (emailParameter.IsRecovery)
@@ -64,9 +64,9 @@ namespace BookingBanquetDV.Utility
 
                 message.Body = new TextPart("plain")
                 {
-                    Text = "Hi " + emailParameter.UserName + ", " +
-                    "\r\r\tYour One Time Password for recover your account password is: " + emailParameter.Otp +
-                    "\r\rThanks and regards\nAdmin"
+                    Text = "Hi ".ConcatString(emailParameter.UserName, ", ",
+                    "\r\r\tYour One Time Password for recover your account password is: ", emailParameter.Otp,
+                    "\r\rThanks and regards\nAdmin")
                 };
             }
             else if (emailParameter.BookingDetails != null)
@@ -75,43 +75,43 @@ namespace BookingBanquetDV.Utility
 
                 BodyBuilder builder = new BodyBuilder
                 {
-                    TextBody = "Hi " + emailParameter.UserName + ", " +
-                    "\r\r\tCongrats!!. Your booking has done successfully. \r\rYour booking details are following:" +
-                    "\r\r\tYour mobile number: " + emailParameter.BookingDetails.MobileNo +
-                    "\r\tYour email id: " + emailParameter.BookingDetails.EmailId +
-                    "\r\tBooking date: " + emailParameter.BookingDetails.BookingDate +
-                    "\r\tBooked by: " + emailParameter.BookingDetails.BookedBy +
-                    "\r\tTotal room: " + emailParameter.BookingDetails.TotalRooms +
-                    "\r\tTotal flour: " + emailParameter.BookingDetails.TotalFlours +
-                    "\r\tTotal amount: " + emailParameter.BookingDetails.TotalAmount +
-                    "\r\tAdvance given by you: " + emailParameter.BookingDetails.Advanced +
-                    "\r\tRemaining balance: " + emailParameter.BookingDetails.Balance +
-                    "\r\tConfirmation: " + emailParameter.BookingDetails.Confirmation +
-                    "\r\rThanks and regards\nAdmin"
+                    TextBody = "Hi ".ConcatString(emailParameter.UserName, ", ",
+                    "\r\r\tCongrats!!. Your booking has done successfully. \r\rYour booking details are following:",
+                    "\r\r\tYour mobile number: ", emailParameter.BookingDetails.MobileNo,
+                    "\r\tYour email id: ", emailParameter.BookingDetails.EmailId,
+                    "\r\tBooking date: ", emailParameter.BookingDetails.BookingDate,
+                    "\r\tBooked by: ", emailParameter.BookingDetails.BookedBy, 
+                    "\r\tTotal room: ", emailParameter.BookingDetails.TotalRooms,
+                    "\r\tTotal flour: ", emailParameter.BookingDetails.TotalFlours,
+                    "\r\tTotal amount: ", emailParameter.BookingDetails.TotalAmount,
+                    "\r\tAdvance given by you: ", emailParameter.BookingDetails.Advanced,
+                    "\r\tRemaining balance: ", emailParameter.BookingDetails.Balance,
+                    "\r\tConfirmation: ", emailParameter.BookingDetails.Confirmation,
+                    "\r\rThanks and regards\nAdmin")
                 };
 
                 builder = await AddAttachment(emailParameter.BookingDetails.PhotoName, builder);
                 message.Body = builder.ToMessageBody();
             }
-            else if (emailParameter.Users != null)
+            else if (emailParameter.UsersCred != null && emailParameter.UsersPersonalDetail != null)
             {
                 message.Subject = EmailConstants.AccountCreation;
 
                 BodyBuilder builder = new BodyBuilder
                 {
-                    TextBody = "Hi " + emailParameter.UserName + ", " +
-                    "\r\r\tCongrats!!. Your account has been created successfully. \r\rYour account details are following:" +
-                    "\r\r\tYour mobile number: " + emailParameter.Users.PhoneCode.ConcatString(emailParameter.Users.Mobile) +
-                    "\r\tYour email id: " + emailParameter.Users.EmailId +
-                    "\r\tYour address: " + emailParameter.Users.Address +
-                    ", country: " + emailParameter.Users.Country +
-                    ", state: " + emailParameter.Users.State +
-                    ", city: " + emailParameter.Users.City +
-                    "\r\tYour account is active and created on " + emailParameter.Users.CreationDate +
-                    "\r\rThanks and regards\nAdmin"
+                    TextBody = "Hi ".ConcatString(emailParameter.UserName, ", ",
+                    "\r\r\tCongrats!!. Your account has been created successfully. \r\rYour account details are following:",
+                    "\r\r\tYour mobile number: ", emailParameter.UsersCred.Mobile,
+                    "\r\tYour email id: ", emailParameter.UsersPersonalDetail.EmailId,
+                    "\r\tYour address: ", emailParameter.UsersPersonalDetail.Address,
+                    ", country: ", emailParameter.UsersPersonalDetail.Country ?? string.Empty,
+                    ", state: ", emailParameter.UsersPersonalDetail.State ?? string.Empty,
+                    ", city: ", emailParameter.UsersPersonalDetail.City ?? string.Empty,
+                    "\r\tYour account is active and created on ", emailParameter.UsersCred.CreationDate,
+                    "\r\rThanks and regards\nAdmin")
                 };
 
-                builder = await AddAttachment(emailParameter.Users.PhotoName, builder);
+                builder = await AddAttachment(emailParameter.PhotoDetails.LocalPhotoName, builder);
                 message.Body = builder.ToMessageBody();
             }
 

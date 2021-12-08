@@ -131,6 +131,7 @@
     <Compile Include="Behavior\Behaviores.cs" />
     <Compile Include="Behavior\HighlightFormFieldOnErrors.cs" />
     <Compile Include="Behavior\NumericTextBoxBehavior.cs" />
+    <Compile Include="Converters\ByteToMegabyteVisibilityConverter.cs" />
     <Compile Include="Converters\FirstErrorConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\NotBooleanToVisibilityConverter.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="Converters\VisibleWhenNonzeroConverter.cs" />
     <Compile Include="Converters\VisibleWhenNotEmptyStringConverter.cs" />
     <Compile Include="Converters\VisibleWhenNotNullConverter.cs" />
+    <Compile Include="Converters\VisibleWhenNullConverter.cs" />
     <Compile Include="Converters\VisibleWhenZeroConverter.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Initiator.cs" />
@@ -159,6 +161,9 @@
     </Compile>
     <Compile Include="Source\CommonControls\LoadingIndicator.xaml.cs">
       <DependentUpon>LoadingIndicator.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\CommonControls\SingleSelectorDialog.xaml.cs">
+      <DependentUpon>SingleSelectorDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Login\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
@@ -182,10 +187,17 @@
       <DependentUpon>Signup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Register\SignupViewModel.cs" />
-    <Compile Include="Source\Welcome\Controls\UserDetailView.xaml.cs">
-      <DependentUpon>UserDetailView.xaml</DependentUpon>
+    <Compile Include="Source\Welcome\Controls\AllProfilePhoto.xaml.cs">
+      <DependentUpon>AllProfilePhoto.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Welcome\Controls\AllProfilePhotoViewModel.cs" />
+    <Compile Include="Source\Welcome\Controls\ViewUserDetail.xaml.cs">
+      <DependentUpon>ViewUserDetail.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Welcome\Controls\UserDetailViewModel.cs" />
+    <Compile Include="Source\Welcome\EditUserDetailPage.xaml.cs">
+      <DependentUpon>EditUserDetailPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Welcome\Model\NewBookingOption.cs" />
     <Compile Include="Source\Welcome\NewBooking.xaml.cs">
       <DependentUpon>NewBooking.xaml</DependentUpon>
@@ -196,8 +208,11 @@
     </Compile>
     <Compile Include="Source\Welcome\WelcomeViewModel.cs" />
     <Compile Include="Utility\AddBookingEventArgs.cs" />
+    <Compile Include="Utility\ByteConverter.cs" />
     <Compile Include="Utility\ComboBoxExt.cs" />
     <Compile Include="Utility\EmailUtility.cs" />
+    <Compile Include="Utility\SingleSelectionUtility.cs" />
+    <Compile Include="Utility\UserDetailEventArgs.cs" />
     <Compile Include="Validation\DateRequiredAttribute.cs" />
     <Compile Include="Validation\EmailValidationAttribute.cs" />
     <Compile Include="Validation\MobileNoValidationAttribute.cs" />
@@ -218,7 +233,6 @@
     <Content Include="Assets\background.jpg" />
     <Content Include="Assets\email.jpg" />
     <Content Include="Assets\EYE_UWP.png" />
-    <Content Include="Assets\ff5cffea-1731-42e2-b26a-3e7064365b8d.jpeg" />
     <Content Include="Assets\mobileNo.png" />
     <Content Include="Assets\password.png" />
     <Content Include="Assets\username.png" />
@@ -248,6 +262,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Source\CommonControls\SingleSelectorDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Source\Login\LoginPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -272,7 +290,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Source\Welcome\Controls\UserDetailView.xaml">
+    <Page Include="Source\Welcome\Controls\AllProfilePhoto.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Welcome\Controls\ViewUserDetail.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Welcome\EditUserDetailPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

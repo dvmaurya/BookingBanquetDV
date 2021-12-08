@@ -41,14 +41,13 @@ namespace BookingBanquetDV.Source.Login
                 
                 if(_userDetail != null && _userDetail.Any())
                 {
-                    if (_userDetail[UsersEnum.IsActivated.ConvertToString()] == "0")
+                    if (_userDetail[UsersEnum.IsAdmin.ConvertToString()] == "0")
                     {
                         _isLoginSuccess = true;
                         _loginDetail = new LoginDetail
                         {
                             IsRememberChecked = mainView.IsRememberChecked,
                             UserId = mainView.UserId,
-                            UserName = _userDetail[UsersEnum.FullName.ConvertToString()],
                             NumberOfLogin = "1",
                             LastLogin = DateTime.Now.ConvertToString(
                                 ApplicationConstants.DatabaseDateTimeFormat)

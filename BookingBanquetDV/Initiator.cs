@@ -36,14 +36,16 @@ namespace BookingBanquetDV
             DIContainer.RegisterType<IEncryptionProvider, EncryptionProvider>();
             DIContainer.RegisterType<IBookingDataProvider, BookingDataProvider>();
             DIContainer.RegisterType<ICountryDataProvider, CountryDataProvider>();
+            DIContainer.RegisterType<IUsersPersonalDetailDataProvider, UsersPersonalDetailDataProvider>();
+            DIContainer.RegisterType<IPhotoDetailDataProvider, PhotoDetailDataProvider>();
 
-            DIContainer.RegisterType<IUserRepository, UserRepository>();
+            DIContainer.RegisterType<IUserCredRepository, UserCredRepository>();
+            DIContainer.RegisterType<IUsersPersonalDetailRepository, UsersPersonalDetailRepository>();
             DIContainer.RegisterType<ILoginRepository, LoginRepository>();
             DIContainer.RegisterType<IBookingRepository, BookingRepository>();
             DIContainer.RegisterType<IEncryptionProvider, EncryptionProvider>();
             DIContainer.RegisterType<ICountryRepository, CountryRepository>();
-            DIContainer.RegisterType<IStateRepository, StateRepository>();
-            DIContainer.RegisterType<ICityRepository, CityRepository>();
+            DIContainer.RegisterType<IPhotoDetailRepository, PhotoDetailRepository>();
             DIContainer.RegisterSingletonType<IDbContext, SQLiteContext>(
                  new InjectionConstructor(
                      Path.Combine(ApplicationData.Current.LocalFolder.Path, "Banquet.sqlite"),

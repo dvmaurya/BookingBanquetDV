@@ -1,7 +1,8 @@
 ﻿using SQLite.Net.Attributes;
-namespace CommonServices.Model
+
+namespace CommonServices.Model.DbModel
 {
-    public class Users
+    public class UsersCred
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -11,13 +12,7 @@ namespace CommonServices.Model
         public string Mobile { get; set; }
         public string Password { get; set; }
         public string CreationDate { get; set; }
-        public bool IsActivate { get; set; }
+        public bool IsAdmin { get; set; }
         public int PasswordChanged { get; set; }
-        public string PhoneCode { get; set; }
-        public string Address { get; set; }
-        public string Country { get; set; }
-        public string State { get; set; }
-        public string City { get; set; }
-        public string PhotoName { get; set; }
     }
 }

@@ -50,7 +50,7 @@ namespace BookingBanquetDV.Source.Camera
                         title: string.Empty,
                         content: ApplicationConstants.UnableToSavePhoto);
 
-                    FileLogger.Logger.Info("Exception: ".ConcatString(ex.Message));
+                    FileLogger.Logger.Info("Save Photo Exception: ".ConcatString(ex.Message));
                 }
             }
         }

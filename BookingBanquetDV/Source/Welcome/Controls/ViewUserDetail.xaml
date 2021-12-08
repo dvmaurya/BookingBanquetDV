@@ -1,5 +1,5 @@
 ﻿<ContentDialog
-    x:Class="BookingBanquetDV.Source.Welcome.Controls.UserDetailView"
+    x:Class="BookingBanquetDV.Source.Welcome.Controls.ViewUserDetail"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -10,7 +10,7 @@
     PrimaryButtonText="Close"
     mc:Ignorable="d">
     <ScrollViewer x:Name="rootScrollViewer" VerticalScrollBarVisibility="Auto">
-        <Grid VerticalAlignment="Top" Style="{StaticResource UserDetailMainGridStyle}">
+        <Grid VerticalAlignment="Top">
             <Grid.RowDefinitions>
                 <RowDefinition Height="11" />
                 <RowDefinition Height="Auto" />
@@ -48,7 +48,7 @@
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="1"
-                Text="{Binding Users.FullName}"
+                Text="{Binding UsersPersonalDetail.FullName}"
                 TextWrapping="Wrap" />
             <Line
                 Grid.Row="2"
@@ -68,7 +68,7 @@
             <TextBlock
                 Grid.Row="3"
                 Grid.Column="1"
-                Text="{Binding Users.EmailId}" />
+                Text="{Binding UsersPersonalDetail.EmailId}" />
             <Line
                 Grid.Row="4"
                 Grid.Column="0"
@@ -88,7 +88,7 @@
                 Grid.Row="5"
                 Grid.Column="1"
                 TextWrapping="Wrap">
-                <Run Text="{Binding Users.PhoneCode}" /><Run Text="{Binding Users.Mobile}" />
+                <Run Text="{Binding UsersPersonalDetail.PhoneCode}" /><Run Text="{Binding UsersPersonalDetail.Mobile}" />
             </TextBlock>
             <Line
                 Grid.Row="6"
@@ -104,12 +104,16 @@
             <TextBlock
                 Grid.Row="7"
                 Grid.Column="0"
-                Text="Account created on" />
+                Text="Address" />
             <TextBlock
                 Grid.Row="7"
                 Grid.Column="1"
-                Text="{Binding Users.CreationDate}"
-                TextWrapping="Wrap" />
+                TextWrapping="Wrap">
+                <Run Text="{Binding UsersPersonalDetail.Address}" /><Run Text="," />
+                <Run Text="{Binding UsersPersonalDetail.Country}" /><Run Text="," />
+                <Run Text="{Binding UsersPersonalDetail.State}" /><Run Text="," />
+                <Run Text="{Binding UsersPersonalDetail.City}" />
+            </TextBlock>
             <Line
                 Grid.Row="8"
                 Grid.Column="0"
@@ -121,41 +125,27 @@
                 X2="540"
                 Y1="0"
                 Y2="0" />
-            <TextBlock
-                Grid.Row="9"
-                Grid.Column="0"
-                Text="Address" />
-            <TextBlock
-                Grid.Row="9"
-                Grid.Column="1"
-                TextWrapping="Wrap">
-                <Run Text="{Binding Users.Address}" /><Run Text="," />
-                <Run Text="{Binding Users.Country}" /><Run Text="," />
-                <Run Text="{Binding Users.State}" /><Run Text="," />
-                <Run Text="{Binding Users.City}" />
-            </TextBlock>
-            <Line
-                Grid.Row="10"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"
-                Margin="0,10,0,10"
-                Stroke="LightGray"
-                StrokeThickness="1"
-                X1="0"
-                X2="540"
-                Y1="0"
-                Y2="0" />
             <StackPanel
-                Grid.Row="11"
+                Grid.Row="9"
                 Grid.Column="0"
                 Grid.ColumnSpan="2">
-                <TextBlock Text="Your photo" />
-                <Image
-                    x:Name="previewImage"
-                    Height="400"
-                    Margin="0,10,0,0"
-                    Source="{Binding ImageSource, Mode=TwoWay}"
-                    Stretch="Fill" />
+                <TextBlock Text="Profile photo" />
+                <Grid>
+                    <Image
+                        x:Name="previewImage"
+                        Height="400"
+                        Margin="0,10,0,0"
+                        Source="{Binding UsersPersonalDetail.ImageSource}"
+                        Stretch="Fill"
+                        Visibility="{Binding UsersPersonalDetail.ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
+                    <TextBlock
+                        Margin="0,30,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Foreground="LightGray"
+                        Text="Photo not available"
+                        Visibility="{Binding UsersPersonalDetail.ImageSource, Converter={StaticResource VisibleWhenNullConverter}}" />
+                </Grid>
             </StackPanel>
         </Grid>
     </ScrollViewer>

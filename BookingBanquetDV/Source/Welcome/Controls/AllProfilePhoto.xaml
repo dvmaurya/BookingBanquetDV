@@ -1,0 +1,98 @@
+﻿<ContentDialog
+    x:Class="BookingBanquetDV.Source.Welcome.Controls.AllProfilePhoto"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Choose profile pic"
+    Width="700"
+    Loading="ContentDialog_Loading"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    PrimaryButtonText="Done"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+    SecondaryButtonText="Cancel"
+    mc:Ignorable="d">
+    <Grid Margin="0,10,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="42" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid
+            Grid.Row="0"
+            Background="#E0E0E0"
+            Visibility="{Binding PhotoDetailList, Converter={StaticResource VisibleWhenNotNullConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="120" />
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0">
+                <TextBlock
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontWeight="SemiBold"
+                    Text="Photo" />
+            </Border>
+            <Border Grid.Column="2">
+                <TextBlock
+                    Margin="0,0,10,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    FontWeight="SemiBold"
+                    Text="Captured on" />
+            </Border>
+        </Grid>
+        <ListView
+            Name="MultiselectlistView"
+            Grid.Row="1"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            ItemsSource="{Binding PhotoDetailList, Mode=TwoWay}"
+            SelectionMode="None">
+            <ListView.Header>
+                <Border Margin="20,20,0,0" Visibility="{Binding PhotoDetailList, Converter={StaticResource VisibleWhenNullConverter}}">
+                    <TextBlock Text="No photo(s) available" />
+                </Border>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="-12,0,-12,0">
+                        <RadioButton
+                            Command="{Binding DataContext.IsCheckedCommand, ElementName=MultiselectlistView}"
+                            CommandParameter="{Binding}"
+                            GroupName="Photo"
+                            IsChecked="{Binding IsChecked, Mode=TwoWay}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="80" />
+                                </Grid.ColumnDefinitions>
+                                <Image
+                                    Grid.Column="0"
+                                    Margin="10,0,10,10"
+                                    Source="{Binding ImageSource}"
+                                    Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
+                                <Grid Grid.Column="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock
+                                        Grid.Row="0"
+                                        VerticalAlignment="Top"
+                                        FontSize="14"
+                                        Text="{Binding Date}"
+                                        TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="1">
+                                        <Run Text="Size:" />
+                                        <Run Text="{Binding Size, Converter={StaticResource ByteToMegabyteVisibilityConverter}}" />
+                                    </TextBlock>
+                                </Grid>
+                            </Grid>
+                        </RadioButton>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</ContentDialog>

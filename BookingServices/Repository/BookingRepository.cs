@@ -2,7 +2,7 @@
 using CommonServices.ConstantData;
 using CommonServices.Extensions;
 using CommonServices.Logger;
-using CommonServices.Model;
+using CommonServices.Model.DbModel;
 using DataAccessLibrary;
 using DataAccessLibrary.DML;
 using Microsoft.Data.Sqlite;
@@ -120,7 +120,7 @@ namespace BookingServices.Repository
             return bookingDetails;
         }
 
-        public BookingDetails GetBooking(int id)
+        public BookingDetails GetBookingById(int id)
         {
             throw new NotImplementedException();
         }

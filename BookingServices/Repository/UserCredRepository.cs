@@ -2,7 +2,7 @@
 using CommonServices.Enums;
 using CommonServices.Extensions;
 using CommonServices.Logger;
-using CommonServices.Model;
+using CommonServices.Model.DbModel;
 using DataAccessLibrary;
 using DataAccessLibrary.DML;
 using Microsoft.Data.Sqlite;
@@ -12,19 +12,18 @@ using System.Linq;
 
 namespace BookingServices.Repository
 {
-    public class UserRepository : IUserRepository
+    public class UserCredRepository : IUserCredRepository
     {
         private string _dbpath;
         private static string _fileName = "Filename={0}";
 
-        public bool AddOrUpdateUsers(Users users)
+        public bool AddOrUpdateUsersCred(UsersCred usersCred)
         {
             try
             {
-                string insertOrUpdate = string.Empty;
                 _dbpath = DataAccess.GetDbPath();
 
-                insertOrUpdate = users.Id == 0
+                string insertOrUpdate = usersCred.Id == 0
                     ?
                     SignupQuery.InsertInSignup
                     :
@@ -40,21 +39,15 @@ namespace BookingServices.Repository
                         CommandText = insertOrUpdate
                     };
 
-                    insertCommand.Parameters.AddWithValue("@" + nameof(users.UserId), users.UserId);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(users.FullName), users.FullName);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(users.EmailId), users.EmailId);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(users.Mobile), users.Mobile);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(users.Password), users.Password);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(users.CreationDate), users.CreationDate);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(users.IsActivate), users.IsActivate);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(users.PasswordChanged), users.PasswordChanged);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(users.PhoneCode), users.PhoneCode);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(users.Address), users.Address);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(users.Country), users.Country);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(users.State), users.State);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(users.City), users.City);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(users.PhotoName), users.PhotoName);
-
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.UserId), usersCred.UserId);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.FullName), usersCred.FullName);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.EmailId), usersCred.EmailId);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.Mobile), usersCred.Mobile);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.Password), usersCred.Password);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.CreationDate), usersCred.CreationDate);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.IsAdmin), usersCred.IsAdmin);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.PasswordChanged), usersCred.PasswordChanged);
+                    
                     insertCommand.ExecuteReader();
                     db.Close();
 
@@ -98,7 +91,7 @@ namespace BookingServices.Repository
             return entries;
         }
 
-        public IDictionary<string, string> GetDataForOTP(string emailId, string mobileNo)
+        public IDictionary<string, string> GetUserDetails(string emailId, string mobileNo)
         {
             IDictionary<string, string> entries = new Dictionary<string, string>();
 
@@ -129,17 +122,17 @@ namespace BookingServices.Repository
             return entries;
         }
 
-        public Users GetUsersDetail(string userId)
+        public UsersCred GetUsersDetail(string userId)
         {
-            Users users = new Users();
+            UsersCred users = new UsersCred();
 
             if (userId != null)
             {
                 string emailOrMobile = userId.All(char.IsDigit)
                     ?
-                    nameof(Users.Mobile)
+                    nameof(UsersCred.Mobile)
                     :
-                    nameof(Users.EmailId);
+                    nameof(UsersCred.EmailId);
 
                 _dbpath = DataAccess.GetDbPath();
 
@@ -148,7 +141,7 @@ namespace BookingServices.Repository
                     db.Open();
 
                     SqliteCommand selectCommand = new SqliteCommand
-                        (SignupQuery.GetUserDetailBuUserId.
+                        (SignupQuery.GetUserDetailByUserId.
                         FormatString(emailOrMobile, userId), db);
 
                     SqliteDataReader query = selectCommand.ExecuteReader();
@@ -160,12 +153,6 @@ namespace BookingServices.Repository
                         users.EmailId = query.GetString(2);
                         users.Mobile = query.GetString(3);
                         users.CreationDate = query.GetString(4);
-                        users.PhoneCode = query.GetString(5);
-                        users.Address = query.GetString(6);
-                        users.Country = query.GetString(7);
-                        users.State = query.GetString(8);
-                        users.City = query.GetString(9);
-                        users.PhotoName = query.GetString(10);
                     }
 
                     db.Close();

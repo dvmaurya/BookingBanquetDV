@@ -16,7 +16,7 @@ namespace CommonServices.Utilities
 {
     public static class GoogleAPI
     {
-        public static async Task SendToGoogleAPIAsync(Users users)
+        public static async Task SendToGoogleAPIAsync(UsersCred users)
         {
             // If modifying these scopes, delete your previously saved credentials
             // at ~/.credentials/drive-dotnet-quickstart.json

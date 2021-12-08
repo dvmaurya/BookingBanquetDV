@@ -1,4 +1,4 @@
-﻿using CommonServices.Model;
+﻿using CommonServices.Model.DbModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,7 +8,7 @@ namespace BookingServices.Repository.Interface
     {
         void AddOrUpdateBooking(BookingDetails bookingDetails);
         IList<BookingDetails> GetAllBookings();
-        BookingDetails GetBooking(int id);
+        BookingDetails GetBookingById(int id);
         Task DeleteBookingAsync(BookingDetails bookingDetails);
     }
 }

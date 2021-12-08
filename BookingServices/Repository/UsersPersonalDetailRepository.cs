@@ -1,0 +1,129 @@
+﻿using BookingServices.Repository.Interface;
+using CommonServices.ConstantData;
+using CommonServices.Extensions;
+using CommonServices.Logger;
+using CommonServices.Model.DbModel;
+using DataAccessLibrary;
+using DataAccessLibrary.DML;
+using Microsoft.Data.Sqlite;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.Storage;
+
+namespace BookingServices.Repository
+{
+    public class UsersPersonalDetailRepository : IUsersPersonalDetailRepository
+    {
+        private string _dbpath;
+        private static string _fileName = "Filename={0}";
+
+        public bool AddOrUpdateUsersPersonalDetail(UsersPersonalDetail usersPersonalDetail)
+        {
+            try
+            {
+                string insertOrUpdate = string.Empty;
+                _dbpath = DataAccess.GetDbPath();
+
+                insertOrUpdate = usersPersonalDetail.Id == 0
+                    ?
+                    UsersPersonalDetailQuery.InsertInUsersPersonalDetail
+                    :
+                    UsersPersonalDetailQuery.UpdateInUsersPersonalDetail;
+
+                using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
+                {
+                    db.Open();
+
+                    SqliteCommand insertCommand = new SqliteCommand
+                    {
+                        Connection = db,
+                        CommandText = insertOrUpdate
+                    };
+
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.FullName), usersPersonalDetail.FullName);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.EmailId), usersPersonalDetail.EmailId);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.Mobile), usersPersonalDetail.Mobile);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.Address), usersPersonalDetail.Address);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.Country), usersPersonalDetail.Country);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.State), usersPersonalDetail.State ?? string.Empty);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.City), usersPersonalDetail.City ?? string.Empty);
+
+                    insertCommand.ExecuteReader();
+                    db.Close();
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLogger.Logger.Info("User personal detail Exception: ".ConcatString(ex.Message));
+                return false;
+            }
+        }
+
+        public async Task DeletePhotoFromFolderAsync(string photoName)
+        {
+            if (!string.IsNullOrEmpty(photoName))
+            {
+                StorageFolder localfolder =
+                    await ApplicationData.Current.LocalFolder.GetFolderAsync(ApplicationConstants.Document);
+
+                if (await localfolder.TryGetItemAsync(photoName) != null)
+                {
+                    StorageFile file = await localfolder.GetFileAsync(photoName);
+                    await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                }
+            }
+        }
+
+        public UsersPersonalDetail GetUsersPersonalDetail(string userId)
+        {
+            UsersPersonalDetail usersPersonalDetail = null;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                string emailOrMobile = userId.All(char.IsDigit)
+                    ?
+                    nameof(UsersCred.Mobile)
+                    :
+                    nameof(UsersCred.EmailId);
+
+                _dbpath = DataAccess.GetDbPath();
+
+                using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
+                {
+                    db.Open();
+
+                    SqliteCommand selectCommand = new SqliteCommand
+                    (
+                        UsersPersonalDetailQuery.GetUsersPersonalDetailByUserId.FormatString(emailOrMobile, userId),
+                        db
+                    );
+
+                    SqliteDataReader query = selectCommand.ExecuteReader();
+
+                    while (query.Read())
+                    {
+                        usersPersonalDetail = new UsersPersonalDetail
+                        {
+                            Id = query.GetString(0).ToInt32(),
+                            FullName = query.GetString(1),
+                            EmailId = query.GetString(2),
+                            Mobile = query.GetString(3),
+                            Address = query.GetString(4),
+                            Country = query.GetString(5),
+                            State = query.GetString(6),
+                            City = query.GetString(7)
+                        };
+
+                    }
+
+                    db.Close();
+                }
+            }
+
+            return usersPersonalDetail;
+        }
+    }
+}

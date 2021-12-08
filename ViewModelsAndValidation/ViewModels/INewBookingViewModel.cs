@@ -22,7 +22,7 @@ namespace ViewModelsAndValidation.ViewModels
         DateTimeOffset MaxDate { get; set; }
         DateTimeOffset MinDateTime { get; set; }
         ICommand DialogLoadingCommand { get; }
-        string SelecteConfirmation { get; set; }
+        string SelectConfirmation { get; set; }
         string MobileNo { get; set; }
         string EmailId { get; set; }
         string PhotoName { get; }

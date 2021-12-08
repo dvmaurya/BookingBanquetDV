@@ -3,6 +3,7 @@ using BookingBanquetDV.Source.Welcome.Controls;
 using BookingBanquetDV.Utility;
 using BookingServices.Interfaces;
 using CommonServices.ConstantData;
+using CommonServices.Enums;
 using CommonServices.Extensions;
 using CommonServices.Model;
 using System;
@@ -17,6 +18,7 @@ using ViewModelsAndValidation.ViewModels;
 using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
+using DBModel = CommonServices.Model.DbModel;
 
 namespace BookingBanquetDV.Source.Welcome
 {
@@ -31,7 +33,9 @@ namespace BookingBanquetDV.Source.Welcome
         private ICameraViewModel _cameraViewModel;
         private bool _isViewBooking;
         private bool _isEditBooking;
-        private readonly ICommand _bookedByDetailCommand;
+        private UsersPersonalDetail _usersPersonalDetail;
+        private readonly ICommand _editProfileCommand;
+        private readonly ICommand _viewProfileCommand;
         private readonly ICommand _cameraClickCommand;
         private readonly ICommand _viewPhotoClickCommand;
         private readonly ICommand _logoutCommand;
@@ -41,23 +45,26 @@ namespace BookingBanquetDV.Source.Welcome
         private readonly IBookingDataProvider _bookingDataProvider;
         private readonly INavigationService _navigationService;
         private readonly IMessageDialogService _messageDialogService;
-        private readonly IOfflineDatabaseProvider _offlineDatabaseProvider;
+        private readonly IUsersPersonalDetailDataProvider _usersPersonalDetailDataProvider;
         private readonly IContentDialogService _contentDialogService;
+        private readonly IPhotoDetailDataProvider _photoDetailDataProvider;
 
         public WelcomeViewModel(
             ICameraViewModel cameraViewModel,
             IBookingDataProvider bookingDataProvider,
             INavigationService navigationService,
             IMessageDialogService messageDialogService,
-            IOfflineDatabaseProvider offlineDatabaseProvider,
-            IContentDialogService contentDialogService)
+            IUsersPersonalDetailDataProvider usersPersonalDetailDataProvider,
+            IContentDialogService contentDialogService,
+            IPhotoDetailDataProvider photoDetailDataProvider)
         {
             _cameraViewModel = cameraViewModel ?? throw new ArgumentNullException("cameraViewModel");
             _bookingDataProvider = bookingDataProvider ?? throw new ArgumentNullException("bookingDataProvider");
             _navigationService = navigationService ?? throw new ArgumentNullException("navigationService");
             _messageDialogService = messageDialogService ?? throw new ArgumentNullException("messageDialogService");
-            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException("offlineDatabaseProvider");
+            _usersPersonalDetailDataProvider = usersPersonalDetailDataProvider ?? throw new ArgumentNullException("usersPersonalDetailDataProvider");
             _contentDialogService = contentDialogService ?? throw new ArgumentNullException("contentDialogService");
+            _photoDetailDataProvider = photoDetailDataProvider ?? throw new ArgumentNullException("photoDetailDataProvider");
 
             _newBookingCommand = new DelegateCommand(
                 async parameter => await OnClickNewBookingAsync());
@@ -80,16 +87,33 @@ namespace BookingBanquetDV.Source.Welcome
             _deleteBookingCommand = new DelegateCommand(
                 async parameter => await OnDeleteBookingClickAsync(parameter));
 
-            _bookedByDetailCommand = new DelegateCommand(
-                async parameter => await OnBookedByDetailClickAsync(parameter));
+            _viewProfileCommand = new DelegateCommand(
+                async parameter => await OnViewProfileClickAsync());
+
+            _editProfileCommand = new DelegateCommand(
+                parameter => OnEditProfileClick());
         }
 
-        private async Task OnBookedByDetailClickAsync(object parameter)
+        private void OnEditProfileClick()
         {
-            if (parameter is BookingDetails bookingDetails)
+            if (_usersPersonalDetail != null)
+                _navigationService.Navigate(typeof(EditUserDetailPage), _usersPersonalDetail);
+        }
+
+        private void OnSaveUserDetail(object sender, UserDetailEventArgs eventArgs)
+        {
+            if (eventArgs != null &&
+                eventArgs.PreviewDialogAction == PreviewDialogAction.Submit)
             {
-                Users userDetail = _offlineDatabaseProvider.GetUsersDetail(_loginDetail.UserId);
-                UserDetailView userDetailView = new UserDetailView(userDetail);
+                _usersPersonalDetailDataProvider.AddOrUpdateUsersPersonalDetail(eventArgs.UsersPersonalDetail);
+            }
+        }
+
+        private async Task OnViewProfileClickAsync()
+        {
+            if (_usersPersonalDetail != null)
+            {
+                ViewUserDetail userDetailView = new ViewUserDetail(_usersPersonalDetail);
                 await _contentDialogService.ShowDialogAsync(userDetailView);
             }
         }
@@ -118,7 +142,7 @@ namespace BookingBanquetDV.Source.Welcome
                     ApplicationConstants.BookingSuccess.FormatString(
                         _bookingDetail.BookingDate));
 
-                ReloadBooking();
+                LoadAllBookingDetail();
             }
         }
 
@@ -163,7 +187,7 @@ namespace BookingBanquetDV.Source.Welcome
             if (parameter is BookingDetails bookingDetail)
             {
                 await OnClickBookingAsync(bookingDetail, _isViewBooking, _isEditBooking);
-                ReloadBooking();
+                LoadAllBookingDetail();
             }
         }
 
@@ -227,7 +251,7 @@ namespace BookingBanquetDV.Source.Welcome
                     photoDetails.StorageFile = file;
 
                     PreviewPhoto newBooking = new PreviewPhoto(photoDetails);
-                    await newBooking.ShowAsync();
+                    await _contentDialogService.ShowDialogAsync(newBooking);
                 }
             }
         }
@@ -269,7 +293,9 @@ namespace BookingBanquetDV.Source.Welcome
 
         private async Task OnBookingCompletedAsync(object sender, AddBookingEventArgs eventArgs)
         {
-            if (!_isViewBooking && eventArgs != null)
+            if (!_isViewBooking &&
+                eventArgs != null &&
+                eventArgs.PreviewDialogAction == PreviewDialogAction.Submit)
             {
                 _bookingDetail = eventArgs.BookingDetails;
 
@@ -323,11 +349,30 @@ namespace BookingBanquetDV.Source.Welcome
             if (parameter is LoginDetail loginDetail)
             {
                 _loginDetail = loginDetail;
-                ReloadBooking();
+                LoadAllBookingDetail();
+
+                _usersPersonalDetail = _usersPersonalDetailDataProvider.GetUsersPersonalDetail(_loginDetail.UserId);
+
+                if (_usersPersonalDetail != null)
+                {
+                    _loginDetail.UserName = _usersPersonalDetail.FullName;
+                    PhotoDetails photoDetail = _photoDetailDataProvider.GetActivePhotoDetail(_usersPersonalDetail.EmailId);
+
+                    if (photoDetail != null)
+                    {
+                        StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.
+                            GetFolderAsync(ApplicationConstants.Document);
+
+                        if (await storageFolder.TryGetItemAsync(photoDetail.LocalPhotoName) is StorageFile file)
+                            _usersPersonalDetail.ImageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file);
+                    }
+
+                    OnPropertyChanged(() => UsersPersonalDetail);
+                }
             }
         }
 
-        private void ReloadBooking()
+        private void LoadAllBookingDetail()
         {
             _masterBookingDetailList = new ObservableCollection<BookingDetails>(
                 _bookingDataProvider.GetAllBookings());
@@ -379,7 +424,9 @@ namespace BookingBanquetDV.Source.Welcome
 
         public ICommand DeleteBookingCommand => _deleteBookingCommand;
 
-        public ICommand BookedByDetailCommand => _bookedByDetailCommand;
+        public ICommand ViewProfileCommand => _viewProfileCommand;
+
+        public ICommand EditProfileCommand => _editProfileCommand;
 
         public bool IsViewBooking
         {
@@ -391,6 +438,12 @@ namespace BookingBanquetDV.Source.Welcome
         {
             get => _isEditBooking;
             set => _isEditBooking = value;
+        }
+
+        public UsersPersonalDetail UsersPersonalDetail
+        {
+            get => _usersPersonalDetail;
+            set => _usersPersonalDetail = value;
         }
     }
 }

@@ -68,5 +68,10 @@
         public const string PhoneCodeRequired = "Phone code is required";
         public const string TakeAPhoto = "Capture a photo";
         public const string GoForPhoto = "Now you will be redirecting for adding a photo. If not interested close the camera";
+        public const string Country = "Country";
+        public const string State = "State";
+        public const string City = "City";
+        public const string RemovePhotoWarning = "Are you sure that to remove photo?";
+
     }
 }
