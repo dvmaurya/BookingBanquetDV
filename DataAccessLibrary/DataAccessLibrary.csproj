@@ -144,7 +144,7 @@
     <Compile Include="DML\CountryQuery.cs" />
     <Compile Include="DML\LoginQuery.cs" />
     <Compile Include="DML\BookingQuery.cs" />
-    <Compile Include="DML\PhotoDetailQuery.cs" />
+    <Compile Include="DML\UserPhotoDetailQuery.cs" />
     <Compile Include="DML\SignupQuery.cs" />
     <Compile Include="DML\UsersPersonalDetailQuery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

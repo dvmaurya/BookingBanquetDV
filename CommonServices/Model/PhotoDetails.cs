@@ -1,6 +1,4 @@
-﻿using CommonServices.ConstantData;
-using CommonServices.Extensions;
-using Windows.Storage;
+﻿using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace CommonServices.Model

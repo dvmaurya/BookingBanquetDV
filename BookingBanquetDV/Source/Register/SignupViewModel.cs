@@ -48,7 +48,6 @@ namespace BookingBanquetDV.Source.Register
         private IReadOnlyCollection<SingleSelection> _cityList;
         private bool _isCityVisible;
         private bool _isStateVisible;
-        private IReadOnlyCollection<string> _phoneCodeList;
         private readonly ICommand _changedCountryCommand;
         private readonly ICommand _changedStateCommand;
         private readonly ICommand _changedCityCommand;
@@ -379,13 +378,9 @@ namespace BookingBanquetDV.Source.Register
         {
             ReadOnlyCollection<Country> countryList = 
                 new ReadOnlyCollection<Country>(_countryDataProvider.GetCountryData());
-            if (countryList != null && countryList.Any())
-            {
-                _phoneCodeList = countryList.Select(phone => phone.PhoneCode).ToList();
-                _phoneCodeList = _phoneCodeList.OrderBy(phone => phone).ToList();
 
+            if (countryList != null && countryList.Any())
                 GenerateListForSingleSelection(countryList);
-            }
         }
 
         private void GenerateListForSingleSelection(IReadOnlyCollection<object> singleCode)
@@ -571,11 +566,5 @@ namespace BookingBanquetDV.Source.Register
         public ICommand ChangedStateCommand => _changedStateCommand;
 
         public ICommand ChangedCityCommand => _changedCityCommand;
-
-        public IReadOnlyCollection<string> PhoneCodeList
-        {
-            get => _phoneCodeList;
-            set => _phoneCodeList = value;
-        }
     }
 }

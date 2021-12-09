@@ -63,6 +63,7 @@ namespace BookingBanquetDV
             DIContainer.RegisterType<INewBookingViewModel, NewBookingViewModel>();
             DIContainer.RegisterType<ICameraViewModel, CameraViewModel>();
             DIContainer.RegisterType<IUserDetailViewModel, UserDetailViewModel>();
+            DIContainer.RegisterType<IViewBookingViewModel, ViewBookingViewModel>();
         }
 
         private static void RegisterServices()

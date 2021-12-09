@@ -15,7 +15,7 @@
             <TextBox
                 Name="addNotes"
                 Height="Auto"
-                MinWidth="415"
+                MinWidth="578"
                 MinHeight="74"
                 MaxWidth="530"
                 HorizontalAlignment="Left"

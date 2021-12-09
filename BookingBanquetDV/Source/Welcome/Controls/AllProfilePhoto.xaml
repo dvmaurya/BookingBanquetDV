@@ -58,7 +58,7 @@
                 <DataTemplate>
                     <Grid Margin="-12,0,-12,0">
                         <RadioButton
-                            Command="{Binding DataContext.IsCheckedCommand, ElementName=MultiselectlistView}"
+                            Command="{Binding DataContext.ChangePhotoCommand, ElementName=MultiselectlistView}"
                             CommandParameter="{Binding}"
                             GroupName="Photo"
                             IsChecked="{Binding IsChecked, Mode=TwoWay}">
@@ -67,6 +67,10 @@
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="80" />
                                 </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Margin="0,0,20,0"
+                                    Text="Photo not available"
+                                    Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNullConverter}}" />
                                 <Image
                                     Grid.Column="0"
                                     Margin="10,0,10,10"

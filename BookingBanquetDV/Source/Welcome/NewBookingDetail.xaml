@@ -1,0 +1,454 @@
+﻿<Page
+    x:Class="BookingBanquetDV.Source.Welcome.NewBookingDetail"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:BookingBanquetDV.Behavior"
+    xmlns:commoncontrols="using:BookingBanquetDV.Utility"
+    xmlns:controls1="using:BookingBanquetDV.Source.Register"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+    <Grid Background="AliceBlue">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid
+            Grid.Row="0"
+            Padding="10"
+            BorderBrush="Gray"
+            BorderThickness="2">
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="16"
+                FontWeight="SemiBold"
+                Text="Add bookings " />
+            <Button
+                Width="Auto"
+                Height="50"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Command="{Binding SaveCommand}"
+                Style="{StaticResource CustomButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <FontIcon Glyph="&#xE74E;" />
+                    <TextBlock Margin="10,0,0,0" Text="Save details" />
+                </StackPanel>
+            </Button>
+        </Grid>
+        <ScrollViewer
+            x:Name="rootScrollViewer"
+            Grid.Row="1"
+            VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="1" Margin="20,0,20,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        Grid.Row="0"
+                        Margin="0,30,0,0"
+                        FontWeight="SemiBold"
+                        Text="Customer's photo" />
+                    <Grid
+                        Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Image
+                            x:Name="previewImage"
+                            Grid.Row="1"
+                            Height="500"
+                            Source="{Binding ImageSource, Mode=TwoWay}"
+                            Stretch="Fill"
+                            Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
+                        <TextBlock
+                            Grid.Row="1"
+                            HorizontalAlignment="Center"
+                            Foreground="LightGray"
+                            Text="Photo not available"
+                            Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNullConverter}}" />
+                        <StackPanel
+                            Grid.Row="0"
+                            Margin="0,0,0,10"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+                            <Button
+                                HorizontalAlignment="Center"
+                                Command="{Binding RetakePhotoCommand}"
+                                Content="Take customer's photo"
+                                FontSize="16"
+                                Foreground="#FFFFFF"
+                                Style="{StaticResource CustomButtonStyle}" />
+                            <Button
+                                Margin="10,0,0,0"
+                                HorizontalAlignment="Center"
+                                Command="{Binding RemovePhotoCommand}"
+                                Content="Remove photo"
+                                FontSize="16"
+                                Foreground="#FFFFFF"
+                                Style="{StaticResource CustomButtonStyle}"
+                                Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+                <Grid
+                    Grid.Column="0"
+                    Margin="30,30"
+                    BorderBrush="Gray"
+                    BorderThickness="2">
+                    <StackPanel Margin="20">
+                        <StackPanel>
+                            <TextBlock>
+                                <Run Foreground="Red" Text="*" />
+                                <Run Text="Customer's name:" /></TextBlock>
+                            <TextBox
+                                IsReadOnly="{Binding BookingParameter.IsViewBooking}"
+                                MaxLength="50"
+                                PlaceholderText="Enter customer name"
+                                Text="{Binding CustomerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <interactivity:Interaction.Behaviors>
+                                    <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[CustomerName]}" />
+                                </interactivity:Interaction.Behaviors>
+                            </TextBox>
+                            <TextBlock
+                                Margin="0"
+                                Style="{StaticResource ErrorMessageStyle}"
+                                Text="{Binding Errors[CustomerName], Converter={StaticResource FirstErrorConverter}}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock>
+                                <Run Foreground="Red" Text="*" />
+                                <Run Text="Customer's mobile number:" /></TextBlock>
+                            <TextBox
+                                InputScope="Number"
+                                IsReadOnly="{Binding BookingParameter.IsViewBooking}"
+                                MaxLength="10"
+                                PlaceholderText="Mobile number"
+                                Text="{Binding MobileNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <interactivity:Interaction.Behaviors>
+                                    <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
+                                    <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[MobileNo]}" />
+                                </interactivity:Interaction.Behaviors>
+                            </TextBox>
+                            <TextBlock
+                                Margin="0"
+                                Style="{StaticResource ErrorMessageStyle}"
+                                Text="{Binding Errors[MobileNo], Converter={StaticResource FirstErrorConverter}}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock>
+                                <Run Foreground="Red" Text="*" />
+                                <Run Text="Customer's email id:" />
+                            </TextBlock>
+                            <TextBox PlaceholderText="Email id" Text="{Binding EmailId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <interactivity:Interaction.Behaviors>
+                                    <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[EmailId]}" />
+                                </interactivity:Interaction.Behaviors>
+                            </TextBox>
+                            <TextBlock
+                                Margin="0"
+                                Style="{StaticResource ErrorMessageStyle}"
+                                Text="{Binding Errors[EmailId], Converter={StaticResource FirstErrorConverter}}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock>
+                                <Run Foreground="Red" Text="*" />
+                                <Run Text="Address:" /></TextBlock>
+                            <controls1:NotesControl
+                                x:Name="NotesText"
+                                Grid.Column="1"
+                                NotesText="{Binding Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                PlaceholderText="Enter address" />
+                            <TextBlock
+                                Margin="0"
+                                Style="{StaticResource ErrorMessageStyle}"
+                                Text="{Binding Errors[Address], Converter={StaticResource FirstErrorConverter}}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock>
+                                <Run Foreground="Red" Text="*" />
+                                <Run Text="Country:" /></TextBlock>
+                            <StackPanel Orientation="Horizontal">
+                                <Border
+                                    Width="538"
+                                    Margin="0,5,0,0"
+                                    Background="#FFFFFF"
+                                    BorderBrush="Gray"
+                                    BorderThickness="2">
+                                    <TextBlock
+                                        Margin="5"
+                                        Text="{Binding SelectedCountry.Name}"
+                                        TextWrapping="Wrap" />
+                                </Border>
+                                <HyperlinkButton
+                                    Margin="10,0,0,0"
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding ChangedCountryCommand}">
+                                    <Grid>
+                                        <FontIcon
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="30"
+                                            Foreground="#0078D7"
+                                            Glyph="&#xEC14;" />
+                                        <FontIcon
+                                            Margin="0,0,0,2"
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="15"
+                                            Foreground="White"
+                                            Glyph="&#xE710;" />
+                                    </Grid>
+                                </HyperlinkButton>
+                            </StackPanel>
+                            <TextBlock
+                                Margin="0"
+                                Style="{StaticResource ErrorMessageStyle}"
+                                Text="{Binding Errors[SelectedCountry], Converter={StaticResource FirstErrorConverter}}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Visibility="{Binding IsStateVisible}">
+                            <TextBlock Text="State:" />
+                            <StackPanel Orientation="Horizontal">
+                                <Border
+                                    Width="538"
+                                    Margin="0,5,0,0"
+                                    Background="#FFFFFF"
+                                    BorderBrush="Gray"
+                                    BorderThickness="2">
+                                    <TextBlock
+                                        Margin="5"
+                                        Text="{Binding SelectedState.Name}"
+                                        TextWrapping="Wrap" />
+                                </Border>
+                                <HyperlinkButton
+                                    Margin="10,0,0,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Command="{Binding ChangedStateCommand}">
+                                    <Grid>
+                                        <FontIcon
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="30"
+                                            Foreground="#0078D7"
+                                            Glyph="&#xEC14;" />
+                                        <FontIcon
+                                            Margin="0,0,0,2"
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="15"
+                                            Foreground="White"
+                                            Glyph="&#xE710;" />
+                                    </Grid>
+                                </HyperlinkButton>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Margin="0,20,0,0" Visibility="{Binding IsCityVisible}">
+                            <TextBlock Text="City:" />
+                            <StackPanel Orientation="Horizontal">
+                                <Border
+                                    Width="538"
+                                    Margin="0,5,0,0"
+                                    Background="#FFFFFF"
+                                    BorderBrush="Gray"
+                                    BorderThickness="2">
+                                    <TextBlock
+                                        Margin="5"
+                                        Text="{Binding SelectedCity.Name}"
+                                        TextWrapping="Wrap" />
+                                </Border>
+                                <HyperlinkButton
+                                    Margin="10,0,0,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Command="{Binding ChangedCityCommand}">
+                                    <Grid>
+                                        <FontIcon
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="30"
+                                            Foreground="#0078D7"
+                                            Glyph="&#xEC14;" />
+                                        <FontIcon
+                                            Margin="0,0,0,2"
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="15"
+                                            Foreground="White"
+                                            Glyph="&#xE710;" />
+                                    </Grid>
+                                </HyperlinkButton>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Margin="0,20,10,20">
+                            <TextBlock Text="Total rooms:" TextWrapping="Wrap" />
+                            <TextBox
+                                InputScope="Number"
+                                IsReadOnly="{Binding BookingParameter.IsViewBooking}"
+                                MaxLength="2"
+                                PlaceholderText="Number of rooms"
+                                Text="{Binding TotalRooms, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <interactivity:Interaction.Behaviors>
+                                    <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
+                                    <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[TotalRooms]}" />
+                                </interactivity:Interaction.Behaviors>
+                            </TextBox>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,10,20">
+                            <TextBlock Text="Total flours:" />
+                            <TextBox
+                                InputScope="Number"
+                                IsReadOnly="{Binding BookingParameter.IsViewBooking}"
+                                MaxLength="1"
+                                PlaceholderText="Number of flours"
+                                Text="{Binding TotalFlours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <interactivity:Interaction.Behaviors>
+                                    <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
+                                    <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[TotalFlours]}" />
+                                </interactivity:Interaction.Behaviors>
+                            </TextBox>
+                        </StackPanel>
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    Foreground="Red"
+                                    Text="*" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Text="Date for  booking:"
+                                    TextWrapping="Wrap" />
+                            </Grid>
+                            <CalendarDatePicker
+                                Width="570"
+                                Margin="0,5,0,0"
+                                Background="#FFFFFF"
+                                Date="{Binding BookingDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                DateFormat="{}{dayofweek.abbreviated(3)}‎, ‎{day.integer} ‎{month.abbreviated(3)}‎ ‎{year.full}"
+                                MinDate="{Binding MinDateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                PlaceholderText="mm/dd/yyyy" />
+                            <TextBlock
+                                x:Name="DateText"
+                                Margin="0"
+                                Foreground="Red"
+                                Style="{StaticResource ErrorMessageStyle}"
+                                Text="{Binding Errors[BookingDate], Converter={StaticResource FirstErrorConverter}}" />
+                        </StackPanel>
+                        <StackPanel Margin="0,10,10,20">
+                            <TextBlock Text="Booked by:" />
+                            <TextBox IsReadOnly="True" Text="{Binding BookedBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,10,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    Foreground="Red"
+                                    Text="*" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Text="Total amount:"
+                                    TextWrapping="Wrap" />
+                            </Grid>
+                            <TextBox
+                                x:Name="TotalAmount"
+                                InputScope="Number"
+                                IsReadOnly="{Binding BookingParameter.IsViewBooking}"
+                                KeyUp="TextBox_KeyUp"
+                                MaxLength="7"
+                                PlaceholderText="Enter total amount"
+                                Text="{Binding TotalAmount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <interactivity:Interaction.Behaviors>
+                                    <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
+                                    <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[TotalAmount]}" />
+                                </interactivity:Interaction.Behaviors>
+                            </TextBox>
+                            <TextBlock
+                                Margin="0"
+                                Style="{StaticResource ErrorMessageStyle}"
+                                Text="{Binding Errors[TotalAmount], Converter={StaticResource FirstErrorConverter}}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Margin="0,10,10,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    Foreground="Red"
+                                    Text="*" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Text="Advance:"
+                                    TextWrapping="Wrap" />
+                            </Grid>
+                            <TextBox
+                                x:Name="Advance"
+                                InputScope="Number"
+                                IsReadOnly="{Binding BookingParameter.IsViewBooking}"
+                                KeyUp="TextBox_KeyUp"
+                                MaxLength="7"
+                                PlaceholderText="Enter advance amount "
+                                Text="{Binding Advanced, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <interactivity:Interaction.Behaviors>
+                                    <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
+                                    <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[Advanced]}" />
+                                </interactivity:Interaction.Behaviors>
+                            </TextBox>
+                            <TextBlock
+                                Margin="0"
+                                Style="{StaticResource ErrorMessageStyle}"
+                                Text="{Binding Errors[Advanced], Converter={StaticResource FirstErrorConverter}}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Margin="0,10,10,0">
+                            <TextBlock Text="Remaining amount:" TextWrapping="Wrap" />
+                            <TextBox
+                                x:Name="RemainingAmount"
+                                InputScope="Number"
+                                IsReadOnly="True"
+                                PlaceholderText="Remaining amount"
+                                Text="{Binding Balance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Margin="0,20,10,20">
+                            <TextBlock Text="Confirm ?" />
+                            <commoncontrols:ComboBoxExt
+                                Width="568"
+                                IsEnabled="{Binding BookingParameter.IsViewBooking, Converter={StaticResource InverseBooleanConverter}}"
+                                ItemsSource="{Binding ConfirmList}"
+                                PlaceholderText="Is booking confirmed ?"
+                                SelectedItem="{Binding SelectedConfirmation, Mode=TwoWay}">
+                                <interactivity:Interaction.Behaviors>
+                                    <behaviors:HighlightFormFieldOnErrors
+                                        HighlightStyleName="HighlightComboBoxStyle"
+                                        OriginalStyleName="BaseComboBoxStyle"
+                                        PropertyErrors="{Binding Errors[SelectedConfirmation]}" />
+                                </interactivity:Interaction.Behaviors>
+                            </commoncontrols:ComboBoxExt>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>

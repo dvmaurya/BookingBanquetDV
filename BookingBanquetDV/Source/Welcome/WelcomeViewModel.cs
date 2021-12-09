@@ -6,6 +6,7 @@ using CommonServices.ConstantData;
 using CommonServices.Enums;
 using CommonServices.Extensions;
 using CommonServices.Model;
+using CommonServices.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,7 +19,6 @@ using ViewModelsAndValidation.ViewModels;
 using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
-using DBModel = CommonServices.Model.DbModel;
 
 namespace BookingBanquetDV.Source.Welcome
 {
@@ -26,13 +26,11 @@ namespace BookingBanquetDV.Source.Welcome
     {
         private LoginDetail _loginDetail;
         private BookingDetails _bookingDetail;
-        private ObservableCollection<BookingDetails> _masterBookingDetailList;
+        private IReadOnlyCollection<BookingDetails> _masterBookingDetailList;
         private ObservableCollection<BookingDetails> _bookingDetailList;
 
         private readonly ICommand _newBookingCommand;
         private ICameraViewModel _cameraViewModel;
-        private bool _isViewBooking;
-        private bool _isEditBooking;
         private UsersPersonalDetail _usersPersonalDetail;
         private readonly ICommand _editProfileCommand;
         private readonly ICommand _viewProfileCommand;
@@ -67,7 +65,7 @@ namespace BookingBanquetDV.Source.Welcome
             _photoDetailDataProvider = photoDetailDataProvider ?? throw new ArgumentNullException("photoDetailDataProvider");
 
             _newBookingCommand = new DelegateCommand(
-                async parameter => await OnClickNewBookingAsync());
+                parameter => OnClickNewBooking());
 
             _cameraClickCommand = new DelegateCommand(
                 async parameter => await OnCameraClickAsync(parameter));
@@ -79,10 +77,10 @@ namespace BookingBanquetDV.Source.Welcome
                 async parameter => await OnLogoutClickAsync(parameter));
 
             _ViewBookingCommand = new DelegateCommand(
-                async parameter => await OnViewBookingClickAsync(parameter));
+                parameter => OnViewBookingClick(parameter));
 
             _editBookingCommand = new DelegateCommand(
-                async parameter => await OnEditBookingClickAsync(parameter));
+                parameter => OnEditBookingClick(parameter));
 
             _deleteBookingCommand = new DelegateCommand(
                 async parameter => await OnDeleteBookingClickAsync(parameter));
@@ -118,39 +116,18 @@ namespace BookingBanquetDV.Source.Welcome
             }
         }
 
-        private async Task OnClickNewBookingAsync()
+        private void OnClickNewBooking()
         {
-            _isViewBooking = false;
-            _isEditBooking = false;
-
-            await OnClickBookingAsync(null, _isViewBooking, _isEditBooking);
-
-            if (_bookingDetail != null)
+            BookingParameter bookingParameter = new BookingParameter
             {
-                await _messageDialogService.ShowMessageDialogAsync(
-                    ApplicationConstants.TakeAPhoto,
-                    ApplicationConstants.GoForPhoto);
+                LoginDetail = _loginDetail
+            };
 
-                await OnCameraClickAsync(_bookingDetail);
-                bool isEmailSent = await SendingEmailAsync(_bookingDetail);
-
-                _bookingDetail.IsEmailSent = isEmailSent;
-                _bookingDataProvider.AddOrUpdateBooking(_bookingDetail);
-
-                await _messageDialogService.ShowMessageDialogAsync(
-                    ApplicationConstants.Congrats,
-                    ApplicationConstants.BookingSuccess.FormatString(
-                        _bookingDetail.BookingDate));
-
-                LoadAllBookingDetail();
-            }
+            _navigationService.Navigate(typeof(NewBookingDetail), bookingParameter);
         }
 
         private async Task OnDeleteBookingClickAsync(object parameter)
         {
-            _isViewBooking = false;
-            _isEditBooking = false;
-
             if (parameter is BookingDetails bookingDetails)
             {
                 List<IUICommand> commands = new List<IUICommand>
@@ -179,35 +156,19 @@ namespace BookingBanquetDV.Source.Welcome
             OnPropertyChanged(() => BookingDetailList);
         }
 
-        private async Task OnEditBookingClickAsync(object parameter)
+        private void OnEditBookingClick(object parameter)
         {
-            _isViewBooking = false;
-            _isEditBooking = true;
+            if (parameter is BookingDetails bookingDetail)
+                OnClickBooking(bookingDetail);
+        }
 
+        private void OnViewBookingClick(object parameter)
+        {
             if (parameter is BookingDetails bookingDetail)
             {
-                await OnClickBookingAsync(bookingDetail, _isViewBooking, _isEditBooking);
-                LoadAllBookingDetail();
+                ViewBooking viewBooking = new ViewBooking(bookingDetail);
+                _contentDialogService.ShowDialogAsync(viewBooking);
             }
-        }
-
-        private async Task<bool> SendingEmailAsync(BookingDetails bookingDetail)
-        {
-            bool isEmailSent = false;
-            App.ShowLoadingIndicator(ApplicationConstants.SendingEmail);
-            isEmailSent = await SendBookingMailAsync(bookingDetail);
-            App.HideLoadingIndicator();
-
-            return isEmailSent;
-        }
-
-        private async Task OnViewBookingClickAsync(object parameter)
-        {
-            _isViewBooking = true;
-            _isEditBooking = false;
-
-            if (parameter is BookingDetails bookingDetail)
-                await OnClickBookingAsync(bookingDetail, _isViewBooking, _isEditBooking);
         }
 
         private async Task OnLogoutClickAsync(object parameter)
@@ -270,76 +231,15 @@ namespace BookingBanquetDV.Source.Welcome
             }
         }
 
-        private async Task OnClickBookingAsync(BookingDetails bookingDetail, bool isViewBooking, bool isEditBooking)
+        private void OnClickBooking(BookingDetails bookingDetail)
         {
             BookingParameter bookingParameter = new BookingParameter
             {
-                BookingDetailList = _bookingDetailList,
-                LoginDetail = _loginDetail,
-                IsViewBooking = isViewBooking,
-                IsEditBooking = IsEditBooking,
-                MasterBookingList = _masterBookingDetailList
+                BookingDetails = bookingDetail,
+                LoginDetail = _loginDetail
             };
 
-            if (bookingDetail != null)
-                bookingParameter.BookingDetails = bookingDetail;
-
-            NewBooking newBooking = new NewBooking(bookingParameter);
-            newBooking.BookingEvent +=
-               async (sender, eventArgs) => await OnBookingCompletedAsync(sender, eventArgs);
-
-            await _contentDialogService.ShowDialogAsync(newBooking);
-        }
-
-        private async Task OnBookingCompletedAsync(object sender, AddBookingEventArgs eventArgs)
-        {
-            if (!_isViewBooking &&
-                eventArgs != null &&
-                eventArgs.PreviewDialogAction == PreviewDialogAction.Submit)
-            {
-                _bookingDetail = eventArgs.BookingDetails;
-
-                if (_bookingDetail != null)
-                {
-                    _bookingDetail.UserId = _loginDetail.UserId;
-
-                    if (!_isEditBooking)
-                        _bookingDetail.CreationDate = DateTime.Now.ConvertToString(
-                            ApplicationConstants.DatabaseDateTimeFormat);
-
-                    if (_isEditBooking)
-                    {
-                        bool isEmailSent = await SendingEmailAsync(_bookingDetail);
-                        _bookingDetail.IsEmailSent = isEmailSent;
-                        _bookingDataProvider.AddOrUpdateBooking(_bookingDetail);
-                    }
-
-                    if (_bookingDetailList == null)
-                        _bookingDetailList = new ObservableCollection<BookingDetails>();
-
-                    _bookingDetailList.Add(_bookingDetail);
-                    _masterBookingDetailList.Add(_bookingDetail);
-
-                    OnPropertyChanged(() => BookingDetailList);
-                }
-            }
-        }
-
-        private async Task<bool> SendBookingMailAsync(BookingDetails bookingDetail)
-        {
-            if (bookingDetail != null)
-            {
-                EmailParameter emailParameter = new EmailParameter
-                {
-                    BookingDetails = bookingDetail,
-                    EmailAddress = bookingDetail.EmailId,
-                    UserName = bookingDetail.CustomerName
-                };
-
-                return await EmailUtility.SendEmailsAsync(emailParameter);
-            }
-
-            return false;
+            _navigationService.Navigate(typeof(NewBookingDetail), bookingParameter);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode navigationMode)
@@ -382,12 +282,12 @@ namespace BookingBanquetDV.Source.Welcome
                 _bookingDetailList = new ObservableCollection<BookingDetails>();
                 foreach (BookingDetails booking in _masterBookingDetailList)
                 {
-                    if (booking.UserId == _loginDetail.UserId)
+                    if (booking.UserId == _loginDetail.UserId || booking.UserId == _loginDetail.EmailId)
                         _bookingDetailList.Add(booking);
                 }
             }
 
-            foreach (var bookingDetail in _bookingDetailList)
+            foreach (BookingDetails bookingDetail in _bookingDetailList)
             {
                 if (!string.IsNullOrEmpty(bookingDetail.PhotoName))
                     bookingDetail.CanShowPhoto = true;
@@ -427,18 +327,6 @@ namespace BookingBanquetDV.Source.Welcome
         public ICommand ViewProfileCommand => _viewProfileCommand;
 
         public ICommand EditProfileCommand => _editProfileCommand;
-
-        public bool IsViewBooking
-        {
-            get => _isViewBooking;
-            set => _isViewBooking = value;
-        }
-
-        public bool IsEditBooking
-        {
-            get => _isEditBooking;
-            set => _isEditBooking = value;
-        }
 
         public UsersPersonalDetail UsersPersonalDetail
         {

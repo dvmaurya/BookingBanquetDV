@@ -34,6 +34,5 @@ namespace ViewModelsAndValidation.ViewModels
         ICommand ChangedCountryCommand { get; }
         ICommand ChangedStateCommand { get; }
         ICommand ChangedCityCommand { get; }
-        IReadOnlyCollection<string> PhoneCodeList { get; set; }
     }
 }

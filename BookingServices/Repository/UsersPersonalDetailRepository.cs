@@ -7,7 +7,6 @@ using DataAccessLibrary;
 using DataAccessLibrary.DML;
 using Microsoft.Data.Sqlite;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -116,7 +115,6 @@ namespace BookingServices.Repository
                             State = query.GetString(6),
                             City = query.GetString(7)
                         };
-
                     }
 
                     db.Close();

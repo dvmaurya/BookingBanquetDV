@@ -24,7 +24,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
         public AllProfilePhotoViewModel()
         {
             _onDialogLoadingCommand = new DelegateCommand(
-                parameter => OnDialogLoadAsync());
+                async parameter => await OnDialogLoadAsync());
 
             _changePhotoCommand = new DelegateCommand(
                 parameter => OnChangePhoto(parameter));
@@ -80,7 +80,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
 
         public ICommand OnDialogLoadingCommand => _onDialogLoadingCommand;
 
-        public ICommand IsCheckedCommand => _changePhotoCommand;
+        public ICommand ChangePhotoCommand => _changePhotoCommand;
 
         public PhotoDetails SelectedPhotoDetail
         {

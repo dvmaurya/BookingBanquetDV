@@ -3,6 +3,7 @@ using CommonServices.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ViewModelsAndValidation.ViewModels;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 // The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -12,13 +13,12 @@ namespace BookingBanquetDV.Source.Welcome.Controls
     public sealed partial class AllProfilePhoto : ContentDialog
     {
         private IList<PhotoDetails> _photoDetails;
-        private PhotoDetails _selectedPhotoDetails;
+        private PhotoDetails _selectedPhotoDetail;
 
-        public AllProfilePhoto(IList<PhotoDetails> photoDetails, PhotoDetails selectedPhoto)
+        public AllProfilePhoto(IList<PhotoDetails> photoDetails)
         {
             this.InitializeComponent();
             _photoDetails = photoDetails;
-            _selectedPhotoDetails = selectedPhoto;
 
             this.DataContext = ViewModelLocator.AllProfilePhotoViewModel;
         }
@@ -33,7 +33,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
             if (sender != null &&
                 args != null &&
                 this.DataContext is IAllProfilePhotoViewModel viewModel)
-                _selectedPhotoDetails = viewModel.SelectedPhotoDetail;
+                _selectedPhotoDetail = viewModel.SelectedPhotoDetail;
 
             this.Hide();
         }
@@ -43,14 +43,13 @@ namespace BookingBanquetDV.Source.Welcome.Controls
             this.Hide();
         }
 
-        public PhotoDetails SelectedPhotoDetails => _selectedPhotoDetails;
+        public PhotoDetails SelectedPhotoDetail => _selectedPhotoDetail;
 
-        private void ContentDialog_Loading(Windows.UI.Xaml.FrameworkElement sender, object args)
+        private void ContentDialog_Loading(FrameworkElement sender, object args)
         {
             if (this.DataContext is IAllProfilePhotoViewModel viewModel)
             {
                 viewModel.PhotoDetailList = new ReadOnlyCollection<PhotoDetails>(_photoDetails);
-                viewModel.SelectedPhotoDetail = _selectedPhotoDetails;
                 viewModel.OnDialogLoadingCommand.Execute(null);
             }
         }

@@ -47,6 +47,7 @@ namespace BookingServices.Repository
                     };
 
                     insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.UserId), loginDetail.UserId);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.EmailId), loginDetail.EmailId);
                     insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.IsRememberChecked), loginDetail.IsRememberChecked);
                     insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.NumberOfLogin), loginDetail.NumberOfLogin);
                     insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.LastLogin), loginDetail.LastLogin);
@@ -86,9 +87,10 @@ namespace BookingServices.Repository
                 {
                     entries.Add(nameof(LoginDetail.Id), query.GetString(0));
                     entries.Add(nameof(LoginDetail.UserId), query.GetString(1));
-                    entries.Add(nameof(LoginDetail.IsRememberChecked), query.GetString(2));
-                    entries.Add(nameof(LoginDetail.NumberOfLogin), query.GetString(3));
-                    entries.Add(nameof(LoginDetail.LastLogin), query.GetString(4));
+                    entries.Add(nameof(LoginDetail.EmailId), query.GetString(2));
+                    entries.Add(nameof(LoginDetail.IsRememberChecked), query.GetString(3));
+                    entries.Add(nameof(LoginDetail.NumberOfLogin), query.GetString(4));
+                    entries.Add(nameof(LoginDetail.LastLogin), query.GetString(5));
                 }
 
                 db.Close();

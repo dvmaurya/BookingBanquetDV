@@ -7,7 +7,6 @@ namespace BookingServices.Interfaces
     {
         void AddOrUpdateBooking(BookingDetails bookingDetails);
         IList<BookingDetails> GetAllBookings();
-        BookingDetails GetBookingById(int id);
         void DeleteBooking(BookingDetails bookingDetails);
     }
 }

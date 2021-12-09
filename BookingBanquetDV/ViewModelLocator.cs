@@ -16,5 +16,6 @@ namespace BookingBanquetDV
         public static INewBookingViewModel NewBookingViewModel => DIContainer.GetInstance<NewBookingViewModel>();
         public static IUserDetailViewModel UserDetailViewModel => DIContainer.GetInstance<UserDetailViewModel>();
         public static IAllProfilePhotoViewModel AllProfilePhotoViewModel => DIContainer.GetInstance<AllProfilePhotoViewModel>();
+        public static IViewBookingViewModel ViewBookingViewModel => DIContainer.GetInstance<ViewBookingViewModel>();
     }
 }

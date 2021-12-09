@@ -1,14 +1,14 @@
 ﻿using CommonServices.Model;
+using CommonServices.Model.City;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace ViewModelsAndValidation.ViewModels
 {
     public interface INewBookingViewModel
     {
-        int Id { get; }
         string CustomerName { get; set; }
         DateTimeOffset BookingDate { get; set; }
         DateTimeOffset CreationDate { get; }
@@ -21,14 +21,26 @@ namespace ViewModelsAndValidation.ViewModels
         List<string> ConfirmList { get; }
         DateTimeOffset MaxDate { get; set; }
         DateTimeOffset MinDateTime { get; set; }
-        ICommand DialogLoadingCommand { get; }
-        string SelectConfirmation { get; set; }
+        string SelectedConfirmation { get; set; }
         string MobileNo { get; set; }
         string EmailId { get; set; }
         string PhotoName { get; }
-        bool IsValidationSuccess { get; }
         bool IsEmailSent { get; }
         ICommand SaveCommand { get; }
-        BookingParameter BookingParameter { get; set; }
+        BookingDetails BookingDetails { get; set; }
+        SingleSelection SelectedCountry { get; set; }
+        SingleSelection SelectedState { get; set; }
+        SingleSelection SelectedCity { get; set; }
+        bool IsCityVisible { get; set; }
+        bool IsStateVisible { get; set; }
+        ICommand ChangedCountryCommand { get; }
+        ICommand ChangedStateCommand { get; }
+        ICommand ChangedCityCommand { get; }
+        long MaxLength { get; }
+        string Address { get; set; }
+        BitmapImage ImageSource { get; set; }
+        ICommand RetakePhotoCommand { get; }
+        ICommand RemovePhotoCommand { get; }
+        IReadOnlyCollection<BookingDetails> MasterBookingDetailList { get; set; }
     }
 }

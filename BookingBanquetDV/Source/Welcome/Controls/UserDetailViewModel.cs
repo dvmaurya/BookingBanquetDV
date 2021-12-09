@@ -86,7 +86,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
             _deletePhoto = new List<PhotoDetails>();
 
             _saveUserDetailCommand = new DelegateCommand(
-                parameter => OnSaveUserDetail());
+                async parameter => await OnSaveUserDetailAsync());
 
             _changedCountryCommand = new DelegateCommand(
                 async parameter => await OnCountryChangedAsync());
@@ -104,16 +104,16 @@ namespace BookingBanquetDV.Source.Welcome.Controls
                 async parameter => await OnPreviousPhotoAsync());
 
             _removePhotoCommand = new DelegateCommand(
-                async parameter => await OnRemovePhotoAsync());
+                async parameter => await OnRemovePhotoAsync(parameter));
         }
 
-        private async Task OnRemovePhotoAsync()
+        private async Task OnRemovePhotoAsync(object parameter)
         {
             List<IUICommand> commands = new List<IUICommand>
             {
                 new UICommand(
                     label: ApplicationConstants.Yes,
-                    action: (uiCommand) => RemovePhotoContinue()),
+                    action: (uiCommand) => RemovePhotoContinue(parameter)),
 
                 new UICommand(
                     label: ApplicationConstants.No,
@@ -126,15 +126,17 @@ namespace BookingBanquetDV.Source.Welcome.Controls
                 commands);
         }
 
-        private void RemovePhotoContinue()
+        private void RemovePhotoContinue(object parameter)
         {
-            if (_selectedphotoDetails == null)
+            if (_activePhotoDetail != null && 
+                _activePhotoDetail.LocalPhotoName.FormatStringEquals(_photoName))
             {
                 _isActivePhotoUpdate = true;
                 _activePhotoDetail.IsPhotoActive = false;
                 _activePhotoDetail.IsPhotoRemoved = true;
             }
-            else
+            else if(_selectedphotoDetails != null &&
+                _selectedphotoDetails.LocalPhotoName.FormatStringEquals(_photoName))
             {
                 if (_selectedphotoDetails.Id == 0)
                 {
@@ -156,24 +158,53 @@ namespace BookingBanquetDV.Source.Welcome.Controls
         {
             PhotoDetails selectedPhoto = _selectedphotoDetails ?? _activePhotoDetail;
 
-            IList<PhotoDetails> allPhotos =
+            IList<PhotoDetails> allPhotoDetails =
                 _photoDetailDataProvider.GetPreviousPhotoDetail(_usersPersonalDetail.EmailId);
 
-            AllProfilePhoto allProfilePhoto = new AllProfilePhoto(allPhotos, selectedPhoto);
+            if (selectedPhoto != null && selectedPhoto.Id != 0)
+            {
+                foreach (PhotoDetails photo in allPhotoDetails)
+                {
+                    if (photo.LocalPhotoName == selectedPhoto.LocalPhotoName)
+                    {
+                        photo.IsChecked = true;
+                        break;
+                    }
+                }
+            }
+
+            AllProfilePhoto allProfilePhoto = new AllProfilePhoto(allPhotoDetails);
             await _contentDialogService.ShowDialogAsync(allProfilePhoto);
 
-            PhotoDetails photoDetails = allProfilePhoto?.SelectedPhotoDetails;
+            PhotoDetails photoDetails = allProfilePhoto?.SelectedPhotoDetail;
 
             if (photoDetails != null)
             {
                 if (_selectedphotoDetails != null && _selectedphotoDetails.Id == 0)
                     _deletePhoto.Add(_selectedphotoDetails);
 
-                _selectedphotoDetails = photoDetails;
-                _isActivePhotoUpdate = true;
-
-                await SetPhotoAsync(_selectedphotoDetails.LocalPhotoName);
+                if (_activePhotoDetail != null &&
+                    _activePhotoDetail.LocalPhotoName != 
+                    photoDetails.LocalPhotoName)
+                { 
+                    _activePhotoDetail.IsChecked = false;
+                    _isActivePhotoUpdate = true;
+                    await SetNewPhotoDetails(photoDetails);
+                }
+                else
+                {
+                    await SetNewPhotoDetails(photoDetails);
+                }
             }
+        }
+
+        private async Task SetNewPhotoDetails(PhotoDetails photoDetails)
+        {
+            photoDetails.IsChecked = true;
+            _photoName = photoDetails.LocalPhotoName;
+            _selectedphotoDetails = photoDetails;
+
+            await SetPhotoAsync(_selectedphotoDetails.LocalPhotoName);
         }
 
         private async Task OnRetakePhotoAsync()
@@ -188,8 +219,12 @@ namespace BookingBanquetDV.Source.Welcome.Controls
             if (_selectedphotoDetails != null)
             {
                 _photoName = _selectedphotoDetails.LocalPhotoName;
+                _selectedphotoDetails.IsChecked = true;
                 _selectedphotoDetails.IsPhotoActive = true;
                 _selectedphotoDetails.IsPhotoRemoved = false;
+
+                if (_activePhotoDetail != null)
+                    _activePhotoDetail.IsChecked = false;
 
                 if (_usersPersonalDetail != null)
                     _selectedphotoDetails.EmailId = _usersPersonalDetail.EmailId;
@@ -250,42 +285,65 @@ namespace BookingBanquetDV.Source.Welcome.Controls
             OnPropertyChanged(() => SelectedCountry);
         }
 
-        private void OnSaveUserDetail()
+        private async Task OnSaveUserDetailAsync()
         {
             if (ValidateProperties())
             {
-                _usersPersonalDetail.FullName = _fullName;
-                _usersPersonalDetail.Address = _address;
-                _usersPersonalDetail.Country = _selectedCountry.Name;
-                _usersPersonalDetail.State = _selectedState.Name;
-                _usersPersonalDetail.City = _selectedCity.Name;
-
-                _usersPersonalDetailDataProvider.AddOrUpdateUsersPersonalDetail(_usersPersonalDetail);
-
-                if (_selectedphotoDetails != null)
+                if (string.IsNullOrEmpty(_photoName))
                 {
-                    _selectedphotoDetails.IsPhotoActive = true;
-                    _photoDetailDataProvider.AddOrUpdatePhotoDetail(_selectedphotoDetails);
-
-                    if (_activePhotoDetail != null)
+                    List<IUICommand> commands = new List<IUICommand>
                     {
-                        _activePhotoDetail.IsPhotoActive = false;
-                        _isActivePhotoUpdate = true;
-                    }
+                        new UICommand(
+                            label: ApplicationConstants.Yes,
+                            action: (uiCommand) => OnContinueSaveAsync()),
+
+                        new UICommand(
+                            label: ApplicationConstants.No,
+                            action: null)
+                    };
+
+                    await _messageDialogService.ShowMessageDialogAsync(
+                        ApplicationConstants.Warning,
+                        ApplicationConstants.PhotoNotAvailable,
+                        commands);
                 }
-
-                if (_isActivePhotoUpdate && _activePhotoDetail != null)
-                    _photoDetailDataProvider.AddOrUpdatePhotoDetail(_activePhotoDetail);
-
-                if (_deletePhoto != null && _deletePhoto.Any())
+                else
                 {
-                    foreach (var deletePhoto in _deletePhoto)
-                        _photoDetailDataProvider.DeleteDocumentFileFromFolderAsync(deletePhoto.LocalPhotoName);
+                    OnContinueSaveAsync();
                 }
-
-                LoginDetail loginDetail = new LoginDetail { UserId = _usersPersonalDetail.EmailId };
-                _navigationService.Navigate(typeof(WelcomePage), loginDetail);
             }
+        }
+
+        private void OnContinueSaveAsync()
+        {
+            _usersPersonalDetail.FullName = _fullName;
+            _usersPersonalDetail.Address = _address;
+            _usersPersonalDetail.Country = _selectedCountry?.Name ?? string.Empty;
+            _usersPersonalDetail.State = _selectedState?.Name ?? string.Empty;
+            _usersPersonalDetail.City = _selectedCity?.Name ?? string.Empty;
+
+            _usersPersonalDetailDataProvider.AddOrUpdateUsersPersonalDetail(_usersPersonalDetail);
+
+            if (_selectedphotoDetails != null)
+            {
+                _selectedphotoDetails.IsPhotoActive = true;
+                _photoDetailDataProvider.AddOrUpdatePhotoDetail(_selectedphotoDetails);
+
+                if (_isActivePhotoUpdate)
+                    _activePhotoDetail.IsPhotoActive = false;
+            }
+
+            if (_isActivePhotoUpdate && _activePhotoDetail != null)
+                _photoDetailDataProvider.AddOrUpdatePhotoDetail(_activePhotoDetail);
+
+            if (_deletePhoto != null && _deletePhoto.Any())
+            {
+                foreach (var deletePhoto in _deletePhoto)
+                    _photoDetailDataProvider.DeleteDocumentFileFromFolderAsync(deletePhoto.LocalPhotoName);
+            }
+
+            LoginDetail loginDetail = new LoginDetail { UserId = _usersPersonalDetail.EmailId };
+            _navigationService.Navigate(typeof(WelcomePage), loginDetail);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode navigationMode)
@@ -301,7 +359,10 @@ namespace BookingBanquetDV.Source.Welcome.Controls
                 {
                     _activePhotoDetail = _photoDetailDataProvider.GetActivePhotoDetail(_usersPersonalDetail.EmailId);
                     if (_activePhotoDetail != null)
+                    {
                         _photoName = _activePhotoDetail.LocalPhotoName;
+                        _activePhotoDetail.IsChecked = true;
+                    }
 
                     _fullName = _usersPersonalDetail.FullName;
                     _address = _usersPersonalDetail.Address;
@@ -365,9 +426,15 @@ namespace BookingBanquetDV.Source.Welcome.Controls
 
                 if (await storageFolder.TryGetItemAsync(photoName) is StorageFile file)
                     _imageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file);
-
-                OnPropertyChanged(() => ImageSource);
+                else
+                    _imageSource = null;
             }
+            else
+            {
+                _imageSource = null;
+            }
+
+            OnPropertyChanged(() => ImageSource);
         }
 
         private void InitializeListData()
@@ -470,6 +537,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
             get => _selectedCity;
             set => _selectedCity = value;
         }
+
         public bool IsStateVisible
         {
             get => _isStateVisible;

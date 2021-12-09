@@ -191,6 +191,10 @@
       <DependentUpon>AllProfilePhoto.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Welcome\Controls\AllProfilePhotoViewModel.cs" />
+    <Compile Include="Source\Welcome\Controls\ViewBooking.xaml.cs">
+      <DependentUpon>ViewBooking.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Welcome\Controls\ViewBookingViewModel.cs" />
     <Compile Include="Source\Welcome\Controls\ViewUserDetail.xaml.cs">
       <DependentUpon>ViewUserDetail.xaml</DependentUpon>
     </Compile>
@@ -198,9 +202,8 @@
     <Compile Include="Source\Welcome\EditUserDetailPage.xaml.cs">
       <DependentUpon>EditUserDetailPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Source\Welcome\Model\NewBookingOption.cs" />
-    <Compile Include="Source\Welcome\NewBooking.xaml.cs">
-      <DependentUpon>NewBooking.xaml</DependentUpon>
+    <Compile Include="Source\Welcome\NewBookingDetail.xaml.cs">
+      <DependentUpon>NewBookingDetail.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Welcome\NewBookingViewModel.cs" />
     <Compile Include="Source\Welcome\WelcomePage.xaml.cs">
@@ -294,6 +297,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Source\Welcome\Controls\ViewBooking.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Source\Welcome\Controls\ViewUserDetail.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -302,7 +309,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Source\Welcome\NewBooking.xaml">
+    <Page Include="Source\Welcome\NewBookingDetail.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

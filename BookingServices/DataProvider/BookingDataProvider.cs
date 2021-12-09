@@ -38,11 +38,5 @@ namespace BookingServices.DataProvider
 
             return bookingDetailList;
         }
-
-        public BookingDetails GetBookingById(int id)
-        {
-            var GetBooking = _addBookingRepository.GetBookingById(id);
-            return GetBooking.ToBookingDetails();
-        }
     }
 }

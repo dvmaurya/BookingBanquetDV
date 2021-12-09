@@ -13,6 +13,9 @@ namespace CommonServices.Model
         [JsonProperty("userId")]
         public string UserId { get; set; }
 
+        [JsonProperty("emailId")]
+        public string EmailId { get; set; }
+
         [JsonProperty("IsRememberChecked")]
         public bool IsRememberChecked { get; set; }
 

@@ -9,7 +9,7 @@ namespace ViewModelsAndValidation.ViewModels
         IReadOnlyCollection<PhotoDetails> PhotoDetailList { get; set; }
         string PhotoCapturedOn { get; set; }
         ICommand OnDialogLoadingCommand { get; }
-        ICommand IsCheckedCommand { get; }
+        ICommand ChangePhotoCommand { get; }
         PhotoDetails SelectedPhotoDetail { get; set; }
     }
 }

@@ -9,6 +9,7 @@ namespace DataAccessLibrary.DML
             "EXISTS " + nameof(LoginDetail) +
             " ( " + nameof(LoginDetail.Id) + " INTEGER PRIMARY KEY, " +
             " " + nameof(LoginDetail.UserId) + " NVARCHAR(2048) NUll," +
+            " " + nameof(LoginDetail.EmailId) + " NVARCHAR(2048) NUll," +
             " " + nameof(LoginDetail.IsRememberChecked) + " NVARCHAR(2048) NUll," +
             " " + nameof(LoginDetail.NumberOfLogin) + " NVARCHAR(2048) NUll," +
             " " + nameof(LoginDetail.LastLogin) + " NVARCHAR(2048) NUll)";
@@ -17,6 +18,7 @@ namespace DataAccessLibrary.DML
             "UPDATE " +
             nameof(LoginDetail) + " SET " +
             nameof(LoginDetail.UserId) + " = @" + nameof(LoginDetail.UserId) + ", " +
+            nameof(LoginDetail.EmailId) + " = @" + nameof(LoginDetail.UserId) + ", " +
             nameof(LoginDetail.IsRememberChecked) + " = @" + nameof(LoginDetail.IsRememberChecked) + ", " +
             nameof(LoginDetail.NumberOfLogin) + " = @" + nameof(LoginDetail.NumberOfLogin) + ", " +
             nameof(LoginDetail.LastLogin) + " = @" + nameof(LoginDetail.LastLogin) + " Where " +
@@ -26,6 +28,7 @@ namespace DataAccessLibrary.DML
             "INSERT INTO " + nameof(LoginDetail) + " VALUES (" +
             "NULL, " +
             "@" + nameof(LoginDetail.UserId) + "," +
+            "@" + nameof(LoginDetail.EmailId) + "," +
             "@" + nameof(LoginDetail.IsRememberChecked) + "," +
             "@" + nameof(LoginDetail.NumberOfLogin) + "," +
             "@" + nameof(LoginDetail.LastLogin) + ");";

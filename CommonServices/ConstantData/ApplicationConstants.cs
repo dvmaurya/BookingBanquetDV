@@ -72,6 +72,7 @@
         public const string State = "State";
         public const string City = "City";
         public const string RemovePhotoWarning = "Are you sure that to remove photo?";
-
+        public const string CurrentUserEmailId = "CurrentUserEmailId";
+        public const string PhotoNotAvailable = "Photo is not captured. Do you want to preceed without photo ?";
     }
 }

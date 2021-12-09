@@ -20,17 +20,17 @@ namespace BookingBanquetDV.Validation
                 
                 if (validationContext.ObjectInstance is INewBookingViewModel newBooking)
                 {
-                    if (newBooking.BookingParameter != null)
+                    if (newBooking.BookingDetails != null)
                     {
                         IList<string> allBookingDates =
-                            newBooking.BookingParameter.MasterBookingList?.Select(date => date.BookingDate).ToList();
+                            newBooking.MasterBookingDetailList?.Select(date => date.BookingDate).ToList();
 
-                        if (newBooking.BookingParameter.IsEditBooking)
+                        if (newBooking.BookingDetails.Id != 0)
                         {
-                            if(newBooking.BookingParameter.BookingDetailList.FirstOrDefault(
+                            if(newBooking.MasterBookingDetailList.FirstOrDefault(
                                 booking =>
-                                booking.Id != newBooking.BookingParameter.BookingDetails?.Id &&
-                                booking.BookingDate.FormatStringEquals(newBooking.BookingParameter.BookingDetails.BookingDate)) != null)
+                                booking.Id != newBooking.BookingDetails?.Id &&
+                                booking.BookingDate.FormatStringEquals(newBooking.BookingDetails.BookingDate)) != null)
                                 return CheckExistingDate(allBookingDates, dateTime);
                         }
                         else

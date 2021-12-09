@@ -164,6 +164,7 @@
     <Compile Include="ViewModels\IRecoverUserViewModel.cs" />
     <Compile Include="ViewModels\IUserDetailViewModel.cs" />
     <Compile Include="ViewModels\IWelcomeViewModel.cs" />
+    <Compile Include="ViewModels\IViewBookingViewModel.cs" />
     <Compile Include="Views\IAppFrame.cs" />
     <Compile Include="Views\IView.cs" />
     <EmbeddedResource Include="Properties\ViewModelsAndValidation.rd.xml" />

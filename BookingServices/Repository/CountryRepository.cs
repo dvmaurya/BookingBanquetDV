@@ -19,47 +19,51 @@ namespace BookingServices.Repository
         {
             try
             {
+                if(country != null)
+                { 
                 _dbpath = DataAccess.GetDbPath();
 
-                using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
-                {
-                    db.Open();
-
-                    SqliteCommand insertCommand = new SqliteCommand
+                    using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                     {
-                        Connection = db,
-                        CommandText = CountryQuery.InsertInCountry
-                    };
+                        db.Open();
 
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.Name), country.Name);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.Capital), country.Capital);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.Currency), country.Currency);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.CurrencySymbol), country.CurrencySymbol);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.Emoji), country.Emoji);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.EmojiU), country.EmojiU);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.Iso2), country.Iso2);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.Iso3), country.Iso3);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.Latitude), country.Latitude);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.Longitude), country.Longitude);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.Native), country.Native);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.NumericCode), country.NumericCode);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.PhoneCode), country.PhoneCode);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.Region), country.Region);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.Subregion), country.Subregion);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.Tld), country.Tld);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(country.StateJson), country.StateJson);
+                        SqliteCommand insertCommand = new SqliteCommand
+                        {
+                            Connection = db,
+                            CommandText = CountryQuery.InsertInCountry
+                        };
 
-                    insertCommand.ExecuteReader();
-                    db.Close();
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Name), country.Name ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Capital), country.Capital ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Currency), country.Currency ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.CurrencySymbol), country.CurrencySymbol ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Emoji), country.Emoji ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.EmojiU), country.EmojiU ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Iso2), country.Iso2 ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Iso3), country.Iso3 ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Latitude), country.Latitude ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Longitude), country.Longitude ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Native), country.Native ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.NumericCode), country.NumericCode ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.PhoneCode), country.PhoneCode ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Region), country.Region ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Subregion), country.Subregion ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Tld), country.Tld ?? string.Empty);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(country.StateJson), country.StateJson ?? string.Empty);
 
-                    return true;
+                        insertCommand.ExecuteReader();
+                        db.Close();
+
+                        return true;
+                    }
                 }
             }
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("Country Exception: ".ConcatString(ex.Message));
-                return false;
             }
+
+            return false;
         }
 
         public IList<Country> GetCountryData()

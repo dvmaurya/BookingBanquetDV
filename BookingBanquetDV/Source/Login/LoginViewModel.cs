@@ -4,6 +4,7 @@ using CommonServices.ConstantData;
 using CommonServices.Enums;
 using CommonServices.Extensions;
 using CommonServices.Model;
+using CommonServices.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,10 +51,12 @@ namespace BookingBanquetDV.Source.Login
                             UserId = mainView.UserId,
                             NumberOfLogin = "1",
                             LastLogin = DateTime.Now.ConvertToString(
-                                ApplicationConstants.DatabaseDateTimeFormat)
+                                ApplicationConstants.DatabaseDateTimeFormat),
+                            EmailId = _userDetail[UsersEnum.EmailId.ConvertToString()]
                         };
 
                         SaveLoginDetails(_loginDetail);
+                        Helper.SetLocalSetting<string>(ApplicationConstants.CurrentUserEmailId, _userDetail[UsersEnum.EmailId.ConvertToString()]);
                         _navigationService.Navigate(typeof(WelcomePage), _loginDetail);
                     }
                     else

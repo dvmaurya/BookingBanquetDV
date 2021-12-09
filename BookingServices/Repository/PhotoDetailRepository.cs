@@ -84,8 +84,8 @@ namespace BookingServices.Repository
                         FileType = query.GetString(3),
                         Size = query.GetString(4).UlongParse(),
                         EmailId = query.GetString(5),
-                        IsPhotoActive = query.GetString(6) != "0" ? true : false,
-                        IsPhotoRemoved = query.GetString(7) != "0" ? true : false
+                        IsPhotoActive = query.GetBoolean(6),
+                        IsPhotoRemoved = query.GetBoolean(7)
                     };
 
                     photoDetails.Add(photoDetail);
@@ -121,8 +121,8 @@ namespace BookingServices.Repository
                         FileType = query.GetString(3),
                         Size = query.GetString(4).UlongParse(),
                         EmailId = query.GetString(5),
-                        IsPhotoActive = query.GetString(6) != "0" ? true : false,
-                        IsPhotoRemoved = query.GetString(7) != "0" ? true : false
+                        IsPhotoActive = query.GetBoolean(6),
+                        IsPhotoRemoved = query.GetBoolean(7)
                     };
                 }
 

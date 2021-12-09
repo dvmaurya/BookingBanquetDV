@@ -6,24 +6,19 @@ using MimeKit;
 using MimeKit.IO;
 using MimeKit.IO.Filters;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ViewModelsAndValidation;
 using ViewModelsAndValidation.Services;
-using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.UI;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace BookingBanquetDV.Source.Camera
 {
     public static class PhotoUtility
     {
-        private const string baseG4Regex = "src=\"data:image\\/([a-zA-Z]*);base64,([^\"]*)\"";
+        //private const string baseG4Regex = "src=\"data:image\\/([a-zA-Z]*);base64,([^\"]*)\"";
 
         private static readonly IMessageDialogService _messageDialogService =
             DIContainer.GetInstance<IMessageDialogService>();

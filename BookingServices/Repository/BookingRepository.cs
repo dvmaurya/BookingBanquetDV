@@ -60,6 +60,10 @@ namespace BookingServices.Repository
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.PhotoName), bookingDetails.PhotoName);
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.UserId), bookingDetails.UserId);
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.IsEmailSent), bookingDetails.IsEmailSent);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Address), bookingDetails.Address);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Country), bookingDetails.Country);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.State), bookingDetails.State);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.City), bookingDetails.City);
 
                     insertCommand.ExecuteReader();
 
@@ -68,7 +72,7 @@ namespace BookingServices.Repository
             }
             catch (Exception ex)
             {
-                FileLogger.Logger.Info("Exception: ".ConcatString(ex.Message));
+                FileLogger.Logger.Info("Add Booking Exception: ".ConcatString(ex.Message));
             }
         }
 
@@ -108,7 +112,11 @@ namespace BookingServices.Repository
                         CreationDate = query.GetString(12),
                         PhotoName = query.GetString(13),
                         UserId = query.GetString(14),
-                        IsEmailSent = query.GetBoolean(15)
+                        IsEmailSent = query.GetBoolean(15),
+                        Address = query.GetString(16),
+                        Country = query.GetString(17),
+                        State = query.GetString(18),
+                        City = query.GetString(19)
                     };
 
                     bookingDetails.Add(bookingDetail);
@@ -118,11 +126,6 @@ namespace BookingServices.Repository
             }
 
             return bookingDetails;
-        }
-
-        public BookingDetails GetBookingById(int id)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task DeleteBookingAsync(BookingDetails bookingDetails)

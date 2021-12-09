@@ -56,6 +56,14 @@
         <Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}" />
         <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
     </Style>
+    <Style x:Key="ViewBookingLine" TargetType="Line">
+        <Setter Property="Stroke" Value="LightGray" />
+        <Setter Property="Stretch" Value="Fill" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="X1" Value="0" />
+        <Setter Property="X2" Value="540" />
+        <Setter Property="Margin" Value="0,10,0,10" />
+    </Style>
     <Style x:Key="LineStyle" TargetType="Line">
         <Setter Property="Stroke" Value="#D2D2D2" />
         <Setter Property="Stretch" Value="Fill" />
@@ -477,4 +485,5 @@
             </Setter.Value>
         </Setter>
     </Style>
+
 </ResourceDictionary>

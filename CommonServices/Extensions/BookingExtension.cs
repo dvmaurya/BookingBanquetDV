@@ -24,7 +24,11 @@ namespace CommonServices.Extensions
                 TotalAmount = bookingDetails.TotalAmount,
                 TotalFlours = bookingDetails.TotalFlours,
                 TotalRooms = bookingDetails.TotalRooms,
-                UserId = bookingDetails.UserId
+                UserId = bookingDetails.UserId,
+                Address = bookingDetails.Address,
+                Country = bookingDetails.Country,
+                State = bookingDetails.State,
+                City = bookingDetails.City
             };
 
             return dbBookingDetails;
@@ -49,7 +53,11 @@ namespace CommonServices.Extensions
                 TotalAmount = DbbookingDetails.TotalAmount,
                 TotalFlours = DbbookingDetails.TotalFlours,
                 TotalRooms = DbbookingDetails.TotalRooms,
-                UserId = DbbookingDetails.UserId
+                UserId = DbbookingDetails.UserId,
+                Address = DbbookingDetails.Address,
+                Country = DbbookingDetails.Country,
+                State = DbbookingDetails.State,
+                City = DbbookingDetails.City
             };
 
             return bookingDetails;

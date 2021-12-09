@@ -18,8 +18,6 @@ namespace ViewModelsAndValidation.ViewModels
         BookingDetails BookingDetail { get; set; }
         ICameraViewModel CameraViewModel { get; set; }
         ObservableCollection<BookingDetails> BookingDetailList { get; }
-        bool IsViewBooking { get; set; }
-        bool IsEditBooking { get; set; }
         UsersPersonalDetail UsersPersonalDetail { get; set; }
     }
 }

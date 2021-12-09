@@ -8,7 +8,6 @@ namespace BookingServices.Repository.Interface
     {
         void AddOrUpdateBooking(BookingDetails bookingDetails);
         IList<BookingDetails> GetAllBookings();
-        BookingDetails GetBookingById(int id);
         Task DeleteBookingAsync(BookingDetails bookingDetails);
     }
 }

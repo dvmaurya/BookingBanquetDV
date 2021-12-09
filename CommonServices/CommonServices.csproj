@@ -150,9 +150,9 @@
     <Compile Include="Logger\FileLogger.cs" />
     <Compile Include="Logger\ILogger.cs" />
     <Compile Include="Model\BookingDetails.cs" />
+    <Compile Include="Model\BookingParameter.cs" />
     <Compile Include="Model\City\SingleSelection.cs" />
     <Compile Include="Model\DbModel\BookingDetails.cs" />
-    <Compile Include="Model\BookingParameter.cs" />
     <Compile Include="Model\City\City.cs" />
     <Compile Include="Model\City\Country.cs" />
     <Compile Include="Model\City\State.cs" />
@@ -176,6 +176,7 @@
     <Compile Include="Utilities\DisposeDialogEventArgs.cs" />
     <Compile Include="Utilities\EnumUtility.cs" />
     <Compile Include="Utilities\GoogleAPI.cs" />
+    <Compile Include="Utilities\Helper.cs" />
     <Compile Include="Utilities\HttpUtility.cs" />
     <Compile Include="Utilities\Utilities.cs" />
     <EmbeddedResource Include="Properties\CommonServices.rd.xml" />

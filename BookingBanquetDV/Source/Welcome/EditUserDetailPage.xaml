@@ -9,237 +9,243 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
-    <ScrollViewer x:Name="rootScrollViewer" VerticalScrollBarVisibility="Auto">
-        <Grid Background="AliceBlue">
+
+    <Grid Background="AliceBlue">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid
+            Grid.Row="0"
+            Padding="10"
+            BorderBrush="Gray"
+            BorderThickness="2">
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="16"
+                FontWeight="SemiBold"
+                Text="User's profile details " />
+            <Button
+                Width="Auto"
+                Height="50"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Command="{Binding SaveUserDetailCommand}"
+                Style="{StaticResource CustomButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <FontIcon Glyph="&#xE74E;" />
+                    <TextBlock Margin="10,0,0,0" Text="Save details" />
+                </StackPanel>
+            </Button>
+        </Grid>
+        <ScrollViewer
+            x:Name="rootScrollViewer"
+            Grid.Row="1"
+            VerticalScrollBarVisibility="Auto">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid
-                    Grid.Row="0"
-                    Padding="10"
-                    BorderBrush="Gray"
-                    BorderThickness="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="1" Margin="20,0,20,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
                     <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="16"
+                        Grid.Row="0"
+                        Margin="0,30,0,0"
                         FontWeight="SemiBold"
-                        Text="User's profile details " />
-                    <Button
-                        Width="Auto"
-                        Height="50"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Command="{Binding SaveUserDetailCommand}"
-                        Style="{StaticResource CustomButtonStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Glyph="&#xE74E;" />
-                            <TextBlock Margin="10,0,0,0" Text="Save details" />
-                        </StackPanel>
-                    </Button>
-                </Grid>
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="1" Margin="20,0,20,0">
+                        Text="Profile photo" />
+                    <Grid
+                        Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="60" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
+                        <Image
+                            x:Name="previewImage"
+                            Grid.Row="1"
+                            Height="500"
+                            Source="{Binding ImageSource, Mode=TwoWay}"
+                            Stretch="Fill"
+                            Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
                         <TextBlock
-                            Grid.Row="0"
-                            Margin="0,30,0,0"
-                            Text="Profile photo" />
-                        <Grid
                             Grid.Row="1"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition Height="60" />
-                            </Grid.RowDefinitions>
-                            <Image
-                                x:Name="previewImage"
-                                Grid.Row="0"
-                                Height="500"
-                                Source="{Binding ImageSource, Mode=TwoWay}"
-                                Stretch="Fill"
+                            Foreground="LightGray"
+                            Text="Photo not available"
+                            Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNullConverter}}" />
+                        <StackPanel
+                            Grid.Row="0"
+                            Margin="0,0,0,10"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+                            <Button
+                                HorizontalAlignment="Center"
+                                Command="{Binding RetakePhotoCommand}"
+                                Content="Retake photo"
+                                FontSize="16"
+                                Foreground="#FFFFFF"
+                                Style="{StaticResource CustomButtonStyle}" />
+                            <Button
+                                Margin="10,0,0,0"
+                                HorizontalAlignment="Center"
+                                Command="{Binding PreviousPhotoCommand}"
+                                Content="Choose from previous photo"
+                                FontSize="16"
+                                Foreground="#FFFFFF"
+                                Style="{StaticResource CustomButtonStyle}" />
+                            <Button
+                                Margin="10,0,0,0"
+                                HorizontalAlignment="Center"
+                                Command="{Binding RemovePhotoCommand}"
+                                CommandParameter="{Binding}"
+                                Content="Remove photo"
+                                FontSize="16"
+                                Foreground="#FFFFFF"
+                                Style="{StaticResource CustomButtonStyle}"
                                 Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
-                            <TextBlock
-                                Grid.Row="0"
-                                HorizontalAlignment="Center"
-                                Foreground="LightGray"
-                                Text="Photo not available"
-                                Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNullConverter}}" />
-                            <StackPanel
-                                Grid.Row="1"
-                                Margin="0,0,0,10"
-                                HorizontalAlignment="Center"
-                                Orientation="Horizontal">
-                                <Button
-                                    HorizontalAlignment="Center"
-                                    Command="{Binding RetakePhotoCommand}"
-                                    Content="Retake photo"
-                                    FontSize="16"
-                                    Foreground="#FFFFFF"
-                                    Style="{StaticResource CustomButtonStyle}" />
-                                <Button
-                                    Margin="10,0,0,0"
-                                    HorizontalAlignment="Center"
-                                    Command="{Binding PreviousPhotoCommand}"
-                                    Content="Choose from previous photo"
-                                    FontSize="16"
-                                    Foreground="#FFFFFF"
-                                    Style="{StaticResource CustomButtonStyle}" />
-                                <Button
-                                    Margin="10,0,0,0"
-                                    HorizontalAlignment="Center"
-                                    Command="{Binding RemovePhotoCommand}"
-                                    Content="Remove photo"
-                                    FontSize="16"
-                                    Foreground="#FFFFFF"
-                                    Style="{StaticResource CustomButtonStyle}"
-                                    Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
-                            </StackPanel>
-                        </Grid>
+                        </StackPanel>
                     </Grid>
-
-                    <Grid
-                        Grid.Column="0"
-                        Margin="50,40"
-                        BorderBrush="Gray"
-                        BorderThickness="2">
-                        <Grid Padding="20">
+                </Grid>
+                <Grid
+                    Grid.Column="0"
+                    Margin="25,30"
+                    BorderBrush="Gray"
+                    BorderThickness="2">
+                    <StackPanel Margin="20">
+                        <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="110" />
-                                <ColumnDefinition Width="425" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="65" />
-                                <RowDefinition Height="65" />
-                                <RowDefinition Height="65" />
-                                <RowDefinition Height="120" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Row="0" Grid.Column="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock
-                                    Grid.Column="0"
-                                    Foreground="Red"
-                                    Text="*" />
-                                <TextBlock
-                                    Grid.Column="1"
-                                    Text="Full name:"
-                                    TextWrapping="Wrap" />
-                            </Grid>
-                            <StackPanel
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Margin="0,0,10,0">
-                                <TextBox
-                                    Background="#FFFFFF"
-                                    MaxLength="50"
-                                    PlaceholderText="Full name"
-                                    Text="{Binding FullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <interactivity:Interaction.Behaviors>
-                                        <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[FullName]}" />
-                                    </interactivity:Interaction.Behaviors>
-                                </TextBox>
-                                <TextBlock
-                                    Margin="0"
-                                    Style="{StaticResource ErrorMessageStyle}"
-                                    Text="{Binding Errors[FullName], Converter={StaticResource FirstErrorConverter}}"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
                             <TextBlock
-                                Grid.Row="1"
                                 Grid.Column="0"
-                                Text="Email id" />
-                            <StackPanel
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Margin="0,0,10,0">
-                                <TextBox
-                                    Background="LightGray"
-                                    IsReadOnly="True"
-                                    Text="{Binding UsersPersonalDetail.EmailId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            </StackPanel>
+                                Foreground="Red"
+                                Text="*" />
                             <TextBlock
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                Text="Mobile no" />
-                            <StackPanel
-                                Grid.Row="2"
                                 Grid.Column="1"
-                                Margin="0,0,10,0">
-                                <TextBox
-                                    Background="LightGray"
-                                    IsReadOnly="True"
-                                    Text="{Binding UsersPersonalDetail.Mobile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            </StackPanel>
-                            <Grid Grid.Row="3" Grid.Column="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock
-                                    Grid.Column="0"
-                                    Foreground="Red"
-                                    Text="*" />
-                                <TextBlock
-                                    Grid.Column="1"
-                                    Text="Address:"
-                                    TextWrapping="Wrap" />
-                            </Grid>
-                            <StackPanel
-                                Grid.Row="3"
-                                Grid.Column="1"
-                                Margin="0,0,10,0">
-                                <controls1:NotesControl
-                                    x:Name="NotesText"
-                                    Grid.Column="1"
-                                    IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
-                                    NotesText="{Binding Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    PlaceholderText="Enter address" />
-                                <TextBlock
-                                    Margin="0"
-                                    Style="{StaticResource ErrorMessageStyle}"
-                                    Text="{Binding Errors[Address], Converter={StaticResource FirstErrorConverter}}"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
+                                Text="Full name:"
+                                TextWrapping="Wrap" />
+                        </Grid>
+                        <StackPanel>
+                            <TextBox
+                                Background="#FFFFFF"
+                                MaxLength="50"
+                                PlaceholderText="Full name"
+                                Text="{Binding FullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <interactivity:Interaction.Behaviors>
+                                    <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[FullName]}" />
+                                </interactivity:Interaction.Behaviors>
+                            </TextBox>
                             <TextBlock
-                                Grid.Row="4"
+                                Margin="0"
+                                Style="{StaticResource ErrorMessageStyle}"
+                                Text="{Binding Errors[FullName], Converter={StaticResource FirstErrorConverter}}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Margin="0,10,0,10">
+                            <TextBlock Text="Email id" />
+                            <TextBox
+                                Background="LightGray"
+                                IsReadOnly="True"
+                                Text="{Binding UsersPersonalDetail.EmailId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock Text="Mobile no" />
+                            <TextBox
+                                Background="LightGray"
+                                IsReadOnly="True"
+                                Text="{Binding UsersPersonalDetail.Mobile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
                                 Grid.Column="0"
-                                Text="Country" />
-                            <StackPanel
-                                Grid.Row="4"
+                                Foreground="Red"
+                                Text="*" />
+                            <TextBlock
                                 Grid.Column="1"
-                                Orientation="Horizontal">
+                                Text="Address:"
+                                TextWrapping="Wrap" />
+                        </Grid>
+                        <StackPanel
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Margin="0,0,10,0">
+                            <controls1:NotesControl
+                                x:Name="NotesText"
+                                Grid.Column="1"
+                                IsEnabled="{Binding IsOtpEnable, Converter={StaticResource InverseBooleanConverter}}"
+                                NotesText="{Binding Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                PlaceholderText="Enter address" />
+                            <TextBlock
+                                Margin="0"
+                                Style="{StaticResource ErrorMessageStyle}"
+                                Text="{Binding Errors[Address], Converter={StaticResource FirstErrorConverter}}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <TextBlock Text="Country" />
+                        <StackPanel Orientation="Horizontal">
+                            <Border
+                                Width="538"
+                                Margin="0,5,0,0"
+                                Background="#FFFFFF"
+                                BorderBrush="Gray"
+                                BorderThickness="2">
+                                <TextBlock
+                                    Margin="5"
+                                    Text="{Binding SelectedCountry.Name}"
+                                    TextWrapping="Wrap" />
+                            </Border>
+                            <HyperlinkButton
+                                Margin="10,0,0,0"
+                                HorizontalAlignment="Right"
+                                Command="{Binding ChangedCountryCommand}">
+                                <Grid>
+                                    <FontIcon
+                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                        FontSize="30"
+                                        Foreground="#0078D7"
+                                        Glyph="&#xEC14;" />
+                                    <FontIcon
+                                        Margin="0,0,0,2"
+                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                        FontSize="15"
+                                        Foreground="White"
+                                        Glyph="&#xE710;" />
+                                </Grid>
+                            </HyperlinkButton>
+                        </StackPanel>
+                        <TextBlock
+                            Margin="0,30,0,0"
+                            Text="State:"
+                            Visibility="{Binding IsStateVisible}" />
+                        <StackPanel Visibility="{Binding IsStateVisible}">
+                            <StackPanel Orientation="Horizontal">
                                 <Border
-                                    Width="380"
+                                    Width="538"
                                     Margin="0,5,0,0"
                                     Background="#FFFFFF"
                                     BorderBrush="Gray"
                                     BorderThickness="2">
                                     <TextBlock
                                         Margin="5"
-                                        Text="{Binding SelectedCountry.Name}"
+                                        Text="{Binding SelectedState.Name}"
                                         TextWrapping="Wrap" />
                                 </Border>
                                 <HyperlinkButton
                                     Margin="10,0,0,0"
                                     HorizontalAlignment="Right"
-                                    Command="{Binding ChangedCountryCommand}">
+                                    VerticalAlignment="Top"
+                                    Command="{Binding ChangedStateCommand}">
                                     <Grid>
                                         <FontIcon
                                             FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -255,97 +261,45 @@
                                     </Grid>
                                 </HyperlinkButton>
                             </StackPanel>
-                            <TextBlock
-                                Grid.Row="5"
-                                Grid.Column="0"
-                                Margin="0,30,0,0"
-                                Text="State:"
-                                Visibility="{Binding IsStateVisible}" />
-                            <StackPanel
-                                Grid.Row="5"
-                                Grid.Column="1"
-                                Margin="0,30,0,0"
-                                Visibility="{Binding IsStateVisible}">
-                                <StackPanel Orientation="Horizontal">
-                                    <Border
-                                        Width="380"
-                                        Margin="0,5,0,0"
-                                        Background="#FFFFFF"
-                                        BorderBrush="Gray"
-                                        BorderThickness="2">
-                                        <TextBlock
-                                            Margin="5"
-                                            Text="{Binding SelectedState.Name}"
-                                            TextWrapping="Wrap" />
-                                    </Border>
-                                    <HyperlinkButton
-                                        Margin="10,0,0,0"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Top"
-                                        Command="{Binding ChangedStateCommand}">
-                                        <Grid>
-                                            <FontIcon
-                                                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                FontSize="30"
-                                                Foreground="#0078D7"
-                                                Glyph="&#xEC14;" />
-                                            <FontIcon
-                                                Margin="0,0,0,2"
-                                                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                FontSize="15"
-                                                Foreground="White"
-                                                Glyph="&#xE710;" />
-                                        </Grid>
-                                    </HyperlinkButton>
-                                </StackPanel>
+                        </StackPanel>
+                        <TextBlock Margin="0,30,0,0" Text="City" />
+                        <StackPanel Visibility="{Binding IsCityVisible}">
+                            <StackPanel Orientation="Horizontal">
+                                <Border
+                                    Width="538"
+                                    Margin="0,5,0,0"
+                                    Background="#FFFFFF"
+                                    BorderBrush="Gray"
+                                    BorderThickness="2">
+                                    <TextBlock
+                                        Margin="5"
+                                        Text="{Binding SelectedCity.Name}"
+                                        TextWrapping="Wrap" />
+                                </Border>
+                                <HyperlinkButton
+                                    Margin="10,0,0,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Command="{Binding ChangedCityCommand}">
+                                    <Grid>
+                                        <FontIcon
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="30"
+                                            Foreground="#0078D7"
+                                            Glyph="&#xEC14;" />
+                                        <FontIcon
+                                            Margin="0,0,0,2"
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="15"
+                                            Foreground="White"
+                                            Glyph="&#xE710;" />
+                                    </Grid>
+                                </HyperlinkButton>
                             </StackPanel>
-                            <TextBlock
-                                Grid.Row="6"
-                                Grid.Column="0"
-                                Margin="0,30,0,0"
-                                Text="City" />
-                            <StackPanel
-                                Grid.Row="6"
-                                Grid.Column="1"
-                                Margin="0,30,0,10"
-                                Visibility="{Binding IsCityVisible}">
-                                <StackPanel Orientation="Horizontal">
-                                    <Border
-                                        Width="380"
-                                        Margin="0,5,0,0"
-                                        Background="#FFFFFF"
-                                        BorderBrush="Gray"
-                                        BorderThickness="2">
-                                        <TextBlock
-                                            Margin="5"
-                                            Text="{Binding SelectedCity.Name}"
-                                            TextWrapping="Wrap" />
-                                    </Border>
-                                    <HyperlinkButton
-                                        Margin="10,0,0,0"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Top"
-                                        Command="{Binding ChangedCityCommand}">
-                                        <Grid>
-                                            <FontIcon
-                                                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                FontSize="30"
-                                                Foreground="#0078D7"
-                                                Glyph="&#xEC14;" />
-                                            <FontIcon
-                                                Margin="0,0,0,2"
-                                                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                FontSize="15"
-                                                Foreground="White"
-                                                Glyph="&#xE710;" />
-                                        </Grid>
-                                    </HyperlinkButton>
-                                </StackPanel>
-                            </StackPanel>
-                        </Grid>
-                    </Grid>
+                        </StackPanel>
+                    </StackPanel>
                 </Grid>
             </Grid>
-        </Grid>
-    </ScrollViewer>
+        </ScrollViewer>
+    </Grid>
 </Page>

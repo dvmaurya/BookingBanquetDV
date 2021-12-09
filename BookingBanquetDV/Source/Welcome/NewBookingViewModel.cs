@@ -1,18 +1,34 @@
-﻿using BookingBanquetDV.Validation;
+﻿using BookingBanquetDV.Converters;
+using BookingBanquetDV.Source.Camera;
+using BookingBanquetDV.Source.Register;
+using BookingBanquetDV.Utility;
+using BookingBanquetDV.Validation;
+using BookingServices.Interfaces;
 using CommonServices.ConstantData;
 using CommonServices.Extensions;
 using CommonServices.Model;
+using CommonServices.Model.City;
+using CommonServices.Utilities;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using ViewModelsAndValidation;
 using ViewModelsAndValidation.Command;
+using ViewModelsAndValidation.Services;
 using ViewModelsAndValidation.ViewModels;
+using Windows.Storage;
+using Windows.UI.Popups;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Navigation;
 
 namespace BookingBanquetDV.Source.Welcome
 {
-    public class NewBookingViewModel : ValidationViewModelBase, INewBookingViewModel
+    public class NewBookingViewModel : ValidationViewModelBase, INewBookingViewModel, INotesValidator
     {
         private string _customerName;
         private string _bookedBy;
@@ -26,61 +42,286 @@ namespace BookingBanquetDV.Source.Welcome
         private DateTimeOffset _maxDate;
         private DateTimeOffset _minDateTime;
         private DateTimeOffset _bookingDate;
-        private BookingParameter _bookingParameter;
-        private string _selecteConfirmation;
+        private BookingDetails _bookingDetails;
+        private LoginDetail _loginDetail;
+        private string _selectedConfirmation;
         private readonly ICommand _saveCommand;
         private DateTimeOffset _creationDate;
-        private int _id;
         private string _photoName;
         private string _mobileNo;
         private string _emailId;
-        private readonly ICommand _dialogLoadingCommand;
+        private IReadOnlyCollection<SingleSelection> _countryList;
+        private IReadOnlyCollection<SingleSelection> _cityList;
+        private IReadOnlyCollection<SingleSelection> _stateList;
+        private bool _isCityVisible;
+        private bool _isStateVisible;
+        private readonly ICommand _changedCountryCommand;
+        private readonly ICommand _changedStateCommand;
+        private readonly ICommand _changedCityCommand;
+        private readonly ICommand _retakePhotoCommand;
+        private readonly ICommand _removePhotoCommand;
+        private IReadOnlyCollection<Country> _masterCountryList;
+        private IReadOnlyCollection<State> _masterStateList;
+        private SingleSelection _selectedCity;
+        private SingleSelection _selectedState;
+        private SingleSelection _selectedCountry;
+        private PhotoDetails _takePhotoDetails;
+        private IList<string> _deletePhoto;
+        private BitmapImage _imageSource;
+        private IReadOnlyCollection<BookingDetails> _masterBookingDetailList;
+        private string _address;
+        private readonly IPhotoDetailDataProvider _photoDetailDataProvider;
+        private readonly IMessageDialogService _messageDialogService;
+        private readonly IBookingDataProvider _bookingDataProvider;
+        private readonly ICountryDataProvider _countryDataProvider;
+        private readonly ICameraViewModel _cameraViewModel;
+        private readonly INavigationService _navigationService;
 
-        public NewBookingViewModel()
+        public NewBookingViewModel(
+            ICountryDataProvider countryDataProvider,
+            ICameraViewModel cameraViewModel,
+            IBookingDataProvider bookingDataProvider,
+            IMessageDialogService messageDialogService,
+            INavigationService navigationService,
+            IPhotoDetailDataProvider photoDetailDataProvider)
         {
-            _dialogLoadingCommand = new DelegateCommand(parameter => OnDialogLoading());
-            _saveCommand = new DelegateCommand(parameter => OnSaveNewBooking());
+            _countryDataProvider = countryDataProvider ?? throw new ArgumentNullException("countryDataProvider");
+            _cameraViewModel = cameraViewModel ?? throw new ArgumentNullException("cameraViewModel");
+            _bookingDataProvider = bookingDataProvider ?? throw new ArgumentNullException("bookingDataProvider");
+            _messageDialogService = messageDialogService ?? throw new ArgumentNullException("messageDialogService");
+            _navigationService = navigationService ?? throw new ArgumentNullException("navigationService");
+            _photoDetailDataProvider = photoDetailDataProvider ?? throw new ArgumentNullException("photoDetailDataProvider");
+
+            _deletePhoto = new List<string>();
+
+            _saveCommand = new DelegateCommand(async parameter => await OnSaveNewBookingAsync());
+
+            _changedCountryCommand = new DelegateCommand(
+               async parameter => await OnCountryChangedAsync());
+
+            _changedStateCommand = new DelegateCommand(
+                async parameter => await OnStateChangedAsync());
+
+            _changedCityCommand = new DelegateCommand(
+                async parameter => await OnCityChangedAsync());
+
+            _retakePhotoCommand = new DelegateCommand(
+               async parameter => await OnRetakePhotoAsync());
+
+            _removePhotoCommand = new DelegateCommand(
+                parameter => OnRemovePhotoAsync());
         }
 
-        private void OnDialogLoading()
+        private void OnRemovePhotoAsync()
         {
-            if (_bookingParameter != null)
+            if (_takePhotoDetails != null)
             {
-                _bookedBy = _bookingParameter.LoginDetail?.UserName;
+                _deletePhoto.Add(_photoName);
+                _imageSource = null;
+                _photoName = string.Empty;
+
+                OnPropertyChanged(() => ImageSource);
+            }
+        }
+
+        private async Task OnRetakePhotoAsync()
+        {
+            PhotoDetails photoDetails = await _cameraViewModel.OnClickTakeAPhotoCommandAsync();
+
+            if (_takePhotoDetails != null)
+                _deletePhoto.Add(_takePhotoDetails.LocalPhotoName);
+
+            _takePhotoDetails = photoDetails;
+
+            if (_takePhotoDetails != null)
+            {
+                _photoName = _takePhotoDetails.LocalPhotoName;
+                _takePhotoDetails.IsPhotoActive = true;
+                _takePhotoDetails.IsPhotoRemoved = false;
+
+                await SetPhotoAsync(_takePhotoDetails.LocalPhotoName);
+            }
+        }
+
+        private async Task SetPhotoAsync(string photoName)
+        {
+            if (!string.IsNullOrEmpty(photoName))
+            {
+                StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.
+                    GetFolderAsync(ApplicationConstants.Document);
+
+                if (await storageFolder.TryGetItemAsync(photoName) is StorageFile file)
+                    _imageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file);
+
+                OnPropertyChanged(() => ImageSource);
+            }
+        }
+
+        private async Task OnCityChangedAsync()
+        {
+            _selectedCity = await SingleSelectionUtility.OnSelectSingleSelectionAsync(
+                        _cityList, ApplicationConstants.City);
+
+            OnPropertyChanged(() => SelectedCity);
+        }
+
+        private async Task OnStateChangedAsync()
+        {
+            _selectedState = await SingleSelectionUtility.OnSelectSingleSelectionAsync(
+                        _stateList, ApplicationConstants.State);
+
+            if (_selectedState != null)
+            {
+                _isCityVisible = true;
+
+                IReadOnlyCollection<City> cityList =
+                    JsonConvert.DeserializeObject<IReadOnlyCollection<City>>(_selectedState.JsonData);
+
+                if (cityList != null)
+                    GenerateListForSingleSelection(cityList);
+
+                await OnCityChangedAsync();
+            }
+
+            OnPropertyChanged(() => IsCityVisible);
+            OnPropertyChanged(() => SelectedState);
+        }
+
+        private async Task OnCountryChangedAsync()
+        {
+            _selectedCountry = await SingleSelectionUtility.OnSelectSingleSelectionAsync(
+                        _countryList, ApplicationConstants.Country);
+
+            if (_selectedCountry != null)
+            {
+                _isStateVisible = true;
+
+                IReadOnlyCollection<State> stateList =
+                    JsonConvert.DeserializeObject<IReadOnlyCollection<State>>(_selectedCountry.JsonData);
+
+                if (stateList != null)
+                    GenerateListForSingleSelection(stateList);
+
+                await OnStateChangedAsync();
+            }
+
+            OnPropertyChanged(() => IsStateVisible);
+            OnPropertyChanged(() => SelectedCountry);
+        }
+
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode navigationMode)
+        {
+            await base.OnNavigatedToAsync(parameter, navigationMode).ConfigureAwait(false);
+
+            GetConfirmationList();
+            InitializeListData();
+
+            if (parameter is BookingParameter bookingParameter)
+            {
+                _bookingDetails = bookingParameter.BookingDetails;
+                _loginDetail = bookingParameter.LoginDetail;
+
+                _bookedBy = _loginDetail?.UserName;
+
+                await OnPageLoadingAsync();
+                LoadAllBookingDetail();
+            }
+        }
+
+        private async Task OnPageLoadingAsync()
+        {
+            if (_bookingDetails != null)
+            {
+                _photoName = _bookingDetails.PhotoName;
                 _maxDate = DateTimeOffset.Now.Date;
                 _minDateTime = DateTimeOffset.Now.Date;
-                GetConfirmationList();
+                _bookingDate = DateTimeOffset.Now;
 
-                if(!_bookingParameter.IsEditBooking && !_bookingParameter.IsViewBooking)
-                    _bookingDate = DateTimeOffset.Now.Date;
-
-                if(_bookingParameter.BookingDetails != null)
-                    SetBookingDetail(_bookingParameter.BookingDetails);
+                SetBookingDetail(_bookingDetails);
+                await SetPhotoAsync(_photoName);
 
                 OnPropertyChanged(() => BookedBy);
                 OnPropertyChanged(() => MaxDate);
                 OnPropertyChanged(() => MinDateTime);
                 OnPropertyChanged(() => BookingDate);
             }
+            else
+            {
+                _creationDate = DateTime.Now.Date;
+            }
+        }
+
+        private void LoadAllBookingDetail()
+        {
+            _masterBookingDetailList = new ObservableCollection<BookingDetails>(
+                _bookingDataProvider.GetAllBookings());
+        }
+
+        private void InitializeListData()
+        {
+            _masterCountryList =
+                new ReadOnlyCollection<Country>(_countryDataProvider.GetCountryData());
+
+            if (_masterCountryList != null && _masterCountryList.Any())
+                GenerateListForSingleSelection(_masterCountryList);
+        }
+
+        private void GenerateListForSingleSelection(IReadOnlyCollection<object> singleCode)
+        {
+            if (singleCode is IReadOnlyCollection<Country> countryList)
+            {
+                _countryList = countryList.
+                    Select(code =>
+                        new SingleSelection
+                        {
+                            Id = code.Id,
+                            Name = code.Name,
+                            JsonData = JsonConvert.SerializeObject(code.States)
+                        }).ToList();
+            }
+            else if (singleCode is IReadOnlyCollection<State> stateList)
+            {
+                _stateList = stateList.
+                    Select(code =>
+                        new SingleSelection
+                        {
+                            Id = code.Id,
+                            Name = code.Name,
+                            JsonData = JsonConvert.SerializeObject(code.Cities)
+                        }).ToList();
+            }
+            else if (singleCode is IReadOnlyCollection<City> cityList)
+            {
+                _cityList = cityList.
+                    Select(code =>
+                        new SingleSelection
+                        {
+                            Id = code.Id,
+                            Name = code.Name
+                        }).ToList();
+            }
         }
 
         private void SetBookingDetail(BookingDetails bookingDetails)
         {
-            if (BookingParameter != null && BookingParameter.BookingDetails != null)
+            if (_bookingDetails != null)
             {
-                _id = BookingParameter.BookingDetails.Id;
-                _customerName = BookingParameter.BookingDetails.CustomerName;
-                _mobileNo = BookingParameter.BookingDetails.MobileNo;
-                _emailId = BookingParameter.BookingDetails.EmailId;
-                _bookingDate = BookingParameter.BookingDetails.BookingDate.ConvertToDateTime();
-                _creationDate = BookingParameter.BookingDetails.CreationDate.ConvertToDateTime();
-                _totalRooms = BookingParameter.BookingDetails.TotalRooms;
-                _totalFlours = BookingParameter.BookingDetails.TotalFlours;
-                _amount = BookingParameter.BookingDetails.TotalAmount;
-                _advanced = BookingParameter.BookingDetails.Advanced;
-                _balance = BookingParameter.BookingDetails.Balance;
-                _selecteConfirmation = BookingParameter.BookingDetails.Confirmation;
-                _photoName = BookingParameter.BookingDetails.PhotoName;
+                _customerName = _bookingDetails.CustomerName;
+                _mobileNo = _bookingDetails.MobileNo;
+                _emailId = _bookingDetails.EmailId;
+                _bookingDate = _bookingDetails.BookingDate.ConvertToDateTime();
+                _creationDate = _bookingDetails.CreationDate.ConvertToDateTime();
+                _totalRooms = _bookingDetails.TotalRooms;
+                _totalFlours = _bookingDetails.TotalFlours;
+                _amount = _bookingDetails.TotalAmount;
+                _advanced = _bookingDetails.Advanced;
+                _balance = _bookingDetails.Balance;
+                _selectedConfirmation = _bookingDetails.Confirmation;
+                _photoName = _bookingDetails.PhotoName;
+                _address = _bookingDetails.Address;
+                SetCountry(_bookingDetails.Country);
+                SetState(_bookingDetails.State);
+                SetCity(_bookingDetails.City);
 
                 OnPropertyChanged(() => CustomerName);
                 OnPropertyChanged(() => MobileNo);
@@ -90,35 +331,160 @@ namespace BookingBanquetDV.Source.Welcome
                 OnPropertyChanged(() => TotalFlours);
                 OnPropertyChanged(() => TotalAmount);
                 OnPropertyChanged(() => Balance);
-                OnPropertyChanged(() => SelectConfirmation);
+                OnPropertyChanged(() => SelectedConfirmation);
+                OnPropertyChanged(() => Address);
+                OnPropertyChanged(() => SelectedCountry);
+                OnPropertyChanged(() => SelectedState);
+                OnPropertyChanged(() => SelectedCity);
             }
         }
 
-        public void OnSaveNewBooking()
+        private void SetCity(string city)
+        {
+            if (!string.IsNullOrEmpty(city) && _cityList != null)
+                _selectedCity = _cityList.FirstOrDefault(name => name.Name == city);
+        }
+
+        private void SetState(string state)
+        {
+            if (_stateList != null && !string.IsNullOrEmpty(state))
+            {
+                _selectedState = _stateList.FirstOrDefault(name => name.Name == state);
+
+                if (_selectedState != null && _masterStateList != null)
+                {
+                    _isCityVisible = true;
+                    List<City> _masterCityList = _masterStateList.FirstOrDefault(
+                        id => id.Id == _selectedState.Id).Cities;
+
+                    if (_masterCityList != null)
+                        GenerateListForSingleSelection(_masterCityList);
+                }
+            }
+        }
+
+        private void SetCountry(string country)
+        {
+            if (_countryList != null && !string.IsNullOrEmpty(country))
+            {
+                _selectedCountry = _countryList.FirstOrDefault(name => name.Name == country);
+
+                if (_selectedCountry != null && _masterCountryList != null)
+                {
+                    _isStateVisible = true;
+                    _masterStateList = _masterCountryList.FirstOrDefault(
+                        id => id.Id == _selectedCountry.Id)?.States;
+
+                    if (_masterStateList != null)
+                        GenerateListForSingleSelection(_masterStateList);
+                }
+            }
+        }
+
+        public async Task OnSaveNewBookingAsync()
         {
             if (ValidateProperties())
             {
-                if(_bookingParameter != null)
+                if (string.IsNullOrEmpty(_photoName))
                 {
-                    _bookingParameter.BookingDetails = new BookingDetails
+                    List<IUICommand> commands = new List<IUICommand>
                     {
-                        Advanced = _advanced,
-                        Balance = _balance,
-                        BookedBy = _bookedBy,
-                        BookingDate = _bookingDate.ConvertToString(ApplicationConstants.DatabaseDateFormat),
-                        Confirmation = _selecteConfirmation,
-                        CreationDate = _creationDate.ConvertToString(ApplicationConstants.DatabaseDateTimeFormat),
-                        CustomerName = _customerName,
-                        EmailId = _emailId,
-                        Id = _id,
-                        MobileNo = _mobileNo,
-                        PhotoName = _photoName ?? string.Empty,
-                        TotalAmount = _amount,
-                        TotalFlours = _totalFlours,
-                        TotalRooms = _totalRooms
+                        new UICommand(
+                            label: ApplicationConstants.Yes,
+                            action: async(uiCommand) => await OnContinueSaveAsync()),
+
+                        new UICommand(
+                            label: ApplicationConstants.No,
+                            action: null)
                     };
+
+                    await _messageDialogService.ShowMessageDialogAsync(
+                        ApplicationConstants.Warning,
+                        ApplicationConstants.PhotoNotAvailable,
+                        commands);
+                }
+                else
+                {
+                    await OnContinueSaveAsync();
                 }
             }
+        }
+
+        private async Task OnContinueSaveAsync()
+        {
+            if (_bookingDetails == null)
+                _bookingDetails = new BookingDetails();
+
+            _bookingDetails.Advanced = _advanced;
+            _bookingDetails.Balance = _balance;
+            _bookingDetails.BookedBy = _bookedBy;
+            _bookingDetails.UserId = _loginDetail?.UserId;
+            _bookingDetails.BookingDate = _bookingDate.ConvertToString(ApplicationConstants.DatabaseDateFormat);
+            _bookingDetails.Confirmation = _selectedConfirmation ?? "Not decided";
+            _bookingDetails.CreationDate = _creationDate.ConvertToString(ApplicationConstants.DatabaseDateTimeFormat);
+            _bookingDetails.CustomerName = _customerName;
+            _bookingDetails.EmailId = _emailId;
+            _bookingDetails.MobileNo = _mobileNo;
+            _bookingDetails.PhotoName = _photoName ?? string.Empty;
+            _bookingDetails.TotalAmount = _amount;
+            _bookingDetails.TotalFlours = _totalFlours ?? string.Empty;
+            _bookingDetails.TotalRooms = _totalRooms ?? string.Empty;
+            _bookingDetails.Address = _address;
+            _bookingDetails.Country = _selectedCountry.Name;
+            _bookingDetails.State = _selectedState?.Name ?? string.Empty;
+            _bookingDetails.City = _selectedCity?.Name ?? string.Empty;
+
+            await OnContinueBookingSaveAsync();
+
+            await _messageDialogService.ShowMessageDialogAsync(
+                ApplicationConstants.Congrats,
+                ApplicationConstants.BookingSuccess.FormatString(
+                    _bookingDate));
+
+            _navigationService.Navigate(typeof(WelcomePage), _loginDetail);
+        }
+
+        private async Task OnContinueBookingSaveAsync()
+        {
+            if (_bookingDetails != null)
+            {
+                bool isEmailSent = await SendingEmailAsync(_bookingDetails);
+                _bookingDetails.IsEmailSent = isEmailSent;
+                _bookingDataProvider.AddOrUpdateBooking(_bookingDetails);
+
+                if (_deletePhoto != null && _deletePhoto.Any())
+                {
+                    foreach (string deletePhoto in _deletePhoto)
+                        await _photoDetailDataProvider.DeleteDocumentFileFromFolderAsync(deletePhoto);
+                }
+            }
+        }
+
+        private async Task<bool> SendingEmailAsync(BookingDetails bookingDetail)
+        {
+            bool isEmailSent = false;
+            App.ShowLoadingIndicator(ApplicationConstants.SendingEmail);
+            isEmailSent = await SendBookingMailAsync(bookingDetail);
+            App.HideLoadingIndicator();
+
+            return isEmailSent;
+        }
+
+        private async Task<bool> SendBookingMailAsync(BookingDetails bookingDetail)
+        {
+            if (bookingDetail != null)
+            {
+                EmailParameter emailParameter = new EmailParameter
+                {
+                    BookingDetails = bookingDetail,
+                    EmailAddress = bookingDetail.EmailId,
+                    UserName = bookingDetail.CustomerName
+                };
+
+                return await EmailUtility.SendEmailsAsync(emailParameter);
+            }
+
+            return false;
         }
 
         private void GetConfirmationList()
@@ -138,8 +504,6 @@ namespace BookingBanquetDV.Source.Welcome
             set => _customerName = value;
         }
 
-        public int Id => _id;
-
         public string PhotoName => _photoName;
 
         [DateRequiredAttribute(ErrorMessage = ApplicationConstants.DateRequired)]
@@ -149,7 +513,7 @@ namespace BookingBanquetDV.Source.Welcome
             set { SetValue(() => BookingDate, ref _bookingDate, value); }
         }
 
-         public DateTimeOffset CreationDate => _creationDate;
+        public DateTimeOffset CreationDate => _creationDate;
 
         public DateTimeOffset MaxDate
         {
@@ -203,16 +567,10 @@ namespace BookingBanquetDV.Source.Welcome
 
         public List<string> ConfirmList => _confirmList;
 
-        public BookingParameter BookingParameter
+        public string SelectedConfirmation
         {
-            get => _bookingParameter;
-            set => _bookingParameter = value;
-        }
-
-        public string SelectConfirmation
-        {
-            get => _selecteConfirmation;
-            set => _selecteConfirmation = value;
+            get => _selectedConfirmation;
+            set => _selectedConfirmation = value;
         }
 
         [MobileNoValidationAttribute(ErrorMessage = ApplicationConstants.InvalidMobileNo)]
@@ -229,12 +587,77 @@ namespace BookingBanquetDV.Source.Welcome
             set => _emailId = value;
         }
 
-        public ICommand DialogLoadingCommand => _dialogLoadingCommand;
-
         public ICommand SaveCommand => _saveCommand;
 
-        public bool IsValidationSuccess { get; }
-
         public bool IsEmailSent { get; }
+
+        public bool IsCityVisible
+        {
+            get => _isCityVisible;
+            set => _isCityVisible = value;
+        }
+
+        public bool IsStateVisible
+        {
+            get => _isStateVisible;
+            set => _isStateVisible = value;
+        }
+
+        [Required(ErrorMessage = ApplicationConstants.CountryRequired)]
+        public SingleSelection SelectedCountry
+        {
+            get => _selectedCountry;
+            set => _selectedCountry = value;
+        }
+
+        public SingleSelection SelectedState
+        {
+            get => _selectedState;
+            set => _selectedState = value;
+        }
+
+        public SingleSelection SelectedCity
+        {
+            get => _selectedCity;
+            set => _selectedCity = value;
+        }
+
+        public ICommand ChangedCountryCommand => _changedCountryCommand;
+
+        public ICommand ChangedStateCommand => _changedStateCommand;
+
+        public ICommand ChangedCityCommand => _changedCityCommand;
+
+        public long MaxLength => ApplicationConstants.AddressLimit;
+
+        public BitmapImage ImageSource
+        {
+            get => _imageSource;
+            set => _imageSource = value;
+        }
+
+        public ICommand RetakePhotoCommand => _retakePhotoCommand;
+
+        public ICommand RemovePhotoCommand => _removePhotoCommand;
+
+        public BookingDetails BookingDetails
+        {
+            get => _bookingDetails;
+            set => _bookingDetails = value;
+        }
+
+        [Required(ErrorMessage = ApplicationConstants.AddressRequired)]
+        [AddressValidationAttribute(ErrorMessage = ApplicationConstants.AddressLimitError)]
+        public string Address
+        {
+            get => _address;
+            set => _address = value;
+        }
+
+        public IReadOnlyCollection<BookingDetails> MasterBookingDetailList
+        {
+            get => _masterBookingDetailList;
+            set => _masterBookingDetailList = value;
+        }
     }
 }
