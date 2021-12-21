@@ -1,4 +1,5 @@
-﻿using BookingBanquetDV.Utility;
+﻿using BookingBanquetDV.Source.Welcome;
+using BookingBanquetDV.Utility;
 using BookingBanquetDV.Validation;
 using BookingServices.Interfaces;
 using CommonServices.ConstantData;
@@ -35,6 +36,7 @@ namespace BookingBanquetDV.Source.Recover
         private string _confirmPassword;
         private IDictionary<string, string> _userDetails;
         private bool _passwordUpdateFailed;
+        private LoginDetail _loginDetail;
         private readonly ICommand _changePasswordCommand;
         private readonly ICommand _getOTPCommand;
         private readonly ICommand _recoverCommand;
@@ -84,7 +86,10 @@ namespace BookingBanquetDV.Source.Recover
                         ApplicationConstants.Success,
                         ApplicationConstants.PasswordUpdated).ConfigureAwait(true);
 
-                    _navigationService.Navigate(typeof(MainPage));
+                    if (_loginDetail == null)
+                        _navigationService.Navigate(typeof(MainPage));
+                    else
+                        _navigationService.Navigate(typeof(WelcomePage), _loginDetail);
                 }
                 else
                 {
@@ -98,6 +103,9 @@ namespace BookingBanquetDV.Source.Recover
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode navigationMode)
         {
             await base.OnNavigatedToAsync(parameter, navigationMode).ConfigureAwait(false);
+
+            if (parameter is LoginDetail loginDetail)
+                _loginDetail = loginDetail;
         }
 
         private async Task OnClickGetOTPAsync()
@@ -122,6 +130,7 @@ namespace BookingBanquetDV.Source.Recover
                     App.ShowLoadingIndicator(ApplicationConstants.SendingEmail);
                     bool isEmailSent = await EmailUtility.SendEmailsAsync(emailParameter);
                     App.HideLoadingIndicator();
+
                     if (isEmailSent)
                     {
                         _isOtpEnable = true;
@@ -249,6 +258,12 @@ namespace BookingBanquetDV.Source.Recover
         {
             get => _passwordUpdateFailed;
             set => _passwordUpdateFailed = value;
+        }
+
+        public LoginDetail LoginDetail
+        {
+            get => _loginDetail;
+            set => _loginDetail = value;
         }
     }
 }

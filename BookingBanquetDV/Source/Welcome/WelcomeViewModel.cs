@@ -1,4 +1,5 @@
 ﻿using BookingBanquetDV.Source.Camera;
+using BookingBanquetDV.Source.Recover;
 using BookingBanquetDV.Source.Welcome.Controls;
 using BookingBanquetDV.Utility;
 using BookingServices.Interfaces;
@@ -32,6 +33,7 @@ namespace BookingBanquetDV.Source.Welcome
         private readonly ICommand _newBookingCommand;
         private ICameraViewModel _cameraViewModel;
         private UsersPersonalDetail _usersPersonalDetail;
+        private readonly ICommand _changePasswordCommand;
         private readonly ICommand _editProfileCommand;
         private readonly ICommand _viewProfileCommand;
         private readonly ICommand _cameraClickCommand;
@@ -46,6 +48,7 @@ namespace BookingBanquetDV.Source.Welcome
         private readonly IUsersPersonalDetailDataProvider _usersPersonalDetailDataProvider;
         private readonly IContentDialogService _contentDialogService;
         private readonly IPhotoDetailDataProvider _photoDetailDataProvider;
+        private readonly ICustomerPhotoDataProvider _customerPhotoDataProvider;
 
         public WelcomeViewModel(
             ICameraViewModel cameraViewModel,
@@ -54,7 +57,8 @@ namespace BookingBanquetDV.Source.Welcome
             IMessageDialogService messageDialogService,
             IUsersPersonalDetailDataProvider usersPersonalDetailDataProvider,
             IContentDialogService contentDialogService,
-            IPhotoDetailDataProvider photoDetailDataProvider)
+            IPhotoDetailDataProvider photoDetailDataProvider,
+            ICustomerPhotoDataProvider customerPhotoDataProvider)
         {
             _cameraViewModel = cameraViewModel ?? throw new ArgumentNullException("cameraViewModel");
             _bookingDataProvider = bookingDataProvider ?? throw new ArgumentNullException("bookingDataProvider");
@@ -63,6 +67,7 @@ namespace BookingBanquetDV.Source.Welcome
             _usersPersonalDetailDataProvider = usersPersonalDetailDataProvider ?? throw new ArgumentNullException("usersPersonalDetailDataProvider");
             _contentDialogService = contentDialogService ?? throw new ArgumentNullException("contentDialogService");
             _photoDetailDataProvider = photoDetailDataProvider ?? throw new ArgumentNullException("photoDetailDataProvider");
+            _customerPhotoDataProvider = customerPhotoDataProvider ?? throw new ArgumentNullException("customerPhotoDataProvider");
 
             _newBookingCommand = new DelegateCommand(
                 parameter => OnClickNewBooking());
@@ -90,6 +95,14 @@ namespace BookingBanquetDV.Source.Welcome
 
             _editProfileCommand = new DelegateCommand(
                 parameter => OnEditProfileClick());
+
+            _changePasswordCommand = new DelegateCommand(
+                parameter => OnChangePassword());
+        }
+
+        private void OnChangePassword()
+        {
+            _navigationService.Navigate(typeof(RecoverUser), _loginDetail);
         }
 
         private void OnEditProfileClick()
@@ -166,7 +179,10 @@ namespace BookingBanquetDV.Source.Welcome
         {
             if (parameter is BookingDetails bookingDetail)
             {
-                ViewBooking viewBooking = new ViewBooking(bookingDetail);
+                CustomerPhotoDetail customerPhoto = 
+                    _customerPhotoDataProvider.GetCustomerPhotoDetail(bookingDetail.Id);
+
+                ViewBooking viewBooking = new ViewBooking(bookingDetail, customerPhoto);
                 _contentDialogService.ShowDialogAsync(viewBooking);
             }
         }
@@ -202,13 +218,15 @@ namespace BookingBanquetDV.Source.Welcome
         {
             if (parameter is BookingDetails bookingDetail)
             {
-                PhotoDetails photoDetails = new PhotoDetails();
-                StorageFolder storageFolder =
-                        await ApplicationData.Current.LocalFolder.GetFolderAsync(ApplicationConstants.Document);
+                CustomerPhotoDetail photoDetails = new CustomerPhotoDetail();
+                StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.
+                    GetFolderAsync(ApplicationConstants.CustomerPhoto);
 
-                if (await storageFolder.TryGetItemAsync(bookingDetail.PhotoName) is StorageFile file)
+                photoDetails = _customerPhotoDataProvider.GetCustomerPhotoDetail(bookingDetail.Id);
+
+                if (await storageFolder.TryGetItemAsync(photoDetails.PhotoName) is StorageFile file)
                 {
-                    photoDetails.ImageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file);
+                    photoDetails.ImageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file, ApplicationConstants.CustomerPhoto);
                     photoDetails.StorageFile = file;
 
                     PreviewPhoto newBooking = new PreviewPhoto(photoDetails);
@@ -221,12 +239,15 @@ namespace BookingBanquetDV.Source.Welcome
         {
             if (parameter is BookingDetails bookingDetail)
             {
-                PhotoDetails photoDetail = await _cameraViewModel.OnClickTakeAPhotoCommandAsync();
+                CustomerPhotoDetail customerPhoto = await _cameraViewModel.OnClickCustomerPhotoAsync(
+                    ApplicationConstants.CustomerPhoto);
 
-                if (photoDetail != null)
+                if (customerPhoto != null)
                 {
-                    bookingDetail.PhotoName = photoDetail.LocalPhotoName;
+                    customerPhoto.BookingId = bookingDetail.Id;
+                    customerPhoto.EmailId = bookingDetail.EmailId;
                     bookingDetail.CanShowPhoto = true;
+                    _customerPhotoDataProvider.AddOrUpdatePhotoDetail(customerPhoto);
                 }
             }
         }
@@ -264,7 +285,7 @@ namespace BookingBanquetDV.Source.Welcome
                             GetFolderAsync(ApplicationConstants.Document);
 
                         if (await storageFolder.TryGetItemAsync(photoDetail.LocalPhotoName) is StorageFile file)
-                            _usersPersonalDetail.ImageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file);
+                            _usersPersonalDetail.ImageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file, ApplicationConstants.Document);
                     }
 
                     OnPropertyChanged(() => UsersPersonalDetail);
@@ -283,14 +304,14 @@ namespace BookingBanquetDV.Source.Welcome
                 foreach (BookingDetails booking in _masterBookingDetailList)
                 {
                     if (booking.UserId == _loginDetail.UserId || booking.UserId == _loginDetail.EmailId)
+                    {
                         _bookingDetailList.Add(booking);
-                }
-            }
+                        CustomerPhotoDetail photo = _customerPhotoDataProvider.GetCustomerPhotoDetail(booking.Id);
 
-            foreach (BookingDetails bookingDetail in _bookingDetailList)
-            {
-                if (!string.IsNullOrEmpty(bookingDetail.PhotoName))
-                    bookingDetail.CanShowPhoto = true;
+                        if (photo != null && !string.IsNullOrEmpty(photo.PhotoName))
+                            booking.CanShowPhoto = true;
+                    }
+                }
             }
 
             OnPropertyChanged(() => BookingDetailList);
@@ -333,5 +354,7 @@ namespace BookingBanquetDV.Source.Welcome
             get => _usersPersonalDetail;
             set => _usersPersonalDetail = value;
         }
+
+        public ICommand ChangePasswordCommand => _changePasswordCommand;
     }
 }

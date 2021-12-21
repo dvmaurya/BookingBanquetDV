@@ -142,6 +142,7 @@
   <ItemGroup>
     <Compile Include="DataAccess.cs" />
     <Compile Include="DML\CountryQuery.cs" />
+    <Compile Include="DML\CustomerPhotoDetailQuery.cs" />
     <Compile Include="DML\LoginQuery.cs" />
     <Compile Include="DML\BookingQuery.cs" />
     <Compile Include="DML\UserPhotoDetailQuery.cs" />

@@ -30,12 +30,12 @@ namespace BookingBanquetDV.Source.Welcome.Controls
     public class UserDetailViewModel : ValidationViewModelBase, IUserDetailViewModel, INotesValidator
     {
         private UsersPersonalDetail _usersPersonalDetail;
-        private PhotoDetails _activePhotoDetail;
+        private PhotoDetails _originalPhotoDetail;
         private string _fullName;
         private string _address;
         private string _photoName;
         private BitmapImage _imageSource;
-        private IList<PhotoDetails> _deletePhoto;
+        private IList<PhotoDetails> _removePhoto;
         private List<SingleSelection> _countryList;
         private List<SingleSelection> _stateList;
         private List<SingleSelection> _cityList;
@@ -49,8 +49,9 @@ namespace BookingBanquetDV.Source.Welcome.Controls
         private ICameraViewModel _cameraViewModel;
         private bool _isPreviousButtonVisible;
         private bool _isRemoveButtonVisible;
-        private PhotoDetails _selectedphotoDetails;
+        private PhotoDetails _newPhotoDetails;
         private bool _isActivePhotoUpdate;
+        private IList<PhotoDetails> _allPhotoDetails;
         private readonly IMessageDialogService _messageDialogService;
         private readonly ICommand _previousPhotoCommand;
         private readonly ICommand _removePhotoCommand;
@@ -83,7 +84,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
             _photoDetailDataProvider = photoDetailDataProvider ?? throw new ArgumentNullException("photoDetailDataProvider");
             _contentDialogService = contentDialogService ?? throw new ArgumentNullException("contentDialogService");
 
-            _deletePhoto = new List<PhotoDetails>();
+            _removePhoto = new List<PhotoDetails>();
 
             _saveUserDetailCommand = new DelegateCommand(
                 async parameter => await OnSaveUserDetailAsync());
@@ -113,7 +114,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
             {
                 new UICommand(
                     label: ApplicationConstants.Yes,
-                    action: (uiCommand) => RemovePhotoContinue(parameter)),
+                    action: async(uiCommand) => await RemovePhotoContinueAsync(parameter)),
 
                 new UICommand(
                     label: ApplicationConstants.No,
@@ -126,27 +127,30 @@ namespace BookingBanquetDV.Source.Welcome.Controls
                 commands);
         }
 
-        private void RemovePhotoContinue(object parameter)
+        private async Task RemovePhotoContinueAsync(object parameter)
         {
-            if (_activePhotoDetail != null && 
-                _activePhotoDetail.LocalPhotoName.FormatStringEquals(_photoName))
+            if (_originalPhotoDetail != null &&
+                _originalPhotoDetail.LocalPhotoName.FormatStringEquals(_photoName))
             {
+                await _messageDialogService.ShowMessageDialogAsync(
+                ApplicationConstants.Note,
+                ApplicationConstants.PhotoRemoveMessage);
+
                 _isActivePhotoUpdate = true;
-                _activePhotoDetail.IsPhotoActive = false;
-                _activePhotoDetail.IsPhotoRemoved = true;
+                _originalPhotoDetail.IsChecked = false;
             }
-            else if(_selectedphotoDetails != null &&
-                _selectedphotoDetails.LocalPhotoName.FormatStringEquals(_photoName))
+            else if (_newPhotoDetails != null &&
+                _newPhotoDetails.LocalPhotoName.FormatStringEquals(_photoName))
             {
-                if (_selectedphotoDetails.Id == 0)
+                if (_newPhotoDetails.Id == 0)
                 {
-                    _deletePhoto.Add(_selectedphotoDetails);
-                    _selectedphotoDetails = null;
+                    _removePhoto.Add(_newPhotoDetails);
+                    _newPhotoDetails = null;
                 }
                 else
                 {
-                    _selectedphotoDetails.IsPhotoActive = false;
-                    _selectedphotoDetails.IsPhotoRemoved = true;
+                    _newPhotoDetails.IsChecked = false;
+                    _photoName = string.Empty;
                 }
             }
 
@@ -156,80 +160,81 @@ namespace BookingBanquetDV.Source.Welcome.Controls
 
         private async Task OnPreviousPhotoAsync()
         {
-            PhotoDetails selectedPhoto = _selectedphotoDetails ?? _activePhotoDetail;
+            if(_allPhotoDetails == null)
+                _allPhotoDetails = _photoDetailDataProvider.GetPreviousPhotoDetail(
+                    _usersPersonalDetail.EmailId);
 
-            IList<PhotoDetails> allPhotoDetails =
-                _photoDetailDataProvider.GetPreviousPhotoDetail(_usersPersonalDetail.EmailId);
-
-            if (selectedPhoto != null && selectedPhoto.Id != 0)
-            {
-                foreach (PhotoDetails photo in allPhotoDetails)
-                {
-                    if (photo.LocalPhotoName == selectedPhoto.LocalPhotoName)
-                    {
-                        photo.IsChecked = true;
-                        break;
-                    }
-                }
-            }
-
-            AllProfilePhoto allProfilePhoto = new AllProfilePhoto(allPhotoDetails);
+            AllProfilePhoto allProfilePhoto = new AllProfilePhoto(_allPhotoDetails);
             await _contentDialogService.ShowDialogAsync(allProfilePhoto);
 
             PhotoDetails photoDetails = allProfilePhoto?.SelectedPhotoDetail;
 
             if (photoDetails != null)
             {
-                if (_selectedphotoDetails != null && _selectedphotoDetails.Id == 0)
-                    _deletePhoto.Add(_selectedphotoDetails);
+                if (!photoDetails.IsPhotoRemoved)
+                {
+                    if (_newPhotoDetails != null && _newPhotoDetails.Id == 0)
+                        _removePhoto.Add(_newPhotoDetails);
 
-                if (_activePhotoDetail != null &&
-                    _activePhotoDetail.LocalPhotoName != 
-                    photoDetails.LocalPhotoName)
-                { 
-                    _activePhotoDetail.IsChecked = false;
-                    _isActivePhotoUpdate = true;
-                    await SetNewPhotoDetails(photoDetails);
+                    if (_originalPhotoDetail != null &&
+                        _originalPhotoDetail.LocalPhotoName !=
+                        photoDetails.LocalPhotoName)
+                    {
+                        _originalPhotoDetail.IsChecked = false;
+                        _isActivePhotoUpdate = true;
+                        await SetNewPhotoDetails(photoDetails);
+                    }
+                    else
+                    {
+                        await SetNewPhotoDetails(photoDetails);
+                    }
                 }
                 else
                 {
-                    await SetNewPhotoDetails(photoDetails);
+                    if (_originalPhotoDetail != null)
+                        _originalPhotoDetail.IsChecked = false;
+
+                    if(_newPhotoDetails != null)
+                        await SetPhotoAsync(_newPhotoDetails.LocalPhotoName);
+                    else
+                        _imageSource = null;
+
+                    OnPropertyChanged(() => ImageSource);
                 }
             }
         }
 
         private async Task SetNewPhotoDetails(PhotoDetails photoDetails)
         {
-            photoDetails.IsChecked = true;
             _photoName = photoDetails.LocalPhotoName;
-            _selectedphotoDetails = photoDetails;
+            _newPhotoDetails = photoDetails;
 
-            await SetPhotoAsync(_selectedphotoDetails.LocalPhotoName);
+            await SetPhotoAsync(_newPhotoDetails.LocalPhotoName);
         }
 
         private async Task OnRetakePhotoAsync()
         {
-            PhotoDetails photoDetails = await _cameraViewModel.OnClickTakeAPhotoCommandAsync();
+            PhotoDetails photoDetails = await _cameraViewModel.OnClickTakeAPhotoAsync(ApplicationConstants.Document);
 
-            if (_selectedphotoDetails != null && _selectedphotoDetails.Id == 0)
-                _deletePhoto.Add(_selectedphotoDetails);
-
-            _selectedphotoDetails = photoDetails;
-
-            if (_selectedphotoDetails != null)
+            if (photoDetails != null)
             {
-                _photoName = _selectedphotoDetails.LocalPhotoName;
-                _selectedphotoDetails.IsChecked = true;
-                _selectedphotoDetails.IsPhotoActive = true;
-                _selectedphotoDetails.IsPhotoRemoved = false;
+                if (_newPhotoDetails != null && _newPhotoDetails.Id == 0)
+                    _removePhoto.Add(_newPhotoDetails);
 
-                if (_activePhotoDetail != null)
-                    _activePhotoDetail.IsChecked = false;
+                _newPhotoDetails = photoDetails;
+                _allPhotoDetails = null;
+                _isActivePhotoUpdate = true;
+
+                _photoName = _newPhotoDetails.LocalPhotoName;
+                _newPhotoDetails.IsChecked = true;
+
+                if (_originalPhotoDetail != null)
+                    _originalPhotoDetail.IsChecked = false;
 
                 if (_usersPersonalDetail != null)
-                    _selectedphotoDetails.EmailId = _usersPersonalDetail.EmailId;
+                    _newPhotoDetails.EmailId = _usersPersonalDetail.EmailId;
 
-                await SetPhotoAsync(_selectedphotoDetails.LocalPhotoName);
+                await SetPhotoAsync(_newPhotoDetails.LocalPhotoName);
             }
         }
 
@@ -304,7 +309,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
 
                     await _messageDialogService.ShowMessageDialogAsync(
                         ApplicationConstants.Warning,
-                        ApplicationConstants.PhotoNotAvailable,
+                        ApplicationConstants.PhotoNotAvailable.FormatString(ApplicationConstants.ChooseFromList),
                         commands);
                 }
                 else
@@ -316,29 +321,43 @@ namespace BookingBanquetDV.Source.Welcome.Controls
 
         private void OnContinueSaveAsync()
         {
-            _usersPersonalDetail.FullName = _fullName;
-            _usersPersonalDetail.Address = _address;
-            _usersPersonalDetail.Country = _selectedCountry?.Name ?? string.Empty;
-            _usersPersonalDetail.State = _selectedState?.Name ?? string.Empty;
-            _usersPersonalDetail.City = _selectedCity?.Name ?? string.Empty;
-
-            _usersPersonalDetailDataProvider.AddOrUpdateUsersPersonalDetail(_usersPersonalDetail);
-
-            if (_selectedphotoDetails != null)
+            if (_usersPersonalDetail != null)
             {
-                _selectedphotoDetails.IsPhotoActive = true;
-                _photoDetailDataProvider.AddOrUpdatePhotoDetail(_selectedphotoDetails);
+                _usersPersonalDetail.FullName = _fullName;
+                _usersPersonalDetail.Address = _address;
+                _usersPersonalDetail.Country = _selectedCountry?.Name ?? string.Empty;
+                _usersPersonalDetail.State = _selectedState?.Name ?? string.Empty;
+                _usersPersonalDetail.City = _selectedCity?.Name ?? string.Empty;
 
-                if (_isActivePhotoUpdate)
-                    _activePhotoDetail.IsPhotoActive = false;
+                _usersPersonalDetailDataProvider.AddOrUpdateUsersPersonalDetail(_usersPersonalDetail);
             }
 
-            if (_isActivePhotoUpdate && _activePhotoDetail != null)
-                _photoDetailDataProvider.AddOrUpdatePhotoDetail(_activePhotoDetail);
-
-            if (_deletePhoto != null && _deletePhoto.Any())
+            if (_newPhotoDetails != null)
             {
-                foreach (var deletePhoto in _deletePhoto)
+                _photoDetailDataProvider.AddOrUpdatePhotoDetail(_newPhotoDetails);
+
+                if (_isActivePhotoUpdate && _originalPhotoDetail != null)
+                    _originalPhotoDetail.IsChecked = false;
+            }
+
+            if (_isActivePhotoUpdate && _originalPhotoDetail != null)
+                _photoDetailDataProvider.AddOrUpdatePhotoDetail(_originalPhotoDetail);
+
+            if(_allPhotoDetails != null && _allPhotoDetails.Any())
+            {
+                List<PhotoDetails> deletePhotoList = 
+                    _allPhotoDetails.Where(remove => remove.IsPhotoRemoved).ToList();
+
+                if(deletePhotoList != null && deletePhotoList.Any())
+                {
+                    foreach (PhotoDetails deletePhoto in deletePhotoList)
+                        _photoDetailDataProvider.AddOrUpdatePhotoDetail(deletePhoto);
+                }
+            }
+
+            if (_removePhoto != null && _removePhoto.Any())
+            {
+                foreach (PhotoDetails deletePhoto in _removePhoto)
                     _photoDetailDataProvider.DeleteDocumentFileFromFolderAsync(deletePhoto.LocalPhotoName);
             }
 
@@ -357,12 +376,11 @@ namespace BookingBanquetDV.Source.Welcome.Controls
 
                 if (_usersPersonalDetail != null)
                 {
-                    _activePhotoDetail = _photoDetailDataProvider.GetActivePhotoDetail(_usersPersonalDetail.EmailId);
-                    if (_activePhotoDetail != null)
-                    {
-                        _photoName = _activePhotoDetail.LocalPhotoName;
-                        _activePhotoDetail.IsChecked = true;
-                    }
+                    _originalPhotoDetail = _photoDetailDataProvider.GetActivePhotoDetail(
+                        _usersPersonalDetail.EmailId);
+
+                    _photoName = _originalPhotoDetail != null ?
+                        _originalPhotoDetail.LocalPhotoName : string.Empty;
 
                     _fullName = _usersPersonalDetail.FullName;
                     _address = _usersPersonalDetail.Address;
@@ -425,7 +443,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
                     GetFolderAsync(ApplicationConstants.Document);
 
                 if (await storageFolder.TryGetItemAsync(photoName) is StorageFile file)
-                    _imageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file);
+                    _imageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file, ApplicationConstants.Document);
                 else
                     _imageSource = null;
             }

@@ -24,7 +24,6 @@ namespace ViewModelsAndValidation.ViewModels
         string SelectedConfirmation { get; set; }
         string MobileNo { get; set; }
         string EmailId { get; set; }
-        string PhotoName { get; }
         bool IsEmailSent { get; }
         ICommand SaveCommand { get; }
         BookingDetails BookingDetails { get; set; }
@@ -38,9 +37,9 @@ namespace ViewModelsAndValidation.ViewModels
         ICommand ChangedCityCommand { get; }
         long MaxLength { get; }
         string Address { get; set; }
-        BitmapImage ImageSource { get; set; }
-        ICommand RetakePhotoCommand { get; }
+        ICommand TakePhotoCommand { get; }
         ICommand RemovePhotoCommand { get; }
         IReadOnlyCollection<BookingDetails> MasterBookingDetailList { get; set; }
+        CustomerPhotoDetail SelectedPhotoDetails { get; set; }
     }
 }

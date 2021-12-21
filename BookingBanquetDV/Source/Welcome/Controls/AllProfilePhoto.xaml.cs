@@ -49,7 +49,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
         {
             if (this.DataContext is IAllProfilePhotoViewModel viewModel)
             {
-                viewModel.PhotoDetailList = new ReadOnlyCollection<PhotoDetails>(_photoDetails);
+                viewModel.PhotoDetailList = new ObservableCollection<PhotoDetails>(_photoDetails);
                 viewModel.OnDialogLoadingCommand.Execute(null);
             }
         }

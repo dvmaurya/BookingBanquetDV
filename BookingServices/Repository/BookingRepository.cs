@@ -1,5 +1,4 @@
 ﻿using BookingServices.Repository.Interface;
-using CommonServices.ConstantData;
 using CommonServices.Extensions;
 using CommonServices.Logger;
 using CommonServices.Model.DbModel;
@@ -8,8 +7,6 @@ using DataAccessLibrary.DML;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Windows.Storage;
 
 namespace BookingServices.Repository
 {
@@ -57,7 +54,6 @@ namespace BookingServices.Repository
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Balance), bookingDetails.Balance);
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Confirmation), bookingDetails.Confirmation);
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.CreationDate), bookingDetails.CreationDate);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.PhotoName), bookingDetails.PhotoName);
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.UserId), bookingDetails.UserId);
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.IsEmailSent), bookingDetails.IsEmailSent);
                     insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Address), bookingDetails.Address);
@@ -110,13 +106,12 @@ namespace BookingServices.Repository
                         Balance = query.GetString(10),
                         Confirmation = query.GetString(11),
                         CreationDate = query.GetString(12),
-                        PhotoName = query.GetString(13),
-                        UserId = query.GetString(14),
-                        IsEmailSent = query.GetBoolean(15),
-                        Address = query.GetString(16),
-                        Country = query.GetString(17),
-                        State = query.GetString(18),
-                        City = query.GetString(19)
+                        UserId = query.GetString(13),
+                        IsEmailSent = query.GetBoolean(14),
+                        Address = query.GetString(15),
+                        Country = query.GetString(16),
+                        State = query.GetString(17),
+                        City = query.GetString(18)
                     };
 
                     bookingDetails.Add(bookingDetail);
@@ -128,7 +123,7 @@ namespace BookingServices.Repository
             return bookingDetails;
         }
 
-        public async Task DeleteBookingAsync(BookingDetails bookingDetails)
+        public void DeleteBooking(BookingDetails bookingDetails)
         {
             _dbpath = DataAccess.GetDbPath();
 
@@ -144,23 +139,6 @@ namespace BookingServices.Repository
                 SqliteDataReader query = selectCommand.ExecuteReader();
 
                 db.Close();
-                await DeleteDocumentFileFromFolderAsync(bookingDetails).ConfigureAwait(true);
-            }
-        }
-
-        private async Task DeleteDocumentFileFromFolderAsync(BookingDetails bookingDetails)
-        {
-            if (bookingDetails != null)
-            {
-                StorageFolder localfolder =
-                    await ApplicationData.Current.LocalFolder.GetFolderAsync(
-                        ApplicationConstants.Document);
-
-                if (await localfolder.TryGetItemAsync(bookingDetails.PhotoName) != null)
-                {
-                    StorageFile isFileExist = await localfolder.GetFileAsync(bookingDetails.PhotoName);
-                    await isFileExist.DeleteAsync();
-                }
             }
         }
     }

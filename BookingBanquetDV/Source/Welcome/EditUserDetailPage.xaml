@@ -87,7 +87,7 @@
                             <Button
                                 HorizontalAlignment="Center"
                                 Command="{Binding RetakePhotoCommand}"
-                                Content="Retake photo"
+                                Content="Take a photo"
                                 FontSize="16"
                                 Foreground="#FFFFFF"
                                 Style="{StaticResource CustomButtonStyle}" />
@@ -153,6 +153,7 @@
                             <TextBox
                                 Background="LightGray"
                                 IsReadOnly="True"
+                                Opacity=".7"
                                 Text="{Binding UsersPersonalDetail.EmailId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
                         <StackPanel Margin="0,10,0,0">
@@ -160,6 +161,7 @@
                             <TextBox
                                 Background="LightGray"
                                 IsReadOnly="True"
+                                Opacity=".7"
                                 Text="{Binding UsersPersonalDetail.Mobile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
                         <Grid Margin="0,20,0,0">

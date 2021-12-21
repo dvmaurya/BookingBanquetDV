@@ -45,7 +45,10 @@ namespace DataAccessLibrary
                         tableCommand = CountryQuery.CreateCountryTable;
                         break;
                     case TableName.PhotoDetails:
-                        tableCommand = PhotoDetailQuery.CreatePhotoDetailTable;
+                        tableCommand = UserPhotoDetailQuery.CreatePhotoDetailTable;
+                        break;
+                    case TableName.CustomerPhotoDetail:
+                        tableCommand = CustomerPhotoDetailQuery.CreatePhotoDetailTable;
                         break;
                     default:
                         break;

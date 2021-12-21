@@ -16,7 +16,6 @@ namespace BookingBanquetDV.Source.Welcome
         {
             this.InitializeComponent();
             this.DataContext = ViewModelLocator.WelcomeViewModel;
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
         }
 
         public ViewModelBase ViewModel => this.DataContext as WelcomeViewModel;

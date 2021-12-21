@@ -7,6 +7,8 @@ namespace ViewModelsAndValidation.ViewModels
 {
     public interface IWelcomeViewModel
     {
+        ICommand ChangePasswordCommand { get; }
+        ICommand EditProfileCommand { get; }
         ICommand NewBookingCommand { get; }
         ICommand CameraClickCommand { get; }
         ICommand ViewPhotoClickCommand { get; }

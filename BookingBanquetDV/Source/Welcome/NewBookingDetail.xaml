@@ -70,15 +70,15 @@
                             x:Name="previewImage"
                             Grid.Row="1"
                             Height="500"
-                            Source="{Binding ImageSource, Mode=TwoWay}"
+                            Source="{Binding SelectedPhotoDetails.ImageSource, Mode=TwoWay}"
                             Stretch="Fill"
-                            Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
+                            Visibility="{Binding SelectedPhotoDetails.ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
                         <TextBlock
                             Grid.Row="1"
                             HorizontalAlignment="Center"
                             Foreground="LightGray"
                             Text="Photo not available"
-                            Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNullConverter}}" />
+                            Visibility="{Binding SelectedPhotoDetails.ImageSource, Converter={StaticResource VisibleWhenNullConverter}}" />
                         <StackPanel
                             Grid.Row="0"
                             Margin="0,0,0,10"
@@ -86,7 +86,7 @@
                             Orientation="Horizontal">
                             <Button
                                 HorizontalAlignment="Center"
-                                Command="{Binding RetakePhotoCommand}"
+                                Command="{Binding TakePhotoCommand}"
                                 Content="Take customer's photo"
                                 FontSize="16"
                                 Foreground="#FFFFFF"
@@ -99,7 +99,7 @@
                                 FontSize="16"
                                 Foreground="#FFFFFF"
                                 Style="{StaticResource CustomButtonStyle}"
-                                Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
+                                Visibility="{Binding SelectedPhotoDetails.ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
                         </StackPanel>
                     </Grid>
                 </Grid>
@@ -351,7 +351,11 @@
                         </StackPanel>
                         <StackPanel Margin="0,10,10,20">
                             <TextBlock Text="Booked by:" />
-                            <TextBox IsReadOnly="True" Text="{Binding BookedBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox
+                                Background="LightGray"
+                                IsReadOnly="True"
+                                Opacity=".7"
+                                Text="{Binding BookedBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
                         <StackPanel Margin="0,0,10,0">
                             <Grid>

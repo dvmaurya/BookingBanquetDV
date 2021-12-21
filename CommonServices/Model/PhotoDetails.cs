@@ -8,6 +8,7 @@ namespace CommonServices.Model
         private string _photoName;
         private BitmapImage _imageSource;
         private string _date;
+        private bool _isChecked;
 
         public int Id { get; set; }
         public string FileType { get; set; }
@@ -48,10 +49,16 @@ namespace CommonServices.Model
             }
         }
 
-        public bool IsPhotoActive { get; set; }
-
         public bool IsPhotoRemoved { get; set; }
 
-        public bool IsChecked { get; set; }
+        public bool IsChecked
+        {
+            get => _isChecked;
+            set
+            {
+                _isChecked = value;
+                OnPropertyChanged("IsChecked");
+            }
+        }
     }
 }

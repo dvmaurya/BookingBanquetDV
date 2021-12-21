@@ -7,7 +7,7 @@
     Title="View booking details"
     Loading="ContentDialog_Loading"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    PrimaryButtonText="CLose"
+    PrimaryButtonText="Close"
     mc:Ignorable="d">
     <ScrollViewer x:Name="rootScrollViewer" VerticalScrollBarVisibility="Auto">
         <Grid
@@ -46,7 +46,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="200" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Line
@@ -76,7 +76,8 @@
             <TextBlock
                 Grid.Row="3"
                 Grid.Column="1"
-                Text="{Binding BookingDetails.BookedBy}" />
+                Text="{Binding BookingDetails.BookedBy}"
+                TextWrapping="Wrap" />
             <Line
                 Grid.Row="4"
                 Grid.Column="0"
@@ -114,24 +115,15 @@
                 Grid.Row="9"
                 Grid.Column="0"
                 Text="Customer address" />
-            <StackPanel
+            <TextBlock
                 Grid.Row="9"
                 Grid.Column="1"
-                Orientation="Horizontal">
-                <TextBlock Text="{Binding BookingDetails.Address}" Visibility="{Binding BookingDetails.Address, Converter={StaticResource VisibleWhenNotEmptyStringConverter}}" />
-                <TextBlock
-                    Margin="2,0,0,0"
-                    Text="{Binding BookingDetails.Country}"
-                    Visibility="{Binding BookingDetails.Country, Converter={StaticResource VisibleWhenNotEmptyStringConverter}}" />
-                <TextBlock
-                    Margin="2,0,0,0"
-                    Text="{Binding BookingDetails.State}"
-                    Visibility="{Binding BookingDetails.State, Converter={StaticResource VisibleWhenNotEmptyStringConverter}}" />
-                <TextBlock
-                    Margin="2,0,0,0"
-                    Text="{Binding BookingDetails.City}"
-                    Visibility="{Binding BookingDetails.City, Converter={StaticResource VisibleWhenNotEmptyStringConverter}}" />
-            </StackPanel>
+                TextWrapping="Wrap">
+                <Run Text="{Binding BookingDetails.Address}" />
+                <Run Text="{Binding BookingDetails.Country}" />
+                <Run Text="{Binding BookingDetails.State}" />
+                <Run Text="{Binding BookingDetails.City}" />
+            </TextBlock>
             <Line
                 Grid.Row="10"
                 Grid.Column="0"
@@ -259,16 +251,16 @@
                         x:Name="previewImage"
                         Height="400"
                         Margin="0,10,0,10"
-                        Source="{Binding ImageSource}"
+                        Source="{Binding CustomerPhoto.ImageSource}"
                         Stretch="Fill"
-                        Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
+                        Visibility="{Binding CustomerPhoto.ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
                     <TextBlock
                         Margin="0,30,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Foreground="LightGray"
                         Text="Photo not available"
-                        Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNullConverter}}" />
+                        Visibility="{Binding CustomerPhoto.ImageSource, Converter={StaticResource VisibleWhenNullConverter}}" />
                 </Grid>
             </StackPanel>
         </Grid>

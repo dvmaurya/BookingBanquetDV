@@ -15,7 +15,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
     public class ViewBookingViewModel : NotificationObject, IViewBookingViewModel
     {
         private BookingDetails _bookingDetail;
-        private BitmapImage _imageSource;
+        private CustomerPhotoDetail _customerPhoto;
         private readonly ICommand _onLoadDialogCommand;
 
         public ViewBookingViewModel()
@@ -26,21 +26,21 @@ namespace BookingBanquetDV.Source.Welcome.Controls
 
         private async Task OnDialogLoadAsync()
         {
-            if(_bookingDetail != null)
-                await SetPhotoAsync(_bookingDetail.PhotoName);
+            if (_bookingDetail != null)
+                await SetPhotoAsync();
         }
 
-        private async Task SetPhotoAsync(string photoName)
+        private async Task SetPhotoAsync()
         {
-            if (!string.IsNullOrEmpty(photoName))
+            if (_customerPhoto != null && !string.IsNullOrEmpty(_customerPhoto.PhotoName))
             {
                 StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.
-                    GetFolderAsync(ApplicationConstants.Document);
+                    GetFolderAsync(ApplicationConstants.CustomerPhoto);
 
-                if (await storageFolder.TryGetItemAsync(photoName) is StorageFile file)
-                    _imageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file);
+                if (await storageFolder.TryGetItemAsync(_customerPhoto.PhotoName) is StorageFile file)
+                    _customerPhoto.ImageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file, ApplicationConstants.CustomerPhoto);
 
-                OnPropertyChanged(() => ImageSource);
+                OnPropertyChanged(() => CustomerPhoto);
             }
         }
 
@@ -52,10 +52,10 @@ namespace BookingBanquetDV.Source.Welcome.Controls
 
         public ICommand OnLoadDialogCommand => _onLoadDialogCommand;
 
-        public BitmapImage ImageSource
+        public CustomerPhotoDetail CustomerPhoto
         {
-            get => _imageSource;
-            set => _imageSource = value;
+            get => _customerPhoto;
+            set => _customerPhoto = value;
         }
     }
 }

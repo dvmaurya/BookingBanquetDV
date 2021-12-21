@@ -2,8 +2,10 @@
 
 namespace CommonServices.Model
 {
-    public class BookingDetails
+    public class BookingDetails : NotificationModel
     {
+        private bool _canShowPhoto;
+
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -37,9 +39,6 @@ namespace CommonServices.Model
         [JsonProperty("creationDate")]
         public string CreationDate { get; set; }
 
-        [JsonProperty("photoName")]
-        public string PhotoName { get; set; }
-
         [JsonProperty("mobileNo")]
         public string MobileNo { get; set; }
 
@@ -62,7 +61,15 @@ namespace CommonServices.Model
         public string City { get; set; }
 
         [JsonIgnore]
-        public bool CanShowPhoto { get; set; }
+        public bool CanShowPhoto
+        {
+            get => _canShowPhoto;
+            set
+            {
+                _canShowPhoto = value;
+                OnPropertyChanged("CanShowPhoto");
+            }
+        }
 
         [JsonIgnore]
         public bool IsEmailSent { get; set; }

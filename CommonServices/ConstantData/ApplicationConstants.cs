@@ -46,6 +46,7 @@
         public const string FileFormat = ".jpeg";
 		public const string UnableToSavePhoto = "Unable to save the photo.";
         public const string Document = "Document";
+        public const string CustomerPhoto = "CustomerPhoto";
         public const string TotalAmountError = "Enter total amount";
         public const string AdvanceAmountError = "Enter advance amount";
         public const string DateBooked = "This date has already booked. Please choose another date.";
@@ -73,6 +74,9 @@
         public const string City = "City";
         public const string RemovePhotoWarning = "Are you sure that to remove photo?";
         public const string CurrentUserEmailId = "CurrentUserEmailId";
-        public const string PhotoNotAvailable = "Photo is not captured. Do you want to preceed without photo ?";
+        public const string PhotoNotAvailable = "Photo is not selected. You can capture new photo {0}. Do you want to preceed without photo ?";
+        public const string ChooseFromList = " or choose from previous photo";
+        public const string Note = "Note";
+        public const string PhotoRemoveMessage = "Your photo will be remove from profile pic but it'll be available in Choose from previous photo. You can again select this photo from that list or can delete permanently.";
     }
 }

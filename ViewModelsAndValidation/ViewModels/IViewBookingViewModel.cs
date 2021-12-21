@@ -6,6 +6,7 @@ namespace ViewModelsAndValidation.ViewModels
     public interface IViewBookingViewModel
     {
         BookingDetails BookingDetails { get; set; }
+        CustomerPhotoDetail CustomerPhoto { get; set; }
         ICommand OnLoadDialogCommand { get; }
     }
 }

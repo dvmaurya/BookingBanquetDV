@@ -8,5 +8,6 @@
         public const string BookingDetails = "BookingDetails";
         public const string Country = "Country";
         public const string PhotoDetails = "PhotoDetails";
+        public const string CustomerPhotoDetail = "CustomerPhotoDetail";
     }
 }

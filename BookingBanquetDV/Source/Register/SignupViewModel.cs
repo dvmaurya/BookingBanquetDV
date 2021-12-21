@@ -205,7 +205,7 @@ namespace BookingBanquetDV.Source.Register
                             FileType = photoDetails.FileType,
                             Size = photoDetails.Size,
                             EmailId = _emailId,
-                            IsPhotoActive = true,
+                            IsChecked = true,
                             IsPhotoRemoved = false
                         };
                     }
@@ -307,7 +307,7 @@ namespace BookingBanquetDV.Source.Register
 
         private async Task<PhotoDetails> OnCameraClickAsync()
         {
-            return await _cameraViewModel.OnClickTakeAPhotoCommandAsync();
+            return await _cameraViewModel.OnClickTakeAPhotoAsync(ApplicationConstants.Document);
         }
 
         private void CheckUserExist()

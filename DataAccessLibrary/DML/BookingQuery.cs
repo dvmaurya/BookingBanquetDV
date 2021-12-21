@@ -20,7 +20,6 @@ namespace DataAccessLibrary.DML
             " " + nameof(BookingDetails.Balance) + " NVARCHAR(2048) NUll," +
             " " + nameof(BookingDetails.Confirmation) + " NVARCHAR(2048) NUll," +
             " " + nameof(BookingDetails.CreationDate) + " NVARCHAR(2048) NUll," +
-            " " + nameof(BookingDetails.PhotoName) + " NVARCHAR(2048) NUll," +
             " " + nameof(BookingDetails.UserId) + " NVARCHAR(2048) NUll, " +
             " " + nameof(BookingDetails.IsEmailSent) + " NVARCHAR(2048) NUll, " +
             " " + nameof(BookingDetails.Address) + " NVARCHAR(2048) NUll, " +
@@ -43,7 +42,6 @@ namespace DataAccessLibrary.DML
             nameof(BookingDetails.Balance) + " = @" + nameof(BookingDetails.Balance) + ", " +
             nameof(BookingDetails.Confirmation) + " = @" + nameof(BookingDetails.Confirmation) + ", " +
             nameof(BookingDetails.IsEmailSent) + " = @" + nameof(BookingDetails.IsEmailSent) + ", " +
-            nameof(BookingDetails.PhotoName) + " = @" + nameof(BookingDetails.PhotoName) + ", " +
             nameof(BookingDetails.Address) + " = @" + nameof(BookingDetails.Address) + ", " +
             nameof(BookingDetails.Country) + " = @" + nameof(BookingDetails.Country) + ", " +
             nameof(BookingDetails.State) + " = @" + nameof(BookingDetails.State) + ", " +
@@ -65,7 +63,6 @@ namespace DataAccessLibrary.DML
             "@" + nameof(BookingDetails.Balance) + "," +
             "@" + nameof(BookingDetails.Confirmation) + "," +
             "@" + nameof(BookingDetails.CreationDate) + "," +
-            "@" + nameof(BookingDetails.PhotoName) + "," +
             "@" + nameof(BookingDetails.UserId) + "," +
             "@" + nameof(BookingDetails.IsEmailSent) + "," +
             "@" + nameof(BookingDetails.Address) + "," +

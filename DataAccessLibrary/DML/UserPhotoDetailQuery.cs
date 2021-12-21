@@ -2,7 +2,7 @@
 
 namespace DataAccessLibrary.DML
 {
-    public static class PhotoDetailQuery
+    public static class UserPhotoDetailQuery
     {
         public const string CreatePhotoDetailTable =
             "CREATE TABLE IF NOT " +
@@ -13,7 +13,7 @@ namespace DataAccessLibrary.DML
             " " + nameof(PhotoDetails.FileType) + " NVARCHAR(2048) NUll," +
             " " + nameof(PhotoDetails.Size) + " NVARCHAR(2048) NUll," +
             " " + nameof(PhotoDetails.EmailId) + " NVARCHAR(2048) NUll," +
-            " " + nameof(PhotoDetails.IsPhotoActive) + " NVARCHAR(2048) NUll," +
+            " " + nameof(PhotoDetails.IsChecked) + " NVARCHAR(2048) NUll," +
             " " + nameof(PhotoDetails.IsPhotoRemoved) + " NVARCHAR(2048) NUll)";
 
         public const string UpdatePhotoDetail =
@@ -24,7 +24,7 @@ namespace DataAccessLibrary.DML
             nameof(PhotoDetails.FileType) + " = @" + nameof(PhotoDetails.FileType) + ", " +
             nameof(PhotoDetails.Size) + " = @" + nameof(PhotoDetails.Size) + ", " +
             nameof(PhotoDetails.EmailId) + " = @" + nameof(PhotoDetails.EmailId) + ", " +
-            nameof(PhotoDetails.IsPhotoActive) + " = @" + nameof(PhotoDetails.IsPhotoActive) + ", " +
+            nameof(PhotoDetails.IsChecked) + " = @" + nameof(PhotoDetails.IsChecked) + ", " +
             nameof(PhotoDetails.IsPhotoRemoved) + " = @" + nameof(PhotoDetails.IsPhotoRemoved) + " Where " +
             nameof(PhotoDetails.Id) + " = @" + nameof(PhotoDetails.Id);
 
@@ -36,7 +36,7 @@ namespace DataAccessLibrary.DML
            "@" + nameof(PhotoDetails.FileType) + "," +
            "@" + nameof(PhotoDetails.Size) + "," +
            "@" + nameof(PhotoDetails.EmailId) + "," +
-           "@" + nameof(PhotoDetails.IsPhotoActive) + "," +
+           "@" + nameof(PhotoDetails.IsChecked) + "," +
            "@" + nameof(PhotoDetails.IsPhotoRemoved) + ");";
 
         public const string GetPreviousPhoto =
@@ -49,6 +49,6 @@ namespace DataAccessLibrary.DML
             "SELECT * from " +
             nameof(PhotoDetails) + " Where " +
             nameof(PhotoDetails.EmailId) + " = '{0}' AND " +
-            nameof(PhotoDetails.IsPhotoActive) + " = '1'";
+            nameof(PhotoDetails.IsChecked) + " = '1'";
     }
 }

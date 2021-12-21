@@ -8,7 +8,7 @@
         public ulong Size { get; set; }
         public string Date { get; set; }
         public string EmailId { get; set; }
-        public bool IsPhotoActive { get; set; }
+        public bool IsChecked { get; set; }
         public bool IsPhotoRemoved { get; set; }
     }
 }

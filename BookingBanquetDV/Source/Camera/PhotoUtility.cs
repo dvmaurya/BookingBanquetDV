@@ -26,14 +26,14 @@ namespace BookingBanquetDV.Source.Camera
         private static readonly IEncryptionProvider _encryptionProvider =
             DIContainer.GetInstance<IEncryptionProvider>();
 
-        public static async Task SavePhotoAsync(StorageFile storeFile, string photoNameForFolder)
+        public static async Task SavePhotoAsync(StorageFile storeFile, string photoNameForFolder, string folderName)
         {
-            if (storeFile != null)
+            if (storeFile != null && !string.IsNullOrEmpty(folderName))
             {
                 try
                 {
                     StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.
-                        CreateFolderAsync(ApplicationConstants.Document, CreationCollisionOption.OpenIfExists);
+                        CreateFolderAsync(folderName, CreationCollisionOption.OpenIfExists);
 
                     await storeFile.MoveAsync(storageFolder, photoNameForFolder);
                     await GetEncryptPhotoAsync(storeFile, storageFolder);
@@ -80,11 +80,11 @@ namespace BookingBanquetDV.Source.Camera
             return fileBytes;
         }
 
-        public static async Task<BitmapImage> GetDecrtypedPhotoAsync(StorageFile storageFile)
+        public static async Task<BitmapImage> GetDecrtypedPhotoAsync(StorageFile storageFile, string folderName)
         {
             try
             {
-                string text = await DecryptedPhotoAsync(storageFile.Name);
+                string text = await DecryptedPhotoAsync(storageFile.Name, folderName);
 
                 if (!string.IsNullOrEmpty(text))
                 {
@@ -187,9 +187,9 @@ namespace BookingBanquetDV.Source.Camera
             return bitmapImage;
         }
 
-        public static async Task<byte[]> GetByteArrayFromEncryptedPhoto(StorageFile storageFile)
+        public static async Task<byte[]> GetByteArrayFromEncryptedPhoto(StorageFile storageFile, string folderName)
         {
-            string text = await DecryptedPhotoAsync(storageFile.Name);
+            string text = await DecryptedPhotoAsync(storageFile.Name, folderName);
 
             if (!string.IsNullOrEmpty(text))
                 return Convert.FromBase64String(text);
@@ -197,12 +197,12 @@ namespace BookingBanquetDV.Source.Camera
             return null;
         }
 
-        public static async Task<string> DecryptedPhotoAsync(string photoName)
+        public static async Task<string> DecryptedPhotoAsync(string photoName, string folderName)
         {
             try
             {
                 StorageFolder storageFolder =
-                    await ApplicationData.Current.LocalFolder.GetFolderAsync(ApplicationConstants.Document);
+                    await ApplicationData.Current.LocalFolder.GetFolderAsync(folderName);
 
                 return await _encryptionProvider.DecryptAsync(photoName, storageFolder);
             }

@@ -44,7 +44,8 @@
                 Grid.Row="1"
                 Grid.Column="0"
                 VerticalAlignment="Center"
-                Text="Full name" />
+                FontWeight="SemiBold"
+                Text="Full name:" />
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="1"
@@ -64,7 +65,8 @@
             <TextBlock
                 Grid.Row="3"
                 Grid.Column="0"
-                Text="Email id" />
+                FontWeight="SemiBold"
+                Text="Email id:" />
             <TextBlock
                 Grid.Row="3"
                 Grid.Column="1"
@@ -83,7 +85,8 @@
             <TextBlock
                 Grid.Row="5"
                 Grid.Column="0"
-                Text="Mobile no" />
+                FontWeight="SemiBold"
+                Text="Mobile no:" />
             <TextBlock
                 Grid.Row="5"
                 Grid.Column="1"
@@ -104,7 +107,8 @@
             <TextBlock
                 Grid.Row="7"
                 Grid.Column="0"
-                Text="Address" />
+                FontWeight="SemiBold"
+                Text="Address:" />
             <TextBlock
                 Grid.Row="7"
                 Grid.Column="1"
@@ -129,7 +133,7 @@
                 Grid.Row="9"
                 Grid.Column="0"
                 Grid.ColumnSpan="2">
-                <TextBlock Text="Profile photo" />
+                <TextBlock FontWeight="SemiBold" Text="Profile photo:" />
                 <Grid>
                     <Image
                         x:Name="previewImage"

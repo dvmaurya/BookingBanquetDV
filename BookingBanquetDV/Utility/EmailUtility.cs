@@ -79,6 +79,10 @@ namespace BookingBanquetDV.Utility
                     "\r\r\tCongrats!!. Your booking has done successfully. \r\rYour booking details are following:",
                     "\r\r\tYour mobile number: ", emailParameter.BookingDetails.MobileNo,
                     "\r\tYour email id: ", emailParameter.BookingDetails.EmailId,
+                    "\r\tYour address: ", emailParameter.BookingDetails.Address,
+                    ", country: ", emailParameter.BookingDetails.Country,
+                    ", state: ", emailParameter.BookingDetails.State,
+                    ", city: ", emailParameter.BookingDetails.City,
                     "\r\tBooking date: ", emailParameter.BookingDetails.BookingDate,
                     "\r\tBooked by: ", emailParameter.BookingDetails.BookedBy, 
                     "\r\tTotal room: ", emailParameter.BookingDetails.TotalRooms,
@@ -90,7 +94,7 @@ namespace BookingBanquetDV.Utility
                     "\r\rThanks and regards\nAdmin")
                 };
 
-                builder = await AddAttachment(emailParameter.BookingDetails.PhotoName, builder);
+                builder = await AddAttachment(emailParameter.CustomerPhoto.PhotoName, builder, ApplicationConstants.CustomerPhoto);
                 message.Body = builder.ToMessageBody();
             }
             else if (emailParameter.UsersCred != null && emailParameter.UsersPersonalDetail != null)
@@ -104,31 +108,31 @@ namespace BookingBanquetDV.Utility
                     "\r\r\tYour mobile number: ", emailParameter.UsersCred.Mobile,
                     "\r\tYour email id: ", emailParameter.UsersPersonalDetail.EmailId,
                     "\r\tYour address: ", emailParameter.UsersPersonalDetail.Address,
-                    ", country: ", emailParameter.UsersPersonalDetail.Country ?? string.Empty,
-                    ", state: ", emailParameter.UsersPersonalDetail.State ?? string.Empty,
-                    ", city: ", emailParameter.UsersPersonalDetail.City ?? string.Empty,
+                    ", country: ", emailParameter.UsersPersonalDetail.Country,
+                    ", state: ", emailParameter.UsersPersonalDetail.State,
+                    ", city: ", emailParameter.UsersPersonalDetail.City,
                     "\r\tYour account is active and created on ", emailParameter.UsersCred.CreationDate,
                     "\r\rThanks and regards\nAdmin")
                 };
 
-                builder = await AddAttachment(emailParameter.PhotoDetails.LocalPhotoName, builder);
+                builder = await AddAttachment(emailParameter.PhotoDetails.LocalPhotoName, builder, ApplicationConstants.Document);
                 message.Body = builder.ToMessageBody();
             }
 
             return message;
         }
 
-        private static async Task<BodyBuilder> AddAttachment(string photoName, BodyBuilder builder)
+        private static async Task<BodyBuilder> AddAttachment(string photoName, BodyBuilder builder, string folderName)
         {
             try
             {
                 StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.
-                    GetFolderAsync(ApplicationConstants.Document);
+                    GetFolderAsync(folderName);
 
                 if (await storageFolder.TryGetItemAsync(photoName) is StorageFile file)
                 {
                     ContentType contentType = new ContentType(EmailConstants.ContentType, string.Empty);
-                    byte[] data = await PhotoUtility.GetByteArrayFromEncryptedPhoto(file);
+                    byte[] data = await PhotoUtility.GetByteArrayFromEncryptedPhoto(file, folderName);
                     MimeEntity mimeEntity = PhotoUtility.AddMimeEntity(file.Name, data, contentType);
 
                     builder.Attachments.Add(mimeEntity);

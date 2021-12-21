@@ -142,6 +142,7 @@
     <Compile Include="Extensions\CityExtension.cs" />
     <Compile Include="Extensions\CountryExtension.cs" />
     <Compile Include="Extensions\CultureCovertion.cs" />
+    <Compile Include="Extensions\CustomerPhotoEtension.cs" />
     <Compile Include="Extensions\LoginExtension.cs" />
     <Compile Include="Extensions\PhotoExtension.cs" />
     <Compile Include="Extensions\StateExtension.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Model\BookingDetails.cs" />
     <Compile Include="Model\BookingParameter.cs" />
     <Compile Include="Model\City\SingleSelection.cs" />
+    <Compile Include="Model\CustomerPhotoDetail.cs" />
     <Compile Include="Model\DbModel\BookingDetails.cs" />
     <Compile Include="Model\City\City.cs" />
     <Compile Include="Model\City\Country.cs" />
@@ -160,6 +162,7 @@
     <Compile Include="Model\City\Translations.cs" />
     <Compile Include="Model\DbModel\City.cs" />
     <Compile Include="Model\DbModel\Country.cs" />
+    <Compile Include="Model\DbModel\CustomerPhotoDetail.cs" />
     <Compile Include="Model\DbModel\PhotoDetails.cs" />
     <Compile Include="Model\DbModel\State.cs" />
     <Compile Include="Model\LoginDetail.cs" />

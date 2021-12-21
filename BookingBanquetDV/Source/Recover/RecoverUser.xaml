@@ -33,7 +33,8 @@
                 Margin="0,0,0,20"
                 HorizontalAlignment="Center"
                 Command="{Binding LoginCommand}"
-                Content="Click here for login" />
+                Content="Click here for login"
+                Visibility="{Binding LoginDetail, Converter={StaticResource VisibleWhenNullConverter}}" />
         </Grid>
     </Grid>
 </Page>

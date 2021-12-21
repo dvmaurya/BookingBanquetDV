@@ -3,9 +3,7 @@ using CommonServices.Extensions;
 using CommonServices.Model;
 using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using ViewModelsAndValidation;
-using ViewModelsAndValidation.Command;
 using ViewModelsAndValidation.Services;
 using ViewModelsAndValidation.ViewModels;
 using Windows.Storage;
@@ -15,35 +13,48 @@ namespace BookingBanquetDV.Source.Camera
 {
     public class CameraViewModel : ViewModelBase, ICameraViewModel
     {
-        private readonly ICommand _cameraClickCommand;
-        private readonly ICommand _previewPhotoCommand;
-
         private readonly IMessageDialogService _messageDialogService;
         private StorageFile _storeFile;
+        private CustomerPhotoDetail _cutomerPhotoDetails;
         private PhotoDetails _photoDetails;
 
         public CameraViewModel(
             IMessageDialogService messageDialogService)
         {
             _messageDialogService = messageDialogService ?? throw new ArgumentNullException("messageDialogService");
-
-            _cameraClickCommand = new DelegateCommand(async camera => await OnClickTakeAPhotoCommandAsync());
-            _previewPhotoCommand = new DelegateCommand(async camera => await OnPreviewPhotoAsync(camera));
-
         }
 
-        private async Task OnPreviewPhotoAsync(object viewPhoto)
+        public async Task<CustomerPhotoDetail> OnClickCustomerPhotoAsync(string folderName)
         {
-            if (viewPhoto != null && viewPhoto is PhotoDetails photoDetails)
-                await ShowPreviewPhotoDialogAsync(photoDetails);
+            _storeFile = await CameraUtility.OpenCameraAndCapturePhotoAsync();
+
+            if (_storeFile != null)
+            {
+                ulong photoSize = await GetCapturedPhotoSizeAsync(_storeFile);
+                _cutomerPhotoDetails = new CustomerPhotoDetail
+                {
+                    StorageFile = _storeFile,
+                    Date = _storeFile.DateCreated.ConvertToString(
+                        ApplicationConstants.DatabaseDateTimeFormat),
+                    FileType = _storeFile.FileType,
+                    Size = photoSize,
+                    ImageSource = await PhotoUtility.GetBitmapImageAsync(_storeFile),
+                    PhotoGuid = Guid.NewGuid().ToString().ToLower()
+                };
+
+                _cutomerPhotoDetails.PhotoName = _cutomerPhotoDetails.PhotoGuid.
+                    ConcatString(ApplicationConstants.FileFormat);
+
+                await PhotoUtility.SavePhotoAsync(
+                    _cutomerPhotoDetails.StorageFile,
+                    _cutomerPhotoDetails.PhotoName,
+                    folderName);
+            }
+
+            return _cutomerPhotoDetails;
         }
 
-        private Task ShowPreviewPhotoDialogAsync(PhotoDetails photoDetails)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PhotoDetails> OnClickTakeAPhotoCommandAsync()
+        public async Task<PhotoDetails> OnClickTakeAPhotoAsync(string folderName)
         {
             _storeFile = await CameraUtility.OpenCameraAndCapturePhotoAsync();
 
@@ -65,7 +76,8 @@ namespace BookingBanquetDV.Source.Camera
 
                 await PhotoUtility.SavePhotoAsync(
                     _photoDetails.StorageFile,
-                    _photoDetails.LocalPhotoName);
+                    _photoDetails.LocalPhotoName,
+                    folderName);
             }
 
             return _photoDetails;
@@ -76,8 +88,6 @@ namespace BookingBanquetDV.Source.Camera
             BasicProperties basicProperties = await _storeFile.GetBasicPropertiesAsync();
             return basicProperties.Size;
         }
-
-        public ICommand CameraClickCommand => _cameraClickCommand;
 
     }
 }

@@ -5,6 +5,7 @@
         public string EmailAddress { get; set; }
         public string UserName { get; set; }
         public BookingDetails BookingDetails { get; set; }
+        public CustomerPhotoDetail CustomerPhoto { get; set; }
         public UsersCred UsersCred { get; set; }
         public UsersPersonalDetail UsersPersonalDetail { get; set; }
         public PhotoDetails PhotoDetails { get; set; }

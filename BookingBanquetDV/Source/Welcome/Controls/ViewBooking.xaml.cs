@@ -9,11 +9,13 @@ namespace BookingBanquetDV.Source.Welcome.Controls
     public sealed partial class ViewBooking : ContentDialog
     {
         private BookingDetails _bookingDetails;
+        private CustomerPhotoDetail _customerPhoto;
 
-        public ViewBooking(BookingDetails bookingDetails)
+        public ViewBooking(BookingDetails bookingDetails, CustomerPhotoDetail customerPhoto)
         {
             this.InitializeComponent();
             _bookingDetails = bookingDetails;
+            _customerPhoto = customerPhoto;
             this.DataContext = ViewModelLocator.ViewBookingViewModel;
         }
 
@@ -28,6 +30,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
                 this.DataContext is IViewBookingViewModel viewModel)
             {
                 viewModel.BookingDetails = _bookingDetails;
+                viewModel.CustomerPhoto = _customerPhoto;
                 viewModel.OnLoadDialogCommand.Execute(null);
             }
 

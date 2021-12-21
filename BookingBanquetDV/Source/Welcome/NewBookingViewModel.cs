@@ -47,7 +47,6 @@ namespace BookingBanquetDV.Source.Welcome
         private string _selectedConfirmation;
         private readonly ICommand _saveCommand;
         private DateTimeOffset _creationDate;
-        private string _photoName;
         private string _mobileNo;
         private string _emailId;
         private IReadOnlyCollection<SingleSelection> _countryList;
@@ -58,19 +57,18 @@ namespace BookingBanquetDV.Source.Welcome
         private readonly ICommand _changedCountryCommand;
         private readonly ICommand _changedStateCommand;
         private readonly ICommand _changedCityCommand;
-        private readonly ICommand _retakePhotoCommand;
+        private readonly ICommand _takePhotoCommand;
         private readonly ICommand _removePhotoCommand;
         private IReadOnlyCollection<Country> _masterCountryList;
         private IReadOnlyCollection<State> _masterStateList;
         private SingleSelection _selectedCity;
         private SingleSelection _selectedState;
         private SingleSelection _selectedCountry;
-        private PhotoDetails _takePhotoDetails;
-        private IList<string> _deletePhoto;
-        private BitmapImage _imageSource;
+        private CustomerPhotoDetail _customerPhoto;
+        private IList<CustomerPhotoDetail> _deletePhoto;
         private IReadOnlyCollection<BookingDetails> _masterBookingDetailList;
         private string _address;
-        private readonly IPhotoDetailDataProvider _photoDetailDataProvider;
+        private readonly ICustomerPhotoDataProvider _customerPhotoDataProvider;
         private readonly IMessageDialogService _messageDialogService;
         private readonly IBookingDataProvider _bookingDataProvider;
         private readonly ICountryDataProvider _countryDataProvider;
@@ -83,16 +81,16 @@ namespace BookingBanquetDV.Source.Welcome
             IBookingDataProvider bookingDataProvider,
             IMessageDialogService messageDialogService,
             INavigationService navigationService,
-            IPhotoDetailDataProvider photoDetailDataProvider)
+            ICustomerPhotoDataProvider customerPhotoDataProvider)
         {
             _countryDataProvider = countryDataProvider ?? throw new ArgumentNullException("countryDataProvider");
             _cameraViewModel = cameraViewModel ?? throw new ArgumentNullException("cameraViewModel");
             _bookingDataProvider = bookingDataProvider ?? throw new ArgumentNullException("bookingDataProvider");
             _messageDialogService = messageDialogService ?? throw new ArgumentNullException("messageDialogService");
             _navigationService = navigationService ?? throw new ArgumentNullException("navigationService");
-            _photoDetailDataProvider = photoDetailDataProvider ?? throw new ArgumentNullException("photoDetailDataProvider");
+            _customerPhotoDataProvider = customerPhotoDataProvider ?? throw new ArgumentNullException("customerPhotoDataProvider");
 
-            _deletePhoto = new List<string>();
+            _deletePhoto = new List<CustomerPhotoDetail>();
 
             _saveCommand = new DelegateCommand(async parameter => await OnSaveNewBookingAsync());
 
@@ -105,55 +103,72 @@ namespace BookingBanquetDV.Source.Welcome
             _changedCityCommand = new DelegateCommand(
                 async parameter => await OnCityChangedAsync());
 
-            _retakePhotoCommand = new DelegateCommand(
-               async parameter => await OnRetakePhotoAsync());
+            _takePhotoCommand = new DelegateCommand(
+               async parameter => await OnTakePhotoAsync());
 
             _removePhotoCommand = new DelegateCommand(
-                parameter => OnRemovePhotoAsync());
+                async parameter => await OnRemovePhotoAsync());
         }
 
-        private void OnRemovePhotoAsync()
+        private async Task OnRemovePhotoAsync()
         {
-            if (_takePhotoDetails != null)
+            if (_customerPhoto != null)
             {
-                _deletePhoto.Add(_photoName);
-                _imageSource = null;
-                _photoName = string.Empty;
+                List<IUICommand> commands = new List<IUICommand>
+                    {
+                        new UICommand(
+                            label: ApplicationConstants.Yes,
+                            action: (uiCommand) => OnContinueRemovePhoto()),
 
-                OnPropertyChanged(() => ImageSource);
+                        new UICommand(
+                            label: ApplicationConstants.No,
+                            action: null)
+                    };
+
+                await _messageDialogService.ShowMessageDialogAsync(
+                    ApplicationConstants.Warning,
+                    ApplicationConstants.RemovePhotoWarning,
+                    commands);
             }
         }
 
-        private async Task OnRetakePhotoAsync()
+        private void OnContinueRemovePhoto()
         {
-            PhotoDetails photoDetails = await _cameraViewModel.OnClickTakeAPhotoCommandAsync();
+            _deletePhoto.Add(_customerPhoto);
+            _customerPhoto = null;
 
-            if (_takePhotoDetails != null)
-                _deletePhoto.Add(_takePhotoDetails.LocalPhotoName);
-
-            _takePhotoDetails = photoDetails;
-
-            if (_takePhotoDetails != null)
-            {
-                _photoName = _takePhotoDetails.LocalPhotoName;
-                _takePhotoDetails.IsPhotoActive = true;
-                _takePhotoDetails.IsPhotoRemoved = false;
-
-                await SetPhotoAsync(_takePhotoDetails.LocalPhotoName);
-            }
+            OnPropertyChanged(() => SelectedPhotoDetails);
         }
 
-        private async Task SetPhotoAsync(string photoName)
+        private async Task OnTakePhotoAsync()
         {
-            if (!string.IsNullOrEmpty(photoName))
+            CustomerPhotoDetail photoDetails = await _cameraViewModel.OnClickCustomerPhotoAsync(
+                ApplicationConstants.CustomerPhoto);
+
+            if (_customerPhoto != null)
+            {
+                _deletePhoto.Add(_customerPhoto);
+                photoDetails.Id = _customerPhoto.Id;
+            }
+
+            _customerPhoto = photoDetails;
+
+            if (_customerPhoto != null)
+                await SetPhotoAsync();
+        }
+
+        private async Task SetPhotoAsync()
+        {
+            if (_customerPhoto != null &&
+                !string.IsNullOrEmpty(_customerPhoto.PhotoName))
             {
                 StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.
-                    GetFolderAsync(ApplicationConstants.Document);
+                    GetFolderAsync(ApplicationConstants.CustomerPhoto);
 
-                if (await storageFolder.TryGetItemAsync(photoName) is StorageFile file)
-                    _imageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file);
+                if (await storageFolder.TryGetItemAsync(_customerPhoto.PhotoName) is StorageFile file)
+                    _customerPhoto.ImageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file, ApplicationConstants.CustomerPhoto);
 
-                OnPropertyChanged(() => ImageSource);
+                OnPropertyChanged(() => SelectedPhotoDetails);
             }
         }
 
@@ -232,15 +247,16 @@ namespace BookingBanquetDV.Source.Welcome
         {
             if (_bookingDetails != null)
             {
-                _photoName = _bookingDetails.PhotoName;
                 _maxDate = DateTimeOffset.Now.Date;
                 _minDateTime = DateTimeOffset.Now.Date;
                 _bookingDate = DateTimeOffset.Now;
 
                 SetBookingDetail(_bookingDetails);
-                await SetPhotoAsync(_photoName);
+                _customerPhoto = _customerPhotoDataProvider.
+                    GetCustomerPhotoDetail(_bookingDetails.Id);
 
-                OnPropertyChanged(() => BookedBy);
+                await SetPhotoAsync();
+
                 OnPropertyChanged(() => MaxDate);
                 OnPropertyChanged(() => MinDateTime);
                 OnPropertyChanged(() => BookingDate);
@@ -317,7 +333,6 @@ namespace BookingBanquetDV.Source.Welcome
                 _advanced = _bookingDetails.Advanced;
                 _balance = _bookingDetails.Balance;
                 _selectedConfirmation = _bookingDetails.Confirmation;
-                _photoName = _bookingDetails.PhotoName;
                 _address = _bookingDetails.Address;
                 SetCountry(_bookingDetails.Country);
                 SetState(_bookingDetails.State);
@@ -385,7 +400,7 @@ namespace BookingBanquetDV.Source.Welcome
         {
             if (ValidateProperties())
             {
-                if (string.IsNullOrEmpty(_photoName))
+                if (_customerPhoto == null)
                 {
                     List<IUICommand> commands = new List<IUICommand>
                     {
@@ -400,7 +415,7 @@ namespace BookingBanquetDV.Source.Welcome
 
                     await _messageDialogService.ShowMessageDialogAsync(
                         ApplicationConstants.Warning,
-                        ApplicationConstants.PhotoNotAvailable,
+                        ApplicationConstants.PhotoNotAvailable.FormatString(string.Empty),
                         commands);
                 }
                 else
@@ -421,11 +436,10 @@ namespace BookingBanquetDV.Source.Welcome
             _bookingDetails.UserId = _loginDetail?.UserId;
             _bookingDetails.BookingDate = _bookingDate.ConvertToString(ApplicationConstants.DatabaseDateFormat);
             _bookingDetails.Confirmation = _selectedConfirmation ?? "Not decided";
-            _bookingDetails.CreationDate = _creationDate.ConvertToString(ApplicationConstants.DatabaseDateTimeFormat);
+            _bookingDetails.CreationDate = _creationDate.ConvertToString(ApplicationConstants.DatabaseDateFormat);
             _bookingDetails.CustomerName = _customerName;
             _bookingDetails.EmailId = _emailId;
             _bookingDetails.MobileNo = _mobileNo;
-            _bookingDetails.PhotoName = _photoName ?? string.Empty;
             _bookingDetails.TotalAmount = _amount;
             _bookingDetails.TotalFlours = _totalFlours ?? string.Empty;
             _bookingDetails.TotalRooms = _totalRooms ?? string.Empty;
@@ -439,7 +453,7 @@ namespace BookingBanquetDV.Source.Welcome
             await _messageDialogService.ShowMessageDialogAsync(
                 ApplicationConstants.Congrats,
                 ApplicationConstants.BookingSuccess.FormatString(
-                    _bookingDate));
+                    _bookingDetails.BookingDate));
 
             _navigationService.Navigate(typeof(WelcomePage), _loginDetail);
         }
@@ -448,29 +462,36 @@ namespace BookingBanquetDV.Source.Welcome
         {
             if (_bookingDetails != null)
             {
-                bool isEmailSent = await SendingEmailAsync(_bookingDetails);
-                _bookingDetails.IsEmailSent = isEmailSent;
+                //bool isEmailSent = await SendingEmailAsync(_bookingDetails, _customerPhoto);
+                //_bookingDetails.IsEmailSent = isEmailSent;
                 _bookingDataProvider.AddOrUpdateBooking(_bookingDetails);
+
+                if(_customerPhoto != null)
+                {
+                    _customerPhoto.BookingId = _bookingDetails.Id;
+                    _customerPhoto.EmailId = _bookingDetails.EmailId;
+                    _customerPhotoDataProvider.AddOrUpdatePhotoDetail(_customerPhoto);
+                }
 
                 if (_deletePhoto != null && _deletePhoto.Any())
                 {
-                    foreach (string deletePhoto in _deletePhoto)
-                        await _photoDetailDataProvider.DeleteDocumentFileFromFolderAsync(deletePhoto);
+                    foreach (CustomerPhotoDetail deletePhoto in _deletePhoto)
+                        await _customerPhotoDataProvider.DeleteCustomerPhotoAsync(deletePhoto);
                 }
             }
         }
 
-        private async Task<bool> SendingEmailAsync(BookingDetails bookingDetail)
+        private async Task<bool> SendingEmailAsync(BookingDetails bookingDetail, CustomerPhotoDetail customerPhoto)
         {
             bool isEmailSent = false;
             App.ShowLoadingIndicator(ApplicationConstants.SendingEmail);
-            isEmailSent = await SendBookingMailAsync(bookingDetail);
+            isEmailSent = await SendBookingMailAsync(bookingDetail, customerPhoto);
             App.HideLoadingIndicator();
 
             return isEmailSent;
         }
 
-        private async Task<bool> SendBookingMailAsync(BookingDetails bookingDetail)
+        private async Task<bool> SendBookingMailAsync(BookingDetails bookingDetail, CustomerPhotoDetail customerPhoto)
         {
             if (bookingDetail != null)
             {
@@ -478,7 +499,8 @@ namespace BookingBanquetDV.Source.Welcome
                 {
                     BookingDetails = bookingDetail,
                     EmailAddress = bookingDetail.EmailId,
-                    UserName = bookingDetail.CustomerName
+                    UserName = bookingDetail.CustomerName,
+                    CustomerPhoto = customerPhoto
                 };
 
                 return await EmailUtility.SendEmailsAsync(emailParameter);
@@ -503,8 +525,6 @@ namespace BookingBanquetDV.Source.Welcome
             get => _customerName;
             set => _customerName = value;
         }
-
-        public string PhotoName => _photoName;
 
         [DateRequiredAttribute(ErrorMessage = ApplicationConstants.DateRequired)]
         public DateTimeOffset BookingDate
@@ -630,13 +650,7 @@ namespace BookingBanquetDV.Source.Welcome
 
         public long MaxLength => ApplicationConstants.AddressLimit;
 
-        public BitmapImage ImageSource
-        {
-            get => _imageSource;
-            set => _imageSource = value;
-        }
-
-        public ICommand RetakePhotoCommand => _retakePhotoCommand;
+        public ICommand TakePhotoCommand => _takePhotoCommand;
 
         public ICommand RemovePhotoCommand => _removePhotoCommand;
 
@@ -659,5 +673,10 @@ namespace BookingBanquetDV.Source.Welcome
             get => _masterBookingDetailList;
             set => _masterBookingDetailList = value;
         }
+
+        public CustomerPhotoDetail SelectedPhotoDetails
+        {
+            get => _customerPhoto;
+            set => _customerPhoto = value; }
     }
 }

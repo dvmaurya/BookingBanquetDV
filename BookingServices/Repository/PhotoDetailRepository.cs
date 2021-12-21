@@ -26,9 +26,9 @@ namespace BookingServices.Repository
 
                 string insertOrUpdate = photoDetail.Id == 0
                     ?
-                    PhotoDetailQuery.InsertInPhotoDetail
+                    UserPhotoDetailQuery.InsertInPhotoDetail
                     :
-                    PhotoDetailQuery.UpdatePhotoDetail;
+                    UserPhotoDetailQuery.UpdatePhotoDetail;
 
                 using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                 {
@@ -46,7 +46,7 @@ namespace BookingServices.Repository
                     insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.FileType), photoDetail.FileType);
                     insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.Size), photoDetail.Size);
                     insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.EmailId), photoDetail.EmailId);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.IsPhotoActive), photoDetail.IsPhotoActive);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.IsChecked), photoDetail.IsChecked);
                     insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.IsPhotoRemoved), photoDetail.IsPhotoRemoved);
 
                     insertCommand.ExecuteReader();
@@ -70,7 +70,7 @@ namespace BookingServices.Repository
                 db.Open();
 
                 SqliteCommand selectCommand = new SqliteCommand
-                    (PhotoDetailQuery.GetPreviousPhoto.FormatString(emailId), db);
+                    (UserPhotoDetailQuery.GetPreviousPhoto.FormatString(emailId), db);
 
                 SqliteDataReader query = selectCommand.ExecuteReader();
 
@@ -84,7 +84,7 @@ namespace BookingServices.Repository
                         FileType = query.GetString(3),
                         Size = query.GetString(4).UlongParse(),
                         EmailId = query.GetString(5),
-                        IsPhotoActive = query.GetBoolean(6),
+                        IsChecked = query.GetBoolean(6),
                         IsPhotoRemoved = query.GetBoolean(7)
                     };
 
@@ -107,7 +107,7 @@ namespace BookingServices.Repository
                 db.Open();
 
                 SqliteCommand selectCommand = new SqliteCommand
-                    (PhotoDetailQuery.GetActivePhoto.FormatString(emailId), db);
+                    (UserPhotoDetailQuery.GetActivePhoto.FormatString(emailId), db);
 
                 SqliteDataReader query = selectCommand.ExecuteReader();
 
@@ -121,7 +121,7 @@ namespace BookingServices.Repository
                         FileType = query.GetString(3),
                         Size = query.GetString(4).UlongParse(),
                         EmailId = query.GetString(5),
-                        IsPhotoActive = query.GetBoolean(6),
+                        IsChecked = query.GetBoolean(6),
                         IsPhotoRemoved = query.GetBoolean(7)
                     };
                 }

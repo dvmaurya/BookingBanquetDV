@@ -15,7 +15,7 @@ namespace CommonServices.Extensions
                 FileType = photoDetails.FileType,
                 Size = photoDetails.Size,
                 EmailId = photoDetails.EmailId,
-                IsPhotoActive = photoDetails.IsPhotoActive,
+                IsChecked = photoDetails.IsChecked,
                 IsPhotoRemoved = photoDetails.IsPhotoRemoved
             };
 
@@ -32,7 +32,7 @@ namespace CommonServices.Extensions
                 FileType = dbPhotoDetails.FileType,
                 Size = dbPhotoDetails.Size,
                 EmailId = dbPhotoDetails.EmailId,
-                IsPhotoActive = dbPhotoDetails.IsPhotoActive,
+                IsChecked = dbPhotoDetails.IsChecked,
                 IsPhotoRemoved = dbPhotoDetails.IsPhotoRemoved
             };
 

@@ -1,4 +1,5 @@
-﻿using Windows.Foundation;
+﻿using CommonServices.Model;
+using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 
 // The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -7,7 +8,7 @@ namespace BookingBanquetDV.Source.Camera
 {
     public sealed partial class PreviewPhoto : ContentDialog
     {
-        public PreviewPhoto(CommonServices.Model.PhotoDetails photoDetails)
+        public PreviewPhoto(CustomerPhotoDetail photoDetails)
         {
             this.InitializeComponent();
             previewImage.Source = photoDetails.ImageSource;

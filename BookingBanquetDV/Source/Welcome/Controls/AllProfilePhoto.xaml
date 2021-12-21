@@ -13,44 +13,14 @@
     SecondaryButtonText="Cancel"
     mc:Ignorable="d">
     <Grid Margin="0,10,0,0">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="42" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <Grid
-            Grid.Row="0"
-            Background="#E0E0E0"
-            Visibility="{Binding PhotoDetailList, Converter={StaticResource VisibleWhenNotNullConverter}}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="120" />
-            </Grid.ColumnDefinitions>
-            <Border Grid.Column="0">
-                <TextBlock
-                    Margin="10,0,0,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontWeight="SemiBold"
-                    Text="Photo" />
-            </Border>
-            <Border Grid.Column="2">
-                <TextBlock
-                    Margin="0,0,10,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    FontWeight="SemiBold"
-                    Text="Captured on" />
-            </Border>
-        </Grid>
         <ListView
             Name="MultiselectlistView"
-            Grid.Row="1"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             ItemsSource="{Binding PhotoDetailList, Mode=TwoWay}"
             SelectionMode="None">
             <ListView.Header>
-                <Border Margin="20,20,0,0" Visibility="{Binding PhotoDetailList, Converter={StaticResource VisibleWhenNullConverter}}">
+                <Border Margin="20,20,0,0" Visibility="{Binding PhotoDetailList.Count, Converter={StaticResource VisibleWhenZeroConverter}}">
                     <TextBlock Text="No photo(s) available" />
                 </Border>
             </ListView.Header>
@@ -61,7 +31,8 @@
                             Command="{Binding DataContext.ChangePhotoCommand, ElementName=MultiselectlistView}"
                             CommandParameter="{Binding}"
                             GroupName="Photo"
-                            IsChecked="{Binding IsChecked, Mode=TwoWay}">
+                            IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                            Visibility="{Binding IsPhotoRemoved, Converter={StaticResource NotBooleanToVisibilityConverter}}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
@@ -78,19 +49,40 @@
                                     Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
                                 <Grid Grid.Column="1">
                                     <Grid.RowDefinitions>
+                                        <RowDefinition Height="40" />
+                                        <RowDefinition />
                                         <RowDefinition />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
+                                    <Border Grid.Row="0">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FontWeight="SemiBold"
+                                            Text="Action" />
+                                    </Border>
                                     <TextBlock
-                                        Grid.Row="0"
+                                        Grid.Row="1"
                                         VerticalAlignment="Top"
                                         FontSize="14"
                                         Text="{Binding Date}"
                                         TextWrapping="Wrap" />
-                                    <TextBlock Grid.Row="1">
+                                    <TextBlock Grid.Row="2">
                                         <Run Text="Size:" />
                                         <Run Text="{Binding Size, Converter={StaticResource ByteToMegabyteVisibilityConverter}}" />
                                     </TextBlock>
+                                    <Button
+                                        Grid.Row="3"
+                                        VerticalAlignment="Top"
+                                        Background="AliceBlue"
+                                        Command="{Binding DataContext.DeletePhotoCommand, ElementName=MultiselectlistView}"
+                                        CommandParameter="{Binding}"
+                                        Visibility="{Binding IsChecked}">
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock Text="Permanentaly delete photo" />
+                                        </ToolTipService.ToolTip>
+                                        <FontIcon Foreground="Red" Glyph="&#xE74D;" />
+                                    </Button>
                                 </Grid>
                             </Grid>
                         </RadioButton>

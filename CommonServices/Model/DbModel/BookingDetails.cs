@@ -13,7 +13,6 @@
         public string Balance { get; set; }
         public string Confirmation { get; set; }
         public string CreationDate { get; set; }
-        public string PhotoName { get; set; }
         public string MobileNo { get; set; }
         public string EmailId { get; set; }
         public string UserId { get; set; }

@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using CommonServices.Model;
+using System.Windows.Input;
 
 namespace ViewModelsAndValidation.ViewModels
 {
@@ -20,5 +21,6 @@ namespace ViewModelsAndValidation.ViewModels
         ICommand LoginCommand { get; }
         ICommand GetOTPCommand { get; }
         ICommand ChangePasswordCommand { get; }
+        LoginDetail LoginDetail { get; set; }
     }
 }
