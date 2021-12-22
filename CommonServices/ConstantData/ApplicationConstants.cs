@@ -80,5 +80,7 @@
         public const string PhotoRemoveMessage = "Your photo will be remove from profile pic but it'll be available in Choose from previous photo. You can again select this photo from that list or can delete permanently.";
         public const string RecoverPassword = "Recover password";
         public const string VerifyItsYou = "First verify it's you. Fill the following details.";
+        public const string EmailSent = "Email sent successfully on you email id: {0}";
+        public const string SomethingWentWrong = "Some thing went wrong. Email could not send.";
     }
 }

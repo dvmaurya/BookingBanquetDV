@@ -12,6 +12,7 @@ namespace BookingBanquetDV.Utility
     {
         public static async Task<SingleSelection> OnSelectSingleSelectionAsync(
             IReadOnlyCollection<SingleSelection> organisationList,
+            SingleSelection selectedValue,
             string header)
         {
             SingleSelectorDialog dialog =
@@ -19,11 +20,11 @@ namespace BookingBanquetDV.Utility
 
             App.ShowLoadingIndicator(ApplicationConstants.Loading);
             await DIContainer.GetInstance<IContentDialogService>().ShowDialogAsync(dialog);
-            SingleSelection result = dialog.SelectedCode;
+            selectedValue = dialog.SelectedCode ?? selectedValue;
             App.HideLoadingIndicator();
 
 
-            return result;
+            return selectedValue;
         }
     }
 }

@@ -17,6 +17,8 @@ namespace ViewModelsAndValidation.ViewModels
         ICommand EditBookingCommand { get; }
         ICommand DeleteBookingCommand { get; }
         ICommand ViewProfileCommand { get; }
+        ICommand SendEmailCommand { get; }
+        ICommand PrintOutCommand { get; }
         BookingDetails BookingDetail { get; set; }
         ICameraViewModel CameraViewModel { get; set; }
         ObservableCollection<BookingDetails> BookingDetailList { get; }

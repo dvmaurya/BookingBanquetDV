@@ -5,6 +5,7 @@ using BookingBanquetDV.Utility;
 using BookingServices.Interfaces;
 using CommonServices.ConstantData;
 using CommonServices.Enums;
+using CommonServices.Extensions;
 using CommonServices.Model;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,8 @@ namespace BookingBanquetDV.Source.Welcome
         private readonly ICommand _newBookingCommand;
         private ICameraViewModel _cameraViewModel;
         private UsersPersonalDetail _usersPersonalDetail;
+        private readonly ICommand _printOutCommand;
+        private readonly ICommand _sendEmailCommand;
         private readonly ICommand _changePasswordCommand;
         private readonly ICommand _editProfileCommand;
         private readonly ICommand _viewProfileCommand;
@@ -96,6 +99,62 @@ namespace BookingBanquetDV.Source.Welcome
 
             _changePasswordCommand = new DelegateCommand(
                 parameter => OnChangePassword());
+
+            _sendEmailCommand = new DelegateCommand(
+                async parameter => await OnSendEmailAsync(parameter));
+
+            _printOutCommand = new DelegateCommand(
+                parameter => OnPrintOutAsync());
+        }
+
+        private void OnPrintOutAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task OnSendEmailAsync(object parameter)
+        {
+            if (parameter is BookingDetails bookingDetails)
+            {
+                CustomerPhotoDetail customerPhoto = 
+                    _customerPhotoDataProvider.GetCustomerPhotoDetail(bookingDetails.Id);
+
+                App.ShowLoadingIndicator(ApplicationConstants.SendingEmail);
+                bool isEmailSent = await SendBookingMailAsync(bookingDetails, customerPhoto);
+                App.HideLoadingIndicator();
+
+                bookingDetails.IsEmailSent = isEmailSent;
+                _bookingDataProvider.AddOrUpdateBooking(bookingDetails);
+
+                string emailMessage = string.Empty;
+
+                if (isEmailSent)
+                    emailMessage = ApplicationConstants.EmailSent.FormatString(bookingDetails.EmailId);
+                else
+                    emailMessage = ApplicationConstants.SomethingWentWrong;
+
+                await _messageDialogService.ShowMessageDialogAsync(
+                        string.Empty,
+                        emailMessage);
+            }
+        }
+
+        private async Task<bool> SendBookingMailAsync(BookingDetails bookingDetail, CustomerPhotoDetail customerPhoto)
+        {
+            if (bookingDetail != null)
+            {
+                EmailParameter emailParameter = new EmailParameter
+                {
+                    BookingDetails = bookingDetail,
+                    EmailAddress = bookingDetail.EmailId,
+                    UserName = bookingDetail.CustomerName,
+                    CustomerPhoto = customerPhoto
+                };
+
+                return await EmailUtility.SendEmailsAsync(emailParameter);
+            }
+
+            return false;
         }
 
         private void OnChangePassword()
@@ -367,5 +426,9 @@ namespace BookingBanquetDV.Source.Welcome
         }
 
         public ICommand ChangePasswordCommand => _changePasswordCommand;
+
+        public ICommand SendEmailCommand => _sendEmailCommand;
+
+        public ICommand PrintOutCommand => _printOutCommand;
     }
 }

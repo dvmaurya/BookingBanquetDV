@@ -108,7 +108,7 @@ namespace BookingBanquetDV.Source.Register
         private async Task OnCityChangedAsync()
         {
             _selectedCity = await SingleSelectionUtility.OnSelectSingleSelectionAsync(
-                        _cityList, ApplicationConstants.City);
+                        _cityList, _selectedCity, ApplicationConstants.City);
             
             OnPropertyChanged(() => SelectedCity);
         }
@@ -116,7 +116,7 @@ namespace BookingBanquetDV.Source.Register
         private async Task OnStateChangedAsync()
         {
             _selectedState = await SingleSelectionUtility.OnSelectSingleSelectionAsync(
-                        _stateList, ApplicationConstants.State);
+                        _stateList, _selectedState, ApplicationConstants.State);
 
             if (_selectedState != null)
             {
@@ -138,7 +138,7 @@ namespace BookingBanquetDV.Source.Register
         private async Task OnCountryChangedAsync()
         {
             _selectedCountry = await SingleSelectionUtility.OnSelectSingleSelectionAsync(
-                        _countryList, ApplicationConstants.Country);
+                        _countryList, _selectedCountry, ApplicationConstants.Country);
 
             if (_selectedCountry != null)
             {

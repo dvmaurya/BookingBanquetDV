@@ -175,7 +175,7 @@ namespace BookingBanquetDV.Source.Welcome
         private async Task OnCityChangedAsync()
         {
             _selectedCity = await SingleSelectionUtility.OnSelectSingleSelectionAsync(
-                        _cityList, ApplicationConstants.City);
+                        _cityList, _selectedCity, ApplicationConstants.City);
 
             OnPropertyChanged(() => SelectedCity);
         }
@@ -183,7 +183,7 @@ namespace BookingBanquetDV.Source.Welcome
         private async Task OnStateChangedAsync()
         {
             _selectedState = await SingleSelectionUtility.OnSelectSingleSelectionAsync(
-                        _stateList, ApplicationConstants.State);
+                        _stateList, _selectedState, ApplicationConstants.State);
 
             if (_selectedState != null)
             {
@@ -205,7 +205,7 @@ namespace BookingBanquetDV.Source.Welcome
         private async Task OnCountryChangedAsync()
         {
             _selectedCountry = await SingleSelectionUtility.OnSelectSingleSelectionAsync(
-                        _countryList, ApplicationConstants.Country);
+                        _countryList, _selectedCountry, ApplicationConstants.Country);
 
             if (_selectedCountry != null)
             {
@@ -247,7 +247,7 @@ namespace BookingBanquetDV.Source.Welcome
         {
             _maxDate = DateTimeOffset.Now.Date;
             _minDateTime = DateTimeOffset.Now.Date;
-            _bookingDate = DateTimeOffset.Now;
+            _bookingDate = DateTimeOffset.Now.Date;
 
             if (_bookingDetails != null)
             {
@@ -321,7 +321,9 @@ namespace BookingBanquetDV.Source.Welcome
                 _customerName = _bookingDetails.CustomerName;
                 _mobileNo = _bookingDetails.MobileNo;
                 _emailId = _bookingDetails.EmailId;
-                _bookingDate = _bookingDetails.BookingDate.ConvertToDateTime();
+                _bookingDate = _bookingDetails.BookingDate != null ?
+                    _bookingDetails.BookingDate.ConvertToDateTime() :
+                    DateTimeOffset.Now.Date;
                 _creationDate = _bookingDetails.CreationDate.ConvertToDateTime();
                 _totalRooms = _bookingDetails.TotalRooms;
                 _totalFlours = _bookingDetails.TotalFlours;
