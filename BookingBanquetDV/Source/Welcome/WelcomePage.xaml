@@ -127,8 +127,8 @@
                                 <ColumnDefinition Width="80" />
                                 <ColumnDefinition Width="80" />
                                 <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="145" />
-                                <ColumnDefinition Width="135" />
+                                <ColumnDefinition Width="160" />
+                                <ColumnDefinition Width="120" />
                                 <ColumnDefinition Width="90" />
                                 <ColumnDefinition Width="120" />
                             </Grid.ColumnDefinitions>
@@ -288,8 +288,8 @@
                                             <ColumnDefinition Width="80" />
                                             <ColumnDefinition Width="80" />
                                             <ColumnDefinition Width="100" />
-                                            <ColumnDefinition Width="145" />
-                                            <ColumnDefinition Width="135" />
+                                            <ColumnDefinition Width="160" />
+                                            <ColumnDefinition Width="120" />
                                             <ColumnDefinition Width="90" />
                                             <ColumnDefinition Width="120" />
                                         </Grid.ColumnDefinitions>
@@ -309,6 +309,7 @@
                                             BorderBrush="Gray"
                                             BorderThickness="0,0,2,0">
                                             <HyperlinkButton
+                                                Margin="2"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
                                                 Command="{Binding DataContext.ViewProfileCommand, ElementName=BookingList}"
@@ -388,6 +389,7 @@
                                             BorderBrush="Gray"
                                             BorderThickness="0,0,2,0">
                                             <TextBlock
+                                                Margin="2"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
                                                 Text="{Binding EmailId}"

@@ -114,7 +114,6 @@
                                 <Run Foreground="Red" Text="*" />
                                 <Run Text="Customer's name:" /></TextBlock>
                             <TextBox
-                                IsReadOnly="{Binding BookingParameter.IsViewBooking}"
                                 MaxLength="50"
                                 PlaceholderText="Enter customer name"
                                 Text="{Binding CustomerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -134,7 +133,6 @@
                                 <Run Text="Customer's mobile number:" /></TextBlock>
                             <TextBox
                                 InputScope="Number"
-                                IsReadOnly="{Binding BookingParameter.IsViewBooking}"
                                 MaxLength="10"
                                 PlaceholderText="Mobile number"
                                 Text="{Binding MobileNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -295,7 +293,6 @@
                             <TextBlock Text="Total rooms:" TextWrapping="Wrap" />
                             <TextBox
                                 InputScope="Number"
-                                IsReadOnly="{Binding BookingParameter.IsViewBooking}"
                                 MaxLength="2"
                                 PlaceholderText="Number of rooms"
                                 Text="{Binding TotalRooms, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -309,7 +306,6 @@
                             <TextBlock Text="Total flours:" />
                             <TextBox
                                 InputScope="Number"
-                                IsReadOnly="{Binding BookingParameter.IsViewBooking}"
                                 MaxLength="1"
                                 PlaceholderText="Number of flours"
                                 Text="{Binding TotalFlours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -338,9 +334,9 @@
                                 Width="570"
                                 Margin="0,5,0,0"
                                 Background="#FFFFFF"
-                                Date="{Binding BookingDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Date="{Binding BookingDate, Mode=TwoWay}"
                                 DateFormat="{}{dayofweek.abbreviated(3)}‎, ‎{day.integer} ‎{month.abbreviated(3)}‎ ‎{year.full}"
-                                MinDate="{Binding MinDateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                MinDate="{Binding MinDateTime, Mode=TwoWay}"
                                 PlaceholderText="mm/dd/yyyy" />
                             <TextBlock
                                 x:Name="DateText"
@@ -375,7 +371,6 @@
                             <TextBox
                                 x:Name="TotalAmount"
                                 InputScope="Number"
-                                IsReadOnly="{Binding BookingParameter.IsViewBooking}"
                                 KeyUp="TextBox_KeyUp"
                                 MaxLength="7"
                                 PlaceholderText="Enter total amount"
@@ -409,7 +404,6 @@
                             <TextBox
                                 x:Name="Advance"
                                 InputScope="Number"
-                                IsReadOnly="{Binding BookingParameter.IsViewBooking}"
                                 KeyUp="TextBox_KeyUp"
                                 MaxLength="7"
                                 PlaceholderText="Enter advance amount "
@@ -438,7 +432,6 @@
                             <TextBlock Text="Confirm ?" />
                             <commoncontrols:ComboBoxExt
                                 Width="568"
-                                IsEnabled="{Binding BookingParameter.IsViewBooking, Converter={StaticResource InverseBooleanConverter}}"
                                 ItemsSource="{Binding ConfirmList}"
                                 PlaceholderText="Is booking confirmed ?"
                                 SelectedItem="{Binding SelectedConfirmation, Mode=TwoWay}">

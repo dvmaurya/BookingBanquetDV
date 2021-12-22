@@ -16,7 +16,6 @@ namespace BookingBanquetDV.Source.Recover
         {
             this.InitializeComponent();
             this.DataContext = ViewModelLocator.RecoverUserViewModel;
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
         }
 
         public ViewModelBase ViewModel => this.DataContext as RecoverUserViewModel;

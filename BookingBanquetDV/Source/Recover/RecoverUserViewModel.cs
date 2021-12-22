@@ -9,14 +9,12 @@ using CommonServices.Model;
 using CommonServices.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ViewModelsAndValidation;
 using ViewModelsAndValidation.Command;
 using ViewModelsAndValidation.Services;
 using ViewModelsAndValidation.ViewModels;
-using Windows.ApplicationModel.Contacts;
 using Windows.UI.Xaml.Navigation;
 
 namespace BookingBanquetDV.Source.Recover
@@ -31,12 +29,14 @@ namespace BookingBanquetDV.Source.Recover
         private string _generatedOTP;
         private bool _somethingWrongMessage;
         private bool _isRecoverUIVisible;
-        private bool _isNewPasswordVisible;
         private string _password;
         private string _confirmPassword;
         private IDictionary<string, string> _userDetails;
         private bool _passwordUpdateFailed;
         private LoginDetail _loginDetail;
+        private bool _isNewPasswordVisible;
+        private string _recoverUserPasswordTitle;
+        private readonly IUsersPersonalDetailDataProvider _usersPersonalDetailDataProvider;
         private readonly ICommand _changePasswordCommand;
         private readonly ICommand _getOTPCommand;
         private readonly ICommand _recoverCommand;
@@ -48,11 +48,13 @@ namespace BookingBanquetDV.Source.Recover
         public RecoverUserViewModel(
             INavigationService navigationService,
             IMessageDialogService messageDialogService,
-            IOfflineDatabaseProvider offlineDatabaseProvider)
+            IOfflineDatabaseProvider offlineDatabaseProvider,
+            IUsersPersonalDetailDataProvider usersPersonalDetailDataProvider)
         {
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             _messageDialogService = messageDialogService ?? throw new ArgumentNullException(nameof(messageDialogService));
             _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException(nameof(offlineDatabaseProvider));
+            _usersPersonalDetailDataProvider = usersPersonalDetailDataProvider ?? throw new ArgumentNullException(nameof(usersPersonalDetailDataProvider));
 
             _isRecoverUIVisible = true;
             _recoverCommand = new DelegateCommand(parameter => OnClickRecover());
@@ -106,6 +108,14 @@ namespace BookingBanquetDV.Source.Recover
 
             if (parameter is LoginDetail loginDetail)
                 _loginDetail = loginDetail;
+
+            if (_loginDetail != null)
+                _recoverUserPasswordTitle = ApplicationConstants.VerifyItsYou;
+            else
+                _recoverUserPasswordTitle = ApplicationConstants.RecoverPassword;
+
+            OnPropertyChanged(() => RecoverUserPasswordTitle);
+            OnPropertyChanged(() => LoginDetail);
         }
 
         private async Task OnClickGetOTPAsync()
@@ -114,9 +124,13 @@ namespace BookingBanquetDV.Source.Recover
             {
                 _userDetails = _offlineDatabaseProvider.GetUserDetails(_emailId, _mobileNo);
 
-                if (_userDetails != null && _userDetails.Any())
+                if (_userDetails != null)
                 {
+                    UsersPersonalDetail usersPersonalDetail =
+                        _usersPersonalDetailDataProvider.GetUsersPersonalDetail(_emailId);
+
                     _invalidCredential = false;
+                    _isNewPasswordVisible = false;
                     _generatedOTP = Utilities.GenerateOTP();
 
                     EmailParameter emailParameter = new EmailParameter
@@ -124,7 +138,7 @@ namespace BookingBanquetDV.Source.Recover
                         EmailAddress = _emailId,
                         IsRecovery = true,
                         Otp = _generatedOTP,
-                        UserName = _userDetails[UsersEnum.FullName.ToString()]
+                        UserName = usersPersonalDetail?.FullName
                     };
 
                     App.ShowLoadingIndicator(ApplicationConstants.SendingEmail);
@@ -264,6 +278,11 @@ namespace BookingBanquetDV.Source.Recover
         {
             get => _loginDetail;
             set => _loginDetail = value;
+        }
+        public string RecoverUserPasswordTitle
+        {
+            get => _recoverUserPasswordTitle;
+            set => _recoverUserPasswordTitle = value;
         }
     }
 }

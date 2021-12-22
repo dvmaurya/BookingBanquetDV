@@ -95,28 +95,41 @@ namespace BookingServices.Repository
         {
             IDictionary<string, string> entries = new Dictionary<string, string>();
 
-            if (!string.IsNullOrEmpty(emailId) && !string.IsNullOrEmpty(mobileNo))
+            try
             {
-                _dbpath = DataAccess.GetDbPath();
-
-                using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
+                if (!string.IsNullOrEmpty(emailId) && !string.IsNullOrEmpty(mobileNo))
                 {
-                    db.Open();
+                    _dbpath = DataAccess.GetDbPath();
 
-                    SqliteCommand selectCommand = new SqliteCommand
-                        (SignupQuery.SelectAllFromUserWithEmailAndMobile.
-                        FormatString(emailId, mobileNo), db);
+                    string queryString = SignupQuery.SelectAllFromUserWithEmailAndMobile.
+                            FormatString(emailId, mobileNo);
 
-                    SqliteDataReader query = selectCommand.ExecuteReader();
-
-                    while (query.Read())
+                    using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                     {
-                        foreach (UsersEnum users in Enum.GetValues(typeof(UsersEnum)))
-                            entries.Add(users.ConvertToString(), query.GetString(users.ToInt32()));
-                    }
+                        db.Open();
 
-                    db.Close();
+                        SqliteCommand selectCommand = new SqliteCommand(queryString, db);
+
+                        SqliteDataReader query = selectCommand.ExecuteReader();
+
+                        while (query.Read())
+                        {
+                            entries.Add(UsersEnum.Id.ConvertToString(), query.GetString(0));
+                            entries.Add(UsersEnum.UserId.ConvertToString(), query.GetString(1));
+                            entries.Add(UsersEnum.EmailId.ConvertToString(), query.GetString(2));
+                            entries.Add(UsersEnum.Mobile.ConvertToString(), query.GetString(3));
+                            entries.Add(UsersEnum.CreationDate.ConvertToString(), query.GetString(5));
+                            entries.Add(UsersEnum.IsAdmin.ConvertToString(), query.GetString(6));
+                            entries.Add(UsersEnum.PasswordChanged.ConvertToString(), query.GetString(7));
+                        }
+
+                        db.Close();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                FileLogger.Logger.Info("User Exception: ".ConcatString(ex.Message));
             }
 
             return entries;

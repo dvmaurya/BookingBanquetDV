@@ -8,6 +8,5 @@ namespace BookingServices.Repository.Interface
     {
         bool AddOrUpdateUsersPersonalDetail(UsersPersonalDetail usersPersonalDetail);
         UsersPersonalDetail GetUsersPersonalDetail(string emailId);
-        Task DeletePhotoFromFolderAsync(string photoName);
     }
 }

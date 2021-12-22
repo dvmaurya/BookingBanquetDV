@@ -62,21 +62,6 @@ namespace BookingServices.Repository
             }
         }
 
-        public async Task DeletePhotoFromFolderAsync(string photoName)
-        {
-            if (!string.IsNullOrEmpty(photoName))
-            {
-                StorageFolder localfolder =
-                    await ApplicationData.Current.LocalFolder.GetFolderAsync(ApplicationConstants.Document);
-
-                if (await localfolder.TryGetItemAsync(photoName) != null)
-                {
-                    StorageFile file = await localfolder.GetFileAsync(photoName);
-                    await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
-                }
-            }
-        }
-
         public UsersPersonalDetail GetUsersPersonalDetail(string userId)
         {
             UsersPersonalDetail usersPersonalDetail = null;

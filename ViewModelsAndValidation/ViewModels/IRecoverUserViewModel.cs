@@ -11,6 +11,7 @@ namespace ViewModelsAndValidation.ViewModels
         string GeneratedOTP { get; set; }
         string Password { get; set; }
         string ConfirmPassword { get; set; }
+        string RecoverUserPasswordTitle { get; set; }
         bool IsOtpEnable { get; set; }
         bool SomethingWrongMessage { get; set; }
         bool InvalidCredential { get; set; }

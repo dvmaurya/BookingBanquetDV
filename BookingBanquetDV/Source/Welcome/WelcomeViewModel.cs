@@ -5,9 +5,7 @@ using BookingBanquetDV.Utility;
 using BookingServices.Interfaces;
 using CommonServices.ConstantData;
 using CommonServices.Enums;
-using CommonServices.Extensions;
 using CommonServices.Model;
-using CommonServices.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -102,13 +100,17 @@ namespace BookingBanquetDV.Source.Welcome
 
         private void OnChangePassword()
         {
+            App.ShowLoadingIndicator(ApplicationConstants.Loading);
             _navigationService.Navigate(typeof(RecoverUser), _loginDetail);
+            App.HideLoadingIndicator();
         }
 
         private void OnEditProfileClick()
         {
+            App.ShowLoadingIndicator(ApplicationConstants.Loading);
             if (_usersPersonalDetail != null)
                 _navigationService.Navigate(typeof(EditUserDetailPage), _usersPersonalDetail);
+            App.HideLoadingIndicator();
         }
 
         private void OnSaveUserDetail(object sender, UserDetailEventArgs eventArgs)
@@ -163,10 +165,19 @@ namespace BookingBanquetDV.Source.Welcome
 
         private void DeleteBooking(BookingDetails bookingDetails)
         {
-            _bookingDataProvider.DeleteBooking(bookingDetails);
-            _bookingDetailList.Remove(bookingDetails);
+            if (bookingDetails != null)
+            {
+                _bookingDataProvider.DeleteBooking(bookingDetails);
+                _bookingDetailList.Remove(bookingDetails);
 
-            OnPropertyChanged(() => BookingDetailList);
+                CustomerPhotoDetail deletePhoto =
+                    _customerPhotoDataProvider.GetCustomerPhotoDetail(bookingDetails.Id);
+
+                if (deletePhoto != null)
+                    _customerPhotoDataProvider.DeleteCustomerPhotoAsync(deletePhoto);
+
+                OnPropertyChanged(() => BookingDetailList);
+            }
         }
 
         private void OnEditBookingClick(object parameter)

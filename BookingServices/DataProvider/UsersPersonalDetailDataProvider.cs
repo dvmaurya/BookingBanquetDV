@@ -38,10 +38,5 @@ namespace BookingServices.DataProvider
 
             return null;
         }
-
-        public async Task DeletePhotoFromFolderAsync(string photoName)
-        {
-            await _usersPersonalDetailRepository.DeletePhotoFromFolderAsync(photoName).ConfigureAwait(true);
-        }
     }
 }

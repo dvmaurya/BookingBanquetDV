@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Choose profile pic"
-    Width="700"
+    Width="800"
     Loading="ContentDialog_Loading"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     PrimaryButtonText="Done"
@@ -34,46 +34,45 @@
                             IsChecked="{Binding IsChecked, Mode=TwoWay}"
                             Visibility="{Binding IsPhotoRemoved, Converter={StaticResource NotBooleanToVisibilityConverter}}">
                             <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="80" />
-                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="40" />
+                                </Grid.RowDefinitions>
                                 <TextBlock
                                     Margin="0,0,20,0"
                                     Text="Photo not available"
                                     Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNullConverter}}" />
                                 <Image
-                                    Grid.Column="0"
+                                    Grid.Row="0"
                                     Margin="10,0,10,10"
                                     Source="{Binding ImageSource}"
                                     Visibility="{Binding ImageSource, Converter={StaticResource VisibleWhenNotNullConverter}}" />
-                                <Grid Grid.Column="1">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="40" />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                    </Grid.RowDefinitions>
-                                    <Border Grid.Row="0">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontWeight="SemiBold"
-                                            Text="Action" />
-                                    </Border>
+                                <Grid Grid.Row="1" Margin="10,0,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
                                     <TextBlock
-                                        Grid.Row="1"
-                                        VerticalAlignment="Top"
+                                        Grid.Column="0"
+                                        VerticalAlignment="Center"
                                         FontSize="14"
-                                        Text="{Binding Date}"
-                                        TextWrapping="Wrap" />
-                                    <TextBlock Grid.Row="2">
+                                        TextWrapping="Wrap">
+                                        <Run Text="Captured on:" />
+                                        <Run Text="{Binding Date}" />
+                                    </TextBlock>
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center">
                                         <Run Text="Size:" />
                                         <Run Text="{Binding Size, Converter={StaticResource ByteToMegabyteVisibilityConverter}}" />
                                     </TextBlock>
                                     <Button
-                                        Grid.Row="3"
-                                        VerticalAlignment="Top"
+                                        Grid.Column="2"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center"
                                         Background="AliceBlue"
                                         Command="{Binding DataContext.DeletePhotoCommand, ElementName=MultiselectlistView}"
                                         CommandParameter="{Binding}"
@@ -81,9 +80,24 @@
                                         <ToolTipService.ToolTip>
                                             <TextBlock Text="Permanentaly delete photo" />
                                         </ToolTipService.ToolTip>
-                                        <FontIcon Foreground="Red" Glyph="&#xE74D;" />
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Remove forever" />
+                                            <FontIcon
+                                                Margin="10,0,0,0"
+                                                Foreground="Red"
+                                                Glyph="&#xE74D;" />
+                                        </StackPanel>
                                     </Button>
                                 </Grid>
+                                <Line
+                                    Grid.Row="2"
+                                    Margin="10,10,0,10"
+                                    Stroke="LightGray"
+                                    StrokeThickness="1"
+                                    X1="0"
+                                    X2="540"
+                                    Y1="0"
+                                    Y2="0" />
                             </Grid>
                         </RadioButton>
                     </Grid>

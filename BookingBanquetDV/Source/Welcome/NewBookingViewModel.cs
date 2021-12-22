@@ -245,21 +245,17 @@ namespace BookingBanquetDV.Source.Welcome
 
         private async Task OnPageLoadingAsync()
         {
+            _maxDate = DateTimeOffset.Now.Date;
+            _minDateTime = DateTimeOffset.Now.Date;
+            _bookingDate = DateTimeOffset.Now;
+
             if (_bookingDetails != null)
             {
-                _maxDate = DateTimeOffset.Now.Date;
-                _minDateTime = DateTimeOffset.Now.Date;
-                _bookingDate = DateTimeOffset.Now;
-
                 SetBookingDetail(_bookingDetails);
                 _customerPhoto = _customerPhotoDataProvider.
                     GetCustomerPhotoDetail(_bookingDetails.Id);
 
                 await SetPhotoAsync();
-
-                OnPropertyChanged(() => MaxDate);
-                OnPropertyChanged(() => MinDateTime);
-                OnPropertyChanged(() => BookingDate);
             }
             else
             {
@@ -468,7 +464,10 @@ namespace BookingBanquetDV.Source.Welcome
 
                 if(_customerPhoto != null)
                 {
-                    _customerPhoto.BookingId = _bookingDetails.Id;
+                    _customerPhoto.BookingId = _bookingDetails.Id != 0 ?
+                        _bookingDetails.Id : _masterBookingDetailList != null ?
+                        _masterBookingDetailList.Count + 1 : 1;
+
                     _customerPhoto.EmailId = _bookingDetails.EmailId;
                     _customerPhotoDataProvider.AddOrUpdatePhotoDetail(_customerPhoto);
                 }
