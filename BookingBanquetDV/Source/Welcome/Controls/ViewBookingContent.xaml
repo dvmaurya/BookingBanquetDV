@@ -1,0 +1,14 @@
+﻿<ContentDialog
+    x:Class="BookingBanquetDV.Source.Welcome.Controls.ViewBookingContent"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:welcome="using:BookingBanquetDV.Source.Welcome"
+    Title="View booking details"
+    Loading="ContentDialog_Loading"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    PrimaryButtonText="Close"
+    mc:Ignorable="d">
+    <welcome:ViewBooking />
+</ContentDialog>

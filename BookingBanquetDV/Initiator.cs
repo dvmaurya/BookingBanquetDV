@@ -5,6 +5,7 @@ using BookingBanquetDV.Source.Recover;
 using BookingBanquetDV.Source.Register;
 using BookingBanquetDV.Source.Welcome;
 using BookingBanquetDV.Source.Welcome.Controls;
+using BookingBanquetDV.Source.Welcome.PrintOut;
 using BookingServices.DataProvider;
 using BookingServices.Interfaces;
 using BookingServices.Repository;
@@ -66,6 +67,7 @@ namespace BookingBanquetDV
             DIContainer.RegisterType<ICameraViewModel, CameraViewModel>();
             DIContainer.RegisterType<IUserDetailViewModel, UserDetailViewModel>();
             DIContainer.RegisterType<IViewBookingViewModel, ViewBookingViewModel>();
+            DIContainer.RegisterType<IPrintLoadingViewModel, PrintLoadingViewModel>();
         }
 
         private static void RegisterServices()

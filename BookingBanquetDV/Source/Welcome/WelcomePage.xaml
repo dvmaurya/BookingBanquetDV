@@ -2,9 +2,7 @@
     x:Class="BookingBanquetDV.Source.Welcome.WelcomePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:behaviors="using:BookingBanquetDV.Behavior"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
@@ -454,7 +452,7 @@
                                                     CommandParameter="{Binding}"
                                                     Label="Send an email" />
                                                 <AppBarButton
-                                                    Name="ActivateCarePlan"
+                                                    Name="InvokePrintingButton"
                                                     VerticalAlignment="Center"
                                                     Command="{Binding DataContext.PrintOutCommand, ElementName=BookingList}"
                                                     CommandParameter="{Binding}"

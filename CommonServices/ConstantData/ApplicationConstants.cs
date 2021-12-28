@@ -57,7 +57,7 @@
         public const string Logout = "Logout";
         public const string LogoutWarning = "Are you sure that you want to logout?";
         public const string Congrats = "Congratulation!!!";
-        public const string BookingSuccess = "You booking has done successfully for date {0}. Please check your email id.";
+        public const string BookingSuccess = "You booking has done successfully for date {0}. For sending an email to {1}, go to action section and click on send an email";
         public const string Loading = "Loading";
         public const string SendingEmail = "Sending an email. Please wait...";
         public const int DefaultApiTimeout = 60000;
@@ -80,7 +80,7 @@
         public const string PhotoRemoveMessage = "Your photo will be remove from profile pic but it'll be available in Choose from previous photo. You can again select this photo from that list or can delete permanently.";
         public const string RecoverPassword = "Recover password";
         public const string VerifyItsYou = "First verify it's you. Fill the following details.";
-        public const string EmailSent = "Email sent successfully on you email id: {0}";
+        public const string EmailSent = "Email sent successfully on email id: {0}";
         public const string SomethingWentWrong = "Some thing went wrong. Email could not send.";
     }
 }

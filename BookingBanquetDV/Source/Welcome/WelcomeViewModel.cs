@@ -1,6 +1,8 @@
 ﻿using BookingBanquetDV.Source.Camera;
 using BookingBanquetDV.Source.Recover;
 using BookingBanquetDV.Source.Welcome.Controls;
+using BookingBanquetDV.Source.Welcome.Model;
+using BookingBanquetDV.Source.Welcome.PrintOut;
 using BookingBanquetDV.Utility;
 using BookingServices.Interfaces;
 using CommonServices.ConstantData;
@@ -104,19 +106,34 @@ namespace BookingBanquetDV.Source.Welcome
                 async parameter => await OnSendEmailAsync(parameter));
 
             _printOutCommand = new DelegateCommand(
-                parameter => OnPrintOutAsync());
+                parameter => OnPrintOutAsync(parameter));
         }
 
-        private void OnPrintOutAsync()
+        private void OnPrintOutAsync(object parameter)
         {
-            throw new NotImplementedException();
+            if (parameter is BookingDetails bookingDetails)
+            {
+                CustomerPhotoDetail customerPhoto =
+                    _customerPhotoDataProvider.GetCustomerPhotoDetail(bookingDetails.Id);
+
+                NavigationParameter navigationParameter = new NavigationParameter
+                {
+                    BookingDetails = bookingDetails,
+                    LoginDetail = _loginDetail
+                };
+
+                if (customerPhoto != null)
+                    navigationParameter.CustomerPhoto = customerPhoto;
+
+                _navigationService.Navigate(typeof(PrintLoading), navigationParameter);
+            }
         }
 
         private async Task OnSendEmailAsync(object parameter)
         {
             if (parameter is BookingDetails bookingDetails)
             {
-                CustomerPhotoDetail customerPhoto = 
+                CustomerPhotoDetail customerPhoto =
                     _customerPhotoDataProvider.GetCustomerPhotoDetail(bookingDetails.Id);
 
                 App.ShowLoadingIndicator(ApplicationConstants.SendingEmail);
@@ -249,10 +266,10 @@ namespace BookingBanquetDV.Source.Welcome
         {
             if (parameter is BookingDetails bookingDetail)
             {
-                CustomerPhotoDetail customerPhoto = 
+                CustomerPhotoDetail customerPhoto =
                     _customerPhotoDataProvider.GetCustomerPhotoDetail(bookingDetail.Id);
 
-                ViewBooking viewBooking = new ViewBooking(bookingDetail, customerPhoto);
+                ViewBookingContent viewBooking = new ViewBookingContent(bookingDetail, customerPhoto);
                 _contentDialogService.ShowDialogAsync(viewBooking);
             }
         }

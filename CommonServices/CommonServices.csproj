@@ -174,6 +174,10 @@
     <Compile Include="Model\DbModel\UsersCred.cs" />
     <Compile Include="Model\DbModel\UsersPersonalDetail.cs" />
     <Compile Include="Model\UsersPersonalDetail.cs" />
+    <Compile Include="Printout\ContinuationPage.xaml.cs">
+      <DependentUpon>ContinuationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Printout\PrintHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FileReaders\CountryStateAndCity.cs" />
     <Compile Include="Utilities\DisposeDialogEventArgs.cs" />
@@ -211,6 +215,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Rulesets\DeployedWithoutCodeContracts.ruleset" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Printout\ContinuationPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

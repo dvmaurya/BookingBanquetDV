@@ -2,6 +2,7 @@
 using BookingBanquetDV.Source.Register;
 using BookingBanquetDV.Source.Welcome;
 using BookingBanquetDV.Source.Welcome.Controls;
+using BookingBanquetDV.Source.Welcome.PrintOut;
 using ViewModelsAndValidation;
 using ViewModelsAndValidation.ViewModels;
 
@@ -17,5 +18,6 @@ namespace BookingBanquetDV
         public static IUserDetailViewModel UserDetailViewModel => DIContainer.GetInstance<UserDetailViewModel>();
         public static IAllProfilePhotoViewModel AllProfilePhotoViewModel => DIContainer.GetInstance<AllProfilePhotoViewModel>();
         public static IViewBookingViewModel ViewBookingViewModel => DIContainer.GetInstance<ViewBookingViewModel>();
+        public static IPrintLoadingViewModel PrintLoadingViewModel => DIContainer.GetInstance<PrintLoadingViewModel>();
     }
 }

@@ -6,12 +6,12 @@ using Windows.UI.Xaml.Controls;
 
 namespace BookingBanquetDV.Source.Welcome.Controls
 {
-    public sealed partial class ViewBooking : ContentDialog
+    public sealed partial class ViewBookingContent : ContentDialog
     {
         private BookingDetails _bookingDetails;
         private CustomerPhotoDetail _customerPhoto;
 
-        public ViewBooking(BookingDetails bookingDetails, CustomerPhotoDetail customerPhoto)
+        public ViewBookingContent(BookingDetails bookingDetails, CustomerPhotoDetail customerPhoto)
         {
             this.InitializeComponent();
             _bookingDetails = bookingDetails;

@@ -159,6 +159,7 @@
     <Compile Include="ViewModels\ICameraViewModel.cs" />
     <Compile Include="ViewModels\ILoginViewModel.cs" />
     <Compile Include="ViewModels\INewBookingViewModel.cs" />
+    <Compile Include="ViewModels\IPrintLoadingViewModel.cs" />
     <Compile Include="ViewModels\ISignupViewModel.cs" />
     <Compile Include="ViewModels\IMainViewModel.cs" />
     <Compile Include="ViewModels\IRecoverUserViewModel.cs" />

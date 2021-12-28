@@ -1,0 +1,108 @@
+﻿<Page
+    x:Class="BookingBanquetDV.Source.Welcome.PrintOut.PageToPrint"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:welcome="using:BookingBanquetDV.Source.Welcome"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+    <Grid x:Name="PrintableArea">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="6*" />
+            <ColumnDefinition Width="4*" />
+        </Grid.ColumnDefinitions>
+        <welcome:ViewBooking
+            x:Name="TextContent"
+            Grid.Row="0"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            FontFamily="Segoe UI"
+            FontSize="18"
+            Foreground="Black" />
+        <RichTextBlockOverflow
+            x:Name="FirstLinkedContainer"
+            Grid.Row="1"
+            Grid.Column="0"
+            OverflowContentTarget="{Binding ElementName=ContinuationPageLinkedContainer}" />
+        <RichTextBlockOverflow
+            x:Name="ContinuationPageLinkedContainer"
+            Grid.Row="2"
+            Grid.ColumnSpan="2" />
+        <Image
+            x:Name="ScenarioImage"
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="10"
+            HorizontalAlignment="Center"
+            Source="ms-appx:///Assets/print_1.png" />
+        <StackPanel
+            x:Name="Footer"
+            Grid.Row="3"
+            Grid.ColumnSpan="2">
+            <TextBlock
+                FontFamily="Segoe UI"
+                FontSize="16"
+                Foreground="Black"
+                TextAlignment="Left">
+                Copyright © Durgvijay Corporation. All rights reserved.
+            </TextBlock>
+        </StackPanel>
+    </Grid>
+    <!--<Grid x:Name="PrintableArea">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="DV Banquet hall" />
+                    <TextBlock Text="Owned by Durgvijay Maurya" />
+                    <TextBlock Text="Contact by: 9455687773, dvmaurya6@gmail.com" />
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="Address" />
+                    <TextBlock Text="Village: Muhamadalla" />
+                    <TextBlock Text="Post: Muhamadalla" />
+                </StackPanel>
+            </Grid>
+            <local:ViewBooking Grid.Row="1" Margin="0,10,0,10" />
+        </Grid>
+        <RichTextBlockOverflow
+            x:Name="FirstLinkedContainer"
+            Grid.Row="1"
+            OverflowContentTarget="{Binding ElementName=ContinuationPageLinkedContainer}" />
+        <RichTextBlockOverflow x:Name="ContinuationPageLinkedContainer" Grid.Row="2" />
+        <StackPanel x:Name="Footer" Grid.Row="3">
+            <TextBlock
+                FontFamily="Segoe UI"
+                FontSize="16"
+                Foreground="Black"
+                TextAlignment="Left">
+                Copyright © Microsoft Corporation. All rights reserved.
+            </TextBlock>
+        </StackPanel>
+    </Grid>-->
+</Page>

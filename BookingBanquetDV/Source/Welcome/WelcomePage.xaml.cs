@@ -1,6 +1,5 @@
 ﻿using ViewModelsAndValidation;
 using ViewModelsAndValidation.Views;
-using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -18,6 +17,6 @@ namespace BookingBanquetDV.Source.Welcome
             this.DataContext = ViewModelLocator.WelcomeViewModel;
         }
 
-        public ViewModelBase ViewModel => this.DataContext as WelcomeViewModel;
+        public ViewModelBase ViewModel => this.DataContext as WelcomeViewModel;        
     }
 }

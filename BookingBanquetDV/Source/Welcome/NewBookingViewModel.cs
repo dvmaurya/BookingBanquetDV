@@ -451,7 +451,8 @@ namespace BookingBanquetDV.Source.Welcome
             await _messageDialogService.ShowMessageDialogAsync(
                 ApplicationConstants.Congrats,
                 ApplicationConstants.BookingSuccess.FormatString(
-                    _bookingDetails.BookingDate));
+                    _bookingDetails.BookingDate,
+                    _bookingDetails.CustomerName));
 
             _navigationService.Navigate(typeof(WelcomePage), _loginDetail);
         }

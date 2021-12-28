@@ -1,13 +1,9 @@
-﻿<ContentDialog
-    x:Class="BookingBanquetDV.Source.Welcome.Controls.ViewBooking"
+﻿<UserControl
+    x:Class="BookingBanquetDV.Source.Welcome.ViewBooking"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="View booking details"
-    Loading="ContentDialog_Loading"
-    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    PrimaryButtonText="Close"
     mc:Ignorable="d">
     <ScrollViewer x:Name="rootScrollViewer" VerticalScrollBarVisibility="Auto">
         <Grid
@@ -265,4 +261,4 @@
             </StackPanel>
         </Grid>
     </ScrollViewer>
-</ContentDialog>
+</UserControl>
