@@ -166,6 +166,7 @@
     <Compile Include="Model\DbModel\PhotoDetails.cs" />
     <Compile Include="Model\DbModel\State.cs" />
     <Compile Include="Model\LoginDetail.cs" />
+    <Compile Include="Model\NavigationParameter.cs" />
     <Compile Include="Model\UsersCred.cs" />
     <Compile Include="Model\EmailParameter.cs" />
     <Compile Include="Model\DbModel\LoginDetail.cs" />

@@ -202,7 +202,6 @@
     <Compile Include="Source\Welcome\EditUserDetailPage.xaml.cs">
       <DependentUpon>EditUserDetailPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Source\Welcome\Model\NavigationParameter.cs" />
     <Compile Include="Source\Welcome\NewBookingDetail.xaml.cs">
       <DependentUpon>NewBookingDetail.xaml</DependentUpon>
     </Compile>
@@ -424,6 +423,7 @@
       <Name>ViewModelsAndValidation</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

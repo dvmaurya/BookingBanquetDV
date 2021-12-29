@@ -46,7 +46,7 @@ namespace CommonServices.Printout
             }
             catch (Exception ex)
             {
-                FileLogger.Logger.Info("Failed to open printout UI " + ex.Message);
+                FileLogger.Logger.Info("Failed to open printout UI. " + ex.Message);
             }
         }
 

@@ -1,6 +1,4 @@
-﻿using CommonServices.Model;
-
-namespace BookingBanquetDV.Source.Welcome.Model
+﻿namespace CommonServices.Model
 {
     public class NavigationParameter
     {

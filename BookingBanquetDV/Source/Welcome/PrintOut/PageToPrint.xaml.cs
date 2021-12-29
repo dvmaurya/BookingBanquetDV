@@ -9,12 +9,12 @@ namespace BookingBanquetDV.Source.Welcome.PrintOut
     /// </summary>
     public sealed partial class PageToPrint : Page
     {
-        //public RichTextBlock TextContentBlock { get; set; }
+        public RichTextBlock TextContentBlock { get; set; }
 
         public PageToPrint()
         {
             this.InitializeComponent();
-            //TextContentBlock = TextContent;
+            TextContentBlock = TextContent;
         }
     }
 }

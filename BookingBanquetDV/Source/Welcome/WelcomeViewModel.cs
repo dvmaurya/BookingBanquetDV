@@ -1,7 +1,6 @@
 ﻿using BookingBanquetDV.Source.Camera;
 using BookingBanquetDV.Source.Recover;
 using BookingBanquetDV.Source.Welcome.Controls;
-using BookingBanquetDV.Source.Welcome.Model;
 using BookingBanquetDV.Source.Welcome.PrintOut;
 using BookingBanquetDV.Utility;
 using BookingServices.Interfaces;

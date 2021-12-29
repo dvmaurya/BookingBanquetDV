@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using BookingBanquetDV.Source.Camera;
-using BookingBanquetDV.Source.Welcome.Model;
+﻿using BookingBanquetDV.Source.Camera;
 using CommonServices.ConstantData;
 using CommonServices.Model;
+using System;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using ViewModelsAndValidation;
 using ViewModelsAndValidation.Command;
 using ViewModelsAndValidation.Services;
@@ -25,9 +24,9 @@ namespace BookingBanquetDV.Source.Welcome.PrintOut
         private readonly INavigationService _nativationService;
 
         public PrintLoadingViewModel(
-            INavigationService navigation)
+            INavigationService navigationService)
         {
-            _nativationService = navigation ?? throw new ArgumentNullException("navigation");
+            _nativationService = navigationService ?? throw new ArgumentNullException("navigationService");
 
             _printCommand = new DelegateCommand(
                 parameter => OnPrintPage());
