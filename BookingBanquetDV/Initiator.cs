@@ -40,6 +40,7 @@ namespace BookingBanquetDV
             DIContainer.RegisterType<IUsersPersonalDetailDataProvider, UsersPersonalDetailDataProvider>();
             DIContainer.RegisterType<IPhotoDetailDataProvider, PhotoDetailDataProvider>();
             DIContainer.RegisterType<ICustomerPhotoDataProvider, CustomerPhotoDataProvider>();
+            DIContainer.RegisterType<IBanquetDataProvider, BanquetDataProvider>();
 
             DIContainer.RegisterType<IUserCredRepository, UserCredRepository>();
             DIContainer.RegisterType<IUsersPersonalDetailRepository, UsersPersonalDetailRepository>();
@@ -49,6 +50,7 @@ namespace BookingBanquetDV
             DIContainer.RegisterType<ICountryRepository, CountryRepository>();
             DIContainer.RegisterType<IPhotoDetailRepository, PhotoDetailRepository>();
             DIContainer.RegisterType<ICustomerPhotoRepository, CustomerPhotoRepository>();
+            DIContainer.RegisterType<IBanquetRepository, BanquetRepository>();
             DIContainer.RegisterSingletonType<IDbContext, SQLiteContext>(
                  new InjectionConstructor(
                      Path.Combine(ApplicationData.Current.LocalFolder.Path, "Banquet.sqlite"),
@@ -68,6 +70,7 @@ namespace BookingBanquetDV
             DIContainer.RegisterType<IUserDetailViewModel, UserDetailViewModel>();
             DIContainer.RegisterType<IViewBookingViewModel, ViewBookingViewModel>();
             DIContainer.RegisterType<IPrintLoadingViewModel, PrintLoadingViewModel>();
+            DIContainer.RegisterType<IBanquetConfigViewModel, BanquetConfigViewModel>();
         }
 
         private static void RegisterServices()

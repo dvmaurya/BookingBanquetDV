@@ -50,7 +50,8 @@ namespace CommonServices.Extensions
                 City = usersPersonalDetail.City,
                 EmailId = usersPersonalDetail.EmailId,
                 Mobile = usersPersonalDetail.Mobile,
-                State = usersPersonalDetail.State
+                State = usersPersonalDetail.State,
+                CreationDate = usersPersonalDetail.CreationDate
             };
 
             return dbUsersPersonalDetail;
@@ -67,7 +68,8 @@ namespace CommonServices.Extensions
                 City = dbUsersPersonalDetail.City,
                 EmailId = dbUsersPersonalDetail.EmailId,
                 Mobile = dbUsersPersonalDetail.Mobile,
-                State = dbUsersPersonalDetail.State
+                State = dbUsersPersonalDetail.State,
+                CreationDate = dbUsersPersonalDetail.CreationDate
             };
 
             return usersPersonalDetail;

@@ -361,7 +361,12 @@ namespace BookingBanquetDV.Source.Welcome.Controls
                     _photoDetailDataProvider.DeleteDocumentFileFromFolderAsync(deletePhoto.LocalPhotoName);
             }
 
-            LoginDetail loginDetail = new LoginDetail { UserId = _usersPersonalDetail.EmailId };
+            LoginDetail loginDetail = new LoginDetail
+            {
+                UserId = _usersPersonalDetail.Mobile,
+                EmailId = _usersPersonalDetail.EmailId
+            }
+            ;
             _navigationService.Navigate(typeof(WelcomePage), loginDetail);
         }
 

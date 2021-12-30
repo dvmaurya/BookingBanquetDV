@@ -156,6 +156,7 @@
     <Compile Include="ViewModelBase.cs" />
     <Compile Include="ViewModelState.cs" />
     <Compile Include="ViewModels\IAllProfilePhotoViewModel.cs" />
+    <Compile Include="ViewModels\IBanquetConfigViewModel.cs" />
     <Compile Include="ViewModels\ICameraViewModel.cs" />
     <Compile Include="ViewModels\ILoginViewModel.cs" />
     <Compile Include="ViewModels\INewBookingViewModel.cs" />

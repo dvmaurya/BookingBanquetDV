@@ -32,6 +32,9 @@ namespace CommonServices.Model
         [JsonProperty("city")]
         public string City { get; set; }
 
+        [JsonProperty("creationDate")]
+        public string CreationDate { get; set; }
+
         [JsonIgnore]
         public BitmapImage ImageSource { get; set; }
     }

@@ -264,7 +264,10 @@
                                 </HyperlinkButton>
                             </StackPanel>
                         </StackPanel>
-                        <TextBlock Margin="0,30,0,0" Text="City" />
+                        <TextBlock
+                            Margin="0,30,0,0"
+                            Text="City"
+                            Visibility="{Binding IsCityVisible}" />
                         <StackPanel Visibility="{Binding IsCityVisible}">
                             <StackPanel Orientation="Horizontal">
                                 <Border

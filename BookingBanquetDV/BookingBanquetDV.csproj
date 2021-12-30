@@ -2,6 +2,7 @@
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <Win32Resource>Resources.res</Win32Resource>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{2CF5BB75-1B2D-40C4-95E2-D738E22BF483}</ProjectGuid>
@@ -191,6 +192,10 @@
       <DependentUpon>AllProfilePhoto.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Welcome\Controls\AllProfilePhotoViewModel.cs" />
+    <Compile Include="Source\Welcome\Controls\BanquetConfigDialog.xaml.cs">
+      <DependentUpon>BanquetConfigDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Welcome\Controls\BanquetConfigViewModel.cs" />
     <Compile Include="Source\Welcome\Controls\ViewBookingContent.xaml.cs">
       <DependentUpon>ViewBookingContent.xaml</DependentUpon>
     </Compile>
@@ -243,6 +248,7 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <Content Include="Assets\CountryStateCity.json" />
+    <Content Include="Resources.res" />
     <None Include="BookingBanquetDV_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -307,6 +313,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Source\Welcome\Controls\AllProfilePhoto.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Welcome\Controls\BanquetConfigDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -65,15 +65,19 @@ namespace BookingBanquetDV.Source.Welcome
         private SingleSelection _selectedState;
         private SingleSelection _selectedCountry;
         private CustomerPhotoDetail _customerPhoto;
+        private BanquetDetail _banquetDetail;
         private IList<CustomerPhotoDetail> _deletePhoto;
         private IReadOnlyCollection<BookingDetails> _masterBookingDetailList;
         private string _address;
+        private IList<string> _totalFLourList;
+        private IList<string> _totalRoomList;
         private readonly ICustomerPhotoDataProvider _customerPhotoDataProvider;
         private readonly IMessageDialogService _messageDialogService;
         private readonly IBookingDataProvider _bookingDataProvider;
         private readonly ICountryDataProvider _countryDataProvider;
         private readonly ICameraViewModel _cameraViewModel;
         private readonly INavigationService _navigationService;
+        private readonly IBanquetDataProvider _banquetDataProvider;
 
         public NewBookingViewModel(
             ICountryDataProvider countryDataProvider,
@@ -81,7 +85,8 @@ namespace BookingBanquetDV.Source.Welcome
             IBookingDataProvider bookingDataProvider,
             IMessageDialogService messageDialogService,
             INavigationService navigationService,
-            ICustomerPhotoDataProvider customerPhotoDataProvider)
+            ICustomerPhotoDataProvider customerPhotoDataProvider,
+            IBanquetDataProvider banquetDataProvider)
         {
             _countryDataProvider = countryDataProvider ?? throw new ArgumentNullException("countryDataProvider");
             _cameraViewModel = cameraViewModel ?? throw new ArgumentNullException("cameraViewModel");
@@ -89,8 +94,11 @@ namespace BookingBanquetDV.Source.Welcome
             _messageDialogService = messageDialogService ?? throw new ArgumentNullException("messageDialogService");
             _navigationService = navigationService ?? throw new ArgumentNullException("navigationService");
             _customerPhotoDataProvider = customerPhotoDataProvider ?? throw new ArgumentNullException("customerPhotoDataProvider");
+            _banquetDataProvider = banquetDataProvider ?? throw new ArgumentNullException("banquetDataProvider");
 
             _deletePhoto = new List<CustomerPhotoDetail>();
+            _totalFLourList = new ObservableCollection<string>();
+            _totalRoomList = new ObservableCollection<string>();
 
             _saveCommand = new DelegateCommand(async parameter => await OnSaveNewBookingAsync());
 
@@ -187,13 +195,14 @@ namespace BookingBanquetDV.Source.Welcome
 
             if (_selectedState != null)
             {
-                _isCityVisible = true;
-
                 IReadOnlyCollection<City> cityList =
                     JsonConvert.DeserializeObject<IReadOnlyCollection<City>>(_selectedState.JsonData);
 
                 if (cityList != null)
+                {
+                    _isCityVisible = true;
                     GenerateListForSingleSelection(cityList);
+                }
 
                 await OnCityChangedAsync();
             }
@@ -209,13 +218,14 @@ namespace BookingBanquetDV.Source.Welcome
 
             if (_selectedCountry != null)
             {
-                _isStateVisible = true;
-
                 IReadOnlyCollection<State> stateList =
                     JsonConvert.DeserializeObject<IReadOnlyCollection<State>>(_selectedCountry.JsonData);
 
                 if (stateList != null)
+                {
+                    _isStateVisible = true;
                     GenerateListForSingleSelection(stateList);
+                }
 
                 await OnStateChangedAsync();
             }
@@ -276,6 +286,25 @@ namespace BookingBanquetDV.Source.Welcome
 
             if (_masterCountryList != null && _masterCountryList.Any())
                 GenerateListForSingleSelection(_masterCountryList);
+
+            _banquetDetail = _banquetDataProvider.GetBanquetDetail();
+
+            if (_banquetDetail != null)
+            {
+                if(!string.IsNullOrEmpty(_banquetDetail.AvailableFlours) && 
+                    _banquetDetail.AvailableFlours.ToInt32() != 0)
+                {
+                    for (int i = 0; i < _banquetDetail.AvailableFlours.ToInt32(); i++)
+                        _totalFLourList.Add((i + 1).ConvertToString());
+                }
+
+                if (!string.IsNullOrEmpty(_banquetDetail.AvailableRooms) && 
+                    _banquetDetail.AvailableRooms.ToInt32() != 0)
+                {
+                    for (int i = 0; i < _banquetDetail.AvailableRooms.ToInt32(); i++)
+                        _totalRoomList.Add((i + 1).ConvertToString());
+                }
+            }
         }
 
         private void GenerateListForSingleSelection(IReadOnlyCollection<object> singleCode)
@@ -439,12 +468,12 @@ namespace BookingBanquetDV.Source.Welcome
             _bookingDetails.EmailId = _emailId;
             _bookingDetails.MobileNo = _mobileNo;
             _bookingDetails.TotalAmount = _amount;
-            _bookingDetails.TotalFlours = _totalFlours ?? string.Empty;
-            _bookingDetails.TotalRooms = _totalRooms ?? string.Empty;
+            _bookingDetails.TotalFlours = _totalFlours ?? "NA";
+            _bookingDetails.TotalRooms = _totalRooms ?? "NA";
             _bookingDetails.Address = _address;
             _bookingDetails.Country = _selectedCountry.Name;
-            _bookingDetails.State = _selectedState?.Name ?? string.Empty;
-            _bookingDetails.City = _selectedCity?.Name ?? string.Empty;
+            _bookingDetails.State = _selectedState?.Name ?? "NA";
+            _bookingDetails.City = _selectedCity?.Name ?? "NA";
 
             await OnContinueBookingSaveAsync();
 
@@ -465,7 +494,7 @@ namespace BookingBanquetDV.Source.Welcome
                 //_bookingDetails.IsEmailSent = isEmailSent;
                 _bookingDataProvider.AddOrUpdateBooking(_bookingDetails);
 
-                if(_customerPhoto != null)
+                if (_customerPhoto != null)
                 {
                     _customerPhoto.BookingId = _bookingDetails.Id != 0 ?
                         _bookingDetails.Id : _masterBookingDetailList != null ?
@@ -679,6 +708,11 @@ namespace BookingBanquetDV.Source.Welcome
         public CustomerPhotoDetail SelectedPhotoDetails
         {
             get => _customerPhoto;
-            set => _customerPhoto = value; }
+            set => _customerPhoto = value;
+        }
+
+        public IList<string> TotalFLourList => _totalFLourList;
+
+        public IList<string> TotalRoomList => _totalRoomList;
     }
 }

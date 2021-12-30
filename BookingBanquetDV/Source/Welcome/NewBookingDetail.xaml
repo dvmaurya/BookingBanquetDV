@@ -295,25 +295,39 @@
                                 InputScope="Number"
                                 MaxLength="2"
                                 PlaceholderText="Number of rooms"
-                                Text="{Binding TotalRooms, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                Text="{Binding TotalRooms, Mode=TwoWay}"
+                                Visibility="{Binding TotalRoomList.Count, Converter={StaticResource VisibleWhenZeroConverter}}">
                                 <interactivity:Interaction.Behaviors>
                                     <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
                                     <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[TotalRooms]}" />
                                 </interactivity:Interaction.Behaviors>
                             </TextBox>
+                            <commoncontrols:ComboBoxExt
+                                Width="568"
+                                ItemsSource="{Binding TotalRoomList}"
+                                PlaceholderText="Select total number of room"
+                                SelectedItem="{Binding TotalRooms, Mode=TwoWay}"
+                                Visibility="{Binding TotalRoomList.Count, Converter={StaticResource VisibleWhenNonzeroConverter}}" />
                         </StackPanel>
                         <StackPanel Margin="0,0,10,20">
                             <TextBlock Text="Total flours:" />
                             <TextBox
                                 InputScope="Number"
-                                MaxLength="1"
+                                MaxLength="2"
                                 PlaceholderText="Number of flours"
-                                Text="{Binding TotalFlours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                Text="{Binding TotalFlours, Mode=TwoWay}"
+                                Visibility="{Binding TotalFLourList.Count, Converter={StaticResource VisibleWhenZeroConverter}}">
                                 <interactivity:Interaction.Behaviors>
                                     <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
                                     <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[TotalFlours]}" />
                                 </interactivity:Interaction.Behaviors>
                             </TextBox>
+                            <commoncontrols:ComboBoxExt
+                                Width="568"
+                                ItemsSource="{Binding TotalFLourList}"
+                                PlaceholderText="Select total number of flour"
+                                SelectedItem="{Binding TotalFlours, Mode=TwoWay}"
+                                Visibility="{Binding TotalFLourList.Count, Converter={StaticResource VisibleWhenNonzeroConverter}}" />
                         </StackPanel>
                         <StackPanel>
                             <Grid>

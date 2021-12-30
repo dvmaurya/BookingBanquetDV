@@ -140,10 +140,12 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DataProvider\BanquetDataProvider.cs" />
     <Compile Include="DataProvider\BookingDataProvider.cs" />
     <Compile Include="DataProvider\CountryDataProvider.cs" />
     <Compile Include="DataProvider\EncryptionProvider.cs" />
     <Compile Include="DataProvider\CustomerPhotoDataProvider.cs" />
+    <Compile Include="Interfaces\IBanquetDataProvider.cs" />
     <Compile Include="DataProvider\OfflineDatabaseProvider.cs" />
     <Compile Include="DataProvider\PhotoDetailDataProvider.cs" />
     <Compile Include="DataProvider\UsersPersonalDetailDataProvider.cs" />
@@ -156,9 +158,11 @@
     <Compile Include="Interfaces\IPhotoDetailDataProvider.cs" />
     <Compile Include="Interfaces\IUsersPersonalDetailDataProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\BanquetRepository.cs" />
     <Compile Include="Repository\BookingRepository.cs" />
     <Compile Include="Repository\CountryRepository.cs" />
     <Compile Include="Repository\CustomerPhotoRepository.cs" />
+    <Compile Include="Repository\Interface\IBanquetRepository.cs" />
     <Compile Include="Repository\Interface\IBookingRepository.cs" />
     <Compile Include="Repository\Interface\ICountryRepository.cs" />
     <Compile Include="Repository\Interface\ICustomerPhotoRepository.cs" />
@@ -170,7 +174,6 @@
     <Compile Include="Repository\PhotoDetailRepository.cs" />
     <Compile Include="Repository\UserCredRepository.cs" />
     <Compile Include="Repository\UsersPersonalDetailRepository.cs" />
-    <Compile Include="SQLite\SqliteConnection.cs" />
     <Compile Include="SQLite\SQLiteContext.cs" />
     <EmbeddedResource Include="Properties\BookingServices.rd.xml" />
   </ItemGroup>

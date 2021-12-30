@@ -91,6 +91,7 @@ namespace BookingServices.DataProvider
                 nameof(DBModel.Country),
                 nameof(DBModel.PhotoDetails),
                 nameof(DBModel.CustomerPhotoDetail),
+                nameof(DBModel.BanquetDetail),
             };
 
             return tableTypes;

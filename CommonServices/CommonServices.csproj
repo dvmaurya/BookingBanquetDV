@@ -136,8 +136,10 @@
     <Compile Include="ConstantData\ApplicationConstants.cs" />
     <Compile Include="ConstantData\EmailConstants.cs" />
     <Compile Include="ConstantData\TableName.cs" />
+    <Compile Include="Enums\BookingActionEnum.cs" />
     <Compile Include="Enums\PreviewDialogAction.cs" />
     <Compile Include="Enums\Users.cs" />
+    <Compile Include="Extensions\BanquetExtension.cs" />
     <Compile Include="Extensions\BookingExtension.cs" />
     <Compile Include="Extensions\CityExtension.cs" />
     <Compile Include="Extensions\CountryExtension.cs" />
@@ -150,10 +152,12 @@
     <Compile Include="FileReaders\FileReader.cs" />
     <Compile Include="Logger\FileLogger.cs" />
     <Compile Include="Logger\ILogger.cs" />
+    <Compile Include="Model\BanquetDetail.cs" />
     <Compile Include="Model\BookingDetails.cs" />
     <Compile Include="Model\BookingParameter.cs" />
     <Compile Include="Model\City\SingleSelection.cs" />
     <Compile Include="Model\CustomerPhotoDetail.cs" />
+    <Compile Include="Model\DbModel\BanquetDetail.cs" />
     <Compile Include="Model\DbModel\BookingDetails.cs" />
     <Compile Include="Model\City\City.cs" />
     <Compile Include="Model\City\Country.cs" />
@@ -181,6 +185,7 @@
     <Compile Include="Printout\PrintHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FileReaders\CountryStateAndCity.cs" />
+    <Compile Include="Utilities\CursorUtility.cs" />
     <Compile Include="Utilities\DisposeDialogEventArgs.cs" />
     <Compile Include="Utilities\EnumUtility.cs" />
     <Compile Include="Utilities\GoogleAPI.cs" />

@@ -109,7 +109,7 @@ namespace BookingBanquetDV.Source.Register
         {
             _selectedCity = await SingleSelectionUtility.OnSelectSingleSelectionAsync(
                         _cityList, _selectedCity, ApplicationConstants.City);
-            
+
             OnPropertyChanged(() => SelectedCity);
         }
 
@@ -120,13 +120,14 @@ namespace BookingBanquetDV.Source.Register
 
             if (_selectedState != null)
             {
-                _isCityVisible = true;
-
                 IReadOnlyCollection<City> cityList =
                     JsonConvert.DeserializeObject<IReadOnlyCollection<City>>(_selectedState.JsonData);
 
                 if (cityList != null)
+                {
+                    _isCityVisible = true;
                     GenerateListForSingleSelection(cityList);
+                }
 
                 await OnCityChangedAsync();
             }
@@ -142,13 +143,14 @@ namespace BookingBanquetDV.Source.Register
 
             if (_selectedCountry != null)
             {
-                _isStateVisible = true;
-
                 IReadOnlyCollection<State> stateList =
                     JsonConvert.DeserializeObject<IReadOnlyCollection<State>>(_selectedCountry.JsonData);
 
                 if (stateList != null)
+                {
+                    _isStateVisible = true;
                     GenerateListForSingleSelection(stateList);
+                }
 
                 await OnStateChangedAsync();
             }
@@ -159,29 +161,26 @@ namespace BookingBanquetDV.Source.Register
 
         private void OnResetClick()
         {
-            if (!_isEmailSent)
-            {
-                _fullName = _emailId = _mobileNo = _password =
+            _fullName = _emailId = _mobileNo = _password =
                     _confirmPassword = Address = string.Empty;
-                _selectedCountry = null;
-                _selectedState = null;
-                _selectedCity = null;
-                _isStateVisible = _isCityVisible = false;
+            _selectedCountry = null;
+            _selectedState = null;
+            _selectedCity = null;
+            _isStateVisible = _isCityVisible = false;
 
-                _isOtpEnable = false;
+            _isOtpEnable = false;
 
-                OnPropertyChanged(() => IsOtpEnable);
-                OnPropertyChanged(() => FullName);
-                OnPropertyChanged(() => EmailId);
-                OnPropertyChanged(() => MobileNo);
-                OnPropertyChanged(() => Password);
-                OnPropertyChanged(() => ConfirmPassword);
-                OnPropertyChanged(() => SelectedCountry);
-                OnPropertyChanged(() => SelectedState);
-                OnPropertyChanged(() => SelectedCity);
-                OnPropertyChanged(() => IsStateVisible);
-                OnPropertyChanged(() => IsCityVisible);
-            }
+            OnPropertyChanged(() => IsOtpEnable);
+            OnPropertyChanged(() => FullName);
+            OnPropertyChanged(() => EmailId);
+            OnPropertyChanged(() => MobileNo);
+            OnPropertyChanged(() => Password);
+            OnPropertyChanged(() => ConfirmPassword);
+            OnPropertyChanged(() => SelectedCountry);
+            OnPropertyChanged(() => SelectedState);
+            OnPropertyChanged(() => SelectedCity);
+            OnPropertyChanged(() => IsStateVisible);
+            OnPropertyChanged(() => IsCityVisible);
         }
 
         private async Task OnSignUpClickAsync()
@@ -198,8 +197,8 @@ namespace BookingBanquetDV.Source.Register
 
                     if (photoDetails != null && _usersPersonalDetail != null)
                     {
-                       _photoDetail = new PhotoDetails
-                       {
+                        _photoDetail = new PhotoDetails
+                        {
                             LocalPhotoName = photoDetails.LocalPhotoName,
                             Date = photoDetails.Date,
                             FileType = photoDetails.FileType,
@@ -210,11 +209,6 @@ namespace BookingBanquetDV.Source.Register
                         };
                     }
 
-                    App.ShowLoadingIndicator(ApplicationConstants.SendingEmail);
-                    await SendBookingMailAsync();
-                    App.HideLoadingIndicator();
-
-                    _somethingWrongMessage = false;
                     bool isSaved = _offlineDatabaseProvider.AddOrUpdateUsers(_usersCred);
                     if (isSaved)
                     {
@@ -247,7 +241,6 @@ namespace BookingBanquetDV.Source.Register
                 {
                     EmailAddress = _usersCred.EmailId,
                     UserName = _usersPersonalDetail.FullName,
-                    UsersCred = _usersCred,
                     UsersPersonalDetail = _usersPersonalDetail,
                     PhotoDetails = _photoDetail
                 };
@@ -287,11 +280,13 @@ namespace BookingBanquetDV.Source.Register
                 {
                     Address = _address,
                     Country = _selectedCountry?.Name,
-                    State = _selectedState?.Name,
-                    City = _selectedCity?.Name,
+                    State = _selectedState?.Name ?? "NA",
+                    City = _selectedCity?.Name ?? "NA",
                     EmailId = _emailId,
                     FullName = _fullName,
                     Mobile = _mobileNo,
+                    CreationDate = DateTime.Now.ConvertToString(
+                        ApplicationConstants.DatabaseDateTimeFormat),
                 };
 
                 await SendOtpAsync();
@@ -376,7 +371,7 @@ namespace BookingBanquetDV.Source.Register
 
         private void InitializeListData()
         {
-            ReadOnlyCollection<Country> countryList = 
+            ReadOnlyCollection<Country> countryList =
                 new ReadOnlyCollection<Country>(_countryDataProvider.GetCountryData());
 
             if (countryList != null && countryList.Any())

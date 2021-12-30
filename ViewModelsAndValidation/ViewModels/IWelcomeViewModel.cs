@@ -19,7 +19,10 @@ namespace ViewModelsAndValidation.ViewModels
         ICommand ViewProfileCommand { get; }
         ICommand SendEmailCommand { get; }
         ICommand PrintOutCommand { get; }
+        ICommand SendUserEmailCommand { get; }
+        ICommand BanquetConfigCommand { get; }
         BookingDetails BookingDetail { get; set; }
+        BanquetDetail BanquetDetail { get; set; }
         ICameraViewModel CameraViewModel { get; set; }
         ObservableCollection<BookingDetails> BookingDetailList { get; }
         UsersPersonalDetail UsersPersonalDetail { get; set; }

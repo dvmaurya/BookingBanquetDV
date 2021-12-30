@@ -31,8 +31,12 @@ namespace BookingBanquetDV.Source.Welcome
         private ObservableCollection<BookingDetails> _bookingDetailList;
 
         private readonly ICommand _newBookingCommand;
+        private readonly ICommand _sendUserEmailCommand;
         private ICameraViewModel _cameraViewModel;
         private UsersPersonalDetail _usersPersonalDetail;
+        private PhotoDetails _photoDetail;
+        private BanquetDetail _banquetDetail;
+        private readonly ICommand _banquetConfigCommand;
         private readonly ICommand _printOutCommand;
         private readonly ICommand _sendEmailCommand;
         private readonly ICommand _changePasswordCommand;
@@ -51,6 +55,7 @@ namespace BookingBanquetDV.Source.Welcome
         private readonly IContentDialogService _contentDialogService;
         private readonly IPhotoDetailDataProvider _photoDetailDataProvider;
         private readonly ICustomerPhotoDataProvider _customerPhotoDataProvider;
+        private readonly IBanquetDataProvider _banquetDataProvider;
 
         public WelcomeViewModel(
             ICameraViewModel cameraViewModel,
@@ -60,7 +65,8 @@ namespace BookingBanquetDV.Source.Welcome
             IUsersPersonalDetailDataProvider usersPersonalDetailDataProvider,
             IContentDialogService contentDialogService,
             IPhotoDetailDataProvider photoDetailDataProvider,
-            ICustomerPhotoDataProvider customerPhotoDataProvider)
+            ICustomerPhotoDataProvider customerPhotoDataProvider,
+            IBanquetDataProvider banquetDataProvider)
         {
             _cameraViewModel = cameraViewModel ?? throw new ArgumentNullException("cameraViewModel");
             _bookingDataProvider = bookingDataProvider ?? throw new ArgumentNullException("bookingDataProvider");
@@ -70,6 +76,7 @@ namespace BookingBanquetDV.Source.Welcome
             _contentDialogService = contentDialogService ?? throw new ArgumentNullException("contentDialogService");
             _photoDetailDataProvider = photoDetailDataProvider ?? throw new ArgumentNullException("photoDetailDataProvider");
             _customerPhotoDataProvider = customerPhotoDataProvider ?? throw new ArgumentNullException("customerPhotoDataProvider");
+            _banquetDataProvider = banquetDataProvider ?? throw new ArgumentNullException("banquetDataProvider");
 
             _newBookingCommand = new DelegateCommand(
                 parameter => OnClickNewBooking());
@@ -104,8 +111,20 @@ namespace BookingBanquetDV.Source.Welcome
             _sendEmailCommand = new DelegateCommand(
                 async parameter => await OnSendEmailAsync(parameter));
 
+            _sendUserEmailCommand = new DelegateCommand(
+                async parameter => await OnSendUserEmailAsync());
+
             _printOutCommand = new DelegateCommand(
                 parameter => OnPrintOutAsync(parameter));
+
+            _banquetConfigCommand = new DelegateCommand(
+                parameter => OnBanquetConfigAsync());
+        }
+
+        private void OnBanquetConfigAsync()
+        {
+            BanquetConfigDialog banquetConfig = new BanquetConfigDialog(_loginDetail, _banquetDetail);
+            _contentDialogService.ShowDialogAsync(banquetConfig);
         }
 
         private void OnPrintOutAsync(object parameter)
@@ -144,15 +163,45 @@ namespace BookingBanquetDV.Source.Welcome
 
                 string emailMessage = string.Empty;
 
-                if (isEmailSent)
-                    emailMessage = ApplicationConstants.EmailSent.FormatString(bookingDetails.EmailId);
-                else
-                    emailMessage = ApplicationConstants.SomethingWentWrong;
+                emailMessage = isEmailSent ?
+                    ApplicationConstants.EmailSent.FormatString(bookingDetails.EmailId) :
+                    ApplicationConstants.SomethingWentWrong;
 
                 await _messageDialogService.ShowMessageDialogAsync(
                         string.Empty,
                         emailMessage);
             }
+        }
+
+        private async Task OnSendUserEmailAsync()
+        {
+            bool isEmailSent = false;
+            App.ShowLoadingIndicator(ApplicationConstants.SendingEmail);
+
+            if (_usersPersonalDetail != null)
+            {
+                EmailParameter emailParameter = new EmailParameter
+                {
+                    EmailAddress = _usersPersonalDetail.EmailId,
+                    UserName = _usersPersonalDetail.FullName,
+                    UsersPersonalDetail = _usersPersonalDetail,
+                    PhotoDetails = _photoDetail
+                };
+
+                await EmailUtility.SendEmailsAsync(emailParameter);
+            }
+
+            App.HideLoadingIndicator();
+
+            string emailMessage = string.Empty;
+
+            emailMessage = isEmailSent ? 
+                ApplicationConstants.EmailSent.FormatString(_usersPersonalDetail.EmailId) :
+                ApplicationConstants.SomethingWentWrong;
+
+            await _messageDialogService.ShowMessageDialogAsync(
+                    string.Empty,
+                    emailMessage);
         }
 
         private async Task<bool> SendBookingMailAsync(BookingDetails bookingDetail, CustomerPhotoDetail customerPhoto)
@@ -363,19 +412,21 @@ namespace BookingBanquetDV.Source.Welcome
                 if (_usersPersonalDetail != null)
                 {
                     _loginDetail.UserName = _usersPersonalDetail.FullName;
-                    PhotoDetails photoDetail = _photoDetailDataProvider.GetActivePhotoDetail(_usersPersonalDetail.EmailId);
+                    _photoDetail = _photoDetailDataProvider.GetActivePhotoDetail(_usersPersonalDetail.EmailId);
 
-                    if (photoDetail != null)
+                    if (_photoDetail != null)
                     {
                         StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.
                             GetFolderAsync(ApplicationConstants.Document);
 
-                        if (await storageFolder.TryGetItemAsync(photoDetail.LocalPhotoName) is StorageFile file)
+                        if (await storageFolder.TryGetItemAsync(_photoDetail.LocalPhotoName) is StorageFile file)
                             _usersPersonalDetail.ImageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file, ApplicationConstants.Document);
                     }
 
                     OnPropertyChanged(() => UsersPersonalDetail);
                 }
+
+                _banquetDetail = _banquetDataProvider.GetBanquetDetail();
             }
         }
 
@@ -446,5 +497,15 @@ namespace BookingBanquetDV.Source.Welcome
         public ICommand SendEmailCommand => _sendEmailCommand;
 
         public ICommand PrintOutCommand => _printOutCommand;
+
+        public ICommand SendUserEmailCommand => _sendUserEmailCommand;
+
+        public ICommand BanquetConfigCommand => _banquetConfigCommand;
+
+        public BanquetDetail BanquetDetail
+        {
+            get => _banquetDetail;
+            set => _banquetDetail = value;
+        }
     }
 }

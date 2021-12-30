@@ -20,11 +20,11 @@ namespace BookingBanquetDV.Validation
                 
                 if (validationContext.ObjectInstance is INewBookingViewModel newBooking)
                 {
+                    IList<string> allBookingDates = newBooking.MasterBookingDetailList?.Select(
+                        date => date.BookingDate).ToList();
+
                     if (newBooking.BookingDetails != null)
                     {
-                        IList<string> allBookingDates =
-                            newBooking.MasterBookingDetailList?.Select(date => date.BookingDate).ToList();
-
                         if (newBooking.BookingDetails.Id != 0)
                         {
                             if(newBooking.MasterBookingDetailList.FirstOrDefault(
@@ -33,10 +33,10 @@ namespace BookingBanquetDV.Validation
                                 booking.BookingDate.FormatStringEquals(newBooking.BookingDetails.BookingDate)) != null)
                                 return CheckExistingDate(allBookingDates, dateTime);
                         }
-                        else
-                        {
-                            return CheckExistingDate(allBookingDates, dateTime);
-                        }
+                    }
+                    else
+                    {
+                        return CheckExistingDate(allBookingDates, dateTime);
                     }
                 }
             }

@@ -2,6 +2,7 @@
 using CommonServices.Model.City;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -41,5 +42,7 @@ namespace ViewModelsAndValidation.ViewModels
         ICommand RemovePhotoCommand { get; }
         IReadOnlyCollection<BookingDetails> MasterBookingDetailList { get; set; }
         CustomerPhotoDetail SelectedPhotoDetails { get; set; }
+        IList<string> TotalFLourList { get; }
+        IList<string> TotalRoomList { get; }
     }
 }

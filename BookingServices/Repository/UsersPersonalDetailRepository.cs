@@ -1,5 +1,4 @@
 ﻿using BookingServices.Repository.Interface;
-using CommonServices.ConstantData;
 using CommonServices.Extensions;
 using CommonServices.Logger;
 using CommonServices.Model.DbModel;
@@ -8,8 +7,6 @@ using DataAccessLibrary.DML;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
-using Windows.Storage;
 
 namespace BookingServices.Repository
 {
@@ -46,8 +43,9 @@ namespace BookingServices.Repository
                     insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.Mobile), usersPersonalDetail.Mobile);
                     insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.Address), usersPersonalDetail.Address);
                     insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.Country), usersPersonalDetail.Country);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.State), usersPersonalDetail.State ?? string.Empty);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.City), usersPersonalDetail.City ?? string.Empty);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.State), usersPersonalDetail.State);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.City), usersPersonalDetail.City);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.CreationDate), usersPersonalDetail.CreationDate);
 
                     insertCommand.ExecuteReader();
                     db.Close();
@@ -98,7 +96,8 @@ namespace BookingServices.Repository
                             Address = query.GetString(4),
                             Country = query.GetString(5),
                             State = query.GetString(6),
-                            City = query.GetString(7)
+                            City = query.GetString(7),
+                            CreationDate = query.GetString(8)
                         };
                     }
 

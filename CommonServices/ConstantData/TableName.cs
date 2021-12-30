@@ -9,5 +9,6 @@
         public const string Country = "Country";
         public const string PhotoDetails = "PhotoDetails";
         public const string CustomerPhotoDetail = "CustomerPhotoDetail";
+        public const string BanquetDetail = "BanquetDetail";
     }
 }

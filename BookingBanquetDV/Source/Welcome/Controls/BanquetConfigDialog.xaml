@@ -1,0 +1,155 @@
+﻿<ContentDialog
+    x:Class="BookingBanquetDV.Source.Welcome.Controls.BanquetConfigDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:BookingBanquetDV.Behavior"
+    xmlns:commoncontrols="using:BookingBanquetDV.Utility"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:local="using:BookingBanquetDV.Source.Welcome.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Banquet configuration"
+    Loading="ContentDialog_Loading"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    PrimaryButtonText="Submit"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+    SecondaryButtonText="Close"
+    mc:Ignorable="d">
+    <ScrollViewer x:Name="rootScrollViewer" VerticalScrollBarVisibility="Auto">
+        <Grid VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="11" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="21" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="21" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="21" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="21" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="21" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Line
+                Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Margin="0,0,0,10"
+                Stroke="LightGray"
+                StrokeThickness="1"
+                X1="0"
+                X2="540"
+                Y1="0"
+                Y2="0" />
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                FontWeight="SemiBold"
+                Text="Available flours:" />
+            <TextBox
+                Grid.Row="1"
+                Grid.Column="1"
+                InputScope="Number"
+                MaxLength="2"
+                PlaceholderText="Total available flour(s)"
+                Text="{Binding AvailableFlours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <interactivity:Interaction.Behaviors>
+                    <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
+                    <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[TotalRooms]}" />
+                </interactivity:Interaction.Behaviors>
+            </TextBox>
+            <Line
+                Grid.Row="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Margin="0,10,0,10"
+                Stroke="LightGray"
+                StrokeThickness="1"
+                X1="0"
+                X2="540"
+                Y1="0"
+                Y2="0" />
+            <TextBlock
+                Grid.Row="3"
+                Grid.Column="0"
+                FontWeight="SemiBold"
+                Text="Available rooms:" />
+            <TextBox
+                Grid.Row="3"
+                Grid.Column="1"
+                InputScope="Number"
+                MaxLength="2"
+                PlaceholderText="Total available room(s)"
+                Text="{Binding AvailableRooms, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <interactivity:Interaction.Behaviors>
+                    <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
+                    <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[TotalRooms]}" />
+                </interactivity:Interaction.Behaviors>
+            </TextBox>
+            <Line
+                Grid.Row="4"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Margin="0,10,0,10"
+                Stroke="LightGray"
+                StrokeThickness="1"
+                X1="0"
+                X2="540"
+                Y1="0"
+                Y2="0" />
+            <TextBlock
+                Grid.Row="5"
+                Grid.Column="0"
+                FontWeight="SemiBold"
+                Text="Available parking:" />
+            <TextBox
+                Grid.Row="5"
+                Grid.Column="1"
+                InputScope="Number"
+                MaxLength="1"
+                PlaceholderText="Total available parking(s)"
+                Text="{Binding AvailableParkings, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <interactivity:Interaction.Behaviors>
+                    <behaviors:NumericTextBoxBehavior AllowDecimal="True" />
+                    <behaviors:HighlightFormFieldOnErrors IsHighlightBorderControl="True" PropertyErrors="{Binding Errors[TotalRooms]}" />
+                </interactivity:Interaction.Behaviors>
+            </TextBox>
+            <Line
+                Grid.Row="6"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Margin="0,10,0,10"
+                Stroke="LightGray"
+                StrokeThickness="1"
+                X1="0"
+                X2="540"
+                Y1="0"
+                Y2="0" />
+            <TextBlock
+                Grid.Row="7"
+                Grid.Column="0"
+                FontWeight="SemiBold"
+                Text="Available mandap:" />
+            <StackPanel
+                Grid.Row="7"
+                Grid.Column="1"
+                Orientation="Horizontal">
+                <RadioButton
+                    Content="Yes"
+                    GroupName="YesOrNo"
+                    IsChecked="{Binding IsYesSelected, Mode=TwoWay}" />
+                <RadioButton
+                    Margin="5"
+                    Content="No"
+                    GroupName="YesOrNo"
+                    IsChecked="{Binding IsNoSelected, Mode=TwoWay}" />
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</ContentDialog>

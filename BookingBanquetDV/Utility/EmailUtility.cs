@@ -25,6 +25,7 @@ namespace BookingBanquetDV.Utility
                     message.From.Add(new MailboxAddress(EmailConstants.Admin, EmailConstants.AdminEmail));
                     message.To.Add(new MailboxAddress(emailParameter.UserName,
                         emailParameter.EmailAddress));
+
                     message = await ConstructBodyAsync(emailParameter, message);
 
                     using (SmtpClient client = new SmtpClient())
@@ -97,7 +98,7 @@ namespace BookingBanquetDV.Utility
                 builder = await AddAttachment(emailParameter.CustomerPhoto.PhotoName, builder, ApplicationConstants.CustomerPhoto);
                 message.Body = builder.ToMessageBody();
             }
-            else if (emailParameter.UsersCred != null && emailParameter.UsersPersonalDetail != null)
+            else if (emailParameter.UsersPersonalDetail != null)
             {
                 message.Subject = EmailConstants.AccountCreation;
 
@@ -105,13 +106,13 @@ namespace BookingBanquetDV.Utility
                 {
                     TextBody = "Hi ".ConcatString(emailParameter.UserName, ", ",
                     "\r\r\tCongrats!!. Your account has been created successfully. \r\rYour account details are following:",
-                    "\r\r\tYour mobile number: ", emailParameter.UsersCred.Mobile,
+                    "\r\r\tYour mobile number: ", emailParameter.UsersPersonalDetail.Mobile,
                     "\r\tYour email id: ", emailParameter.UsersPersonalDetail.EmailId,
                     "\r\tYour address: ", emailParameter.UsersPersonalDetail.Address,
                     ", country: ", emailParameter.UsersPersonalDetail.Country,
                     ", state: ", emailParameter.UsersPersonalDetail.State,
                     ", city: ", emailParameter.UsersPersonalDetail.City,
-                    "\r\tYour account is active and created on ", emailParameter.UsersCred.CreationDate,
+                    "\r\tYour account is active and created on ", emailParameter.UsersPersonalDetail.CreationDate,
                     "\r\rThanks and regards\nAdmin")
                 };
 

@@ -14,7 +14,8 @@ namespace DataAccessLibrary.DML
             " " + nameof(UsersPersonalDetail.Address) + " NVARCHAR(2048) NULL, " +
             " " + nameof(UsersPersonalDetail.Country) + " NVARCHAR(2048) NULL, " +
             " " + nameof(UsersPersonalDetail.State) + " NVARCHAR(2048) NULL, " +
-            " " + nameof(UsersPersonalDetail.City) + " NVARCHAR(2048) NULL)";
+            " " + nameof(UsersPersonalDetail.City) + " NVARCHAR(2048) NULL, " +
+            " " + nameof(UsersPersonalDetail.CreationDate) + " NVARCHAR(2048) NULL)";
 
         public const string InsertInUsersPersonalDetail =
             "INSERT INTO " + nameof(UsersPersonalDetail) + " VALUES (" +
@@ -25,7 +26,8 @@ namespace DataAccessLibrary.DML
             "@" + nameof(UsersPersonalDetail.Address) + "," +
             "@" + nameof(UsersPersonalDetail.Country) + "," +
             "@" + nameof(UsersPersonalDetail.State) + "," +
-            "@" + nameof(UsersPersonalDetail.City) + ");";
+            "@" + nameof(UsersPersonalDetail.City) + "," +
+            "@" + nameof(UsersPersonalDetail.CreationDate) + ");";
 
         public const string UpdateInUsersPersonalDetail =
             "UPDATE " +
@@ -36,7 +38,8 @@ namespace DataAccessLibrary.DML
             nameof(UsersPersonalDetail.Address) + " = @" + nameof(UsersPersonalDetail.Address) + ", " +
             nameof(UsersPersonalDetail.Country) + " = @" + nameof(UsersPersonalDetail.Country) + ", " +
             nameof(UsersPersonalDetail.State) + " = @" + nameof(UsersPersonalDetail.State) + ", " +
-            nameof(UsersPersonalDetail.City) + " = @" + nameof(UsersPersonalDetail.City) + " Where " +
+            nameof(UsersPersonalDetail.City) + " = @" + nameof(UsersPersonalDetail.City) + ", " +
+            nameof(UsersPersonalDetail.CreationDate) + " = @" + nameof(UsersPersonalDetail.CreationDate) + " Where " +
             nameof(UsersPersonalDetail.EmailId) + " = @" + nameof(UsersPersonalDetail.EmailId);
 
         public const string GetUsersPersonalDetailByUserId =
@@ -48,7 +51,8 @@ namespace DataAccessLibrary.DML
             nameof(UsersPersonalDetail.Address) + "," +
             nameof(UsersPersonalDetail.Country) + "," +
             nameof(UsersPersonalDetail.State) + "," +
-            nameof(UsersPersonalDetail.City) + " from " +
+            nameof(UsersPersonalDetail.City) + "," +
+            nameof(UsersPersonalDetail.CreationDate) + " from " +
             nameof(UsersPersonalDetail) + " Where {0} = '{1}'";
     }
 }

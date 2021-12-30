@@ -50,6 +50,9 @@ namespace DataAccessLibrary
                     case TableName.CustomerPhotoDetail:
                         tableCommand = CustomerPhotoDetailQuery.CreatePhotoDetailTable;
                         break;
+                    case TableName.BanquetDetail:
+                        tableCommand = BanquetDetailQuery.CreateBanquetDetailTable;
+                        break;
                     default:
                         break;
                 }
