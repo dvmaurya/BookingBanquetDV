@@ -7,7 +7,7 @@ namespace BookingServices.Repository.Interface
     public interface IPhotoDetailRepository
     {
         void AddOrUpdatePhotoDetail(PhotoDetails photoDetail);
-        IList<PhotoDetails> GetPreviousPhotoDetail(string emailId);
+        IList<PhotoDetails> GetAllPhotoDetail(string emailId);
         PhotoDetails GetActivePhotoDetail(string emailId);
         Task DeleteDocumentFileFromFolderAsync(string photoName);
     }

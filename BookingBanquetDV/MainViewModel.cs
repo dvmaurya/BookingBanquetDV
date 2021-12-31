@@ -39,10 +39,10 @@ namespace BookingBanquetDV
             IOfflineDatabaseProvider offlineDatabaseProvider,
             IAnalyticsManager analyticsManager)
         {
-            _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
-            _loginViewModel = loginViewModel ?? throw new ArgumentNullException(nameof(loginViewModel));
-            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException(nameof(offlineDatabaseProvider));
-            _analyticsManager = analyticsManager ?? throw new ArgumentNullException(nameof(analyticsManager));
+            _navigationService = navigationService ?? throw new ArgumentNullException("navigationService");
+            _loginViewModel = loginViewModel ?? throw new ArgumentNullException("loginViewModel");
+            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException("offlineDatabaseProvider");
+            _analyticsManager = analyticsManager ?? throw new ArgumentNullException("analyticsManager");
 
             _loginCommand = new DelegateCommand(async parameter => await OnClickLoginAsync(parameter));
             _signupCommand = new DelegateCommand(parameter => OnClickSignup());

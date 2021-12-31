@@ -4,6 +4,7 @@ using BookingBanquetDV.Source.Register;
 using BookingBanquetDV.Utility;
 using BookingBanquetDV.Validation;
 using BookingServices.Interfaces;
+using CommonServices.Analytcis;
 using CommonServices.ConstantData;
 using CommonServices.Extensions;
 using CommonServices.Model;
@@ -76,7 +77,8 @@ namespace BookingBanquetDV.Source.Welcome
         private readonly ICameraViewModel _cameraViewModel;
         private readonly INavigationService _navigationService;
         private readonly IBanquetDataProvider _banquetDataProvider;
-
+        private readonly IAnalyticsManager _analyticsManager;
+        
         public NewBookingViewModel(
             ICountryDataProvider countryDataProvider,
             ICameraViewModel cameraViewModel,
@@ -84,7 +86,8 @@ namespace BookingBanquetDV.Source.Welcome
             IMessageDialogService messageDialogService,
             INavigationService navigationService,
             ICustomerPhotoDataProvider customerPhotoDataProvider,
-            IBanquetDataProvider banquetDataProvider)
+            IBanquetDataProvider banquetDataProvider,
+            IAnalyticsManager analyticsManager)
         {
             _countryDataProvider = countryDataProvider ?? throw new ArgumentNullException("countryDataProvider");
             _cameraViewModel = cameraViewModel ?? throw new ArgumentNullException("cameraViewModel");
@@ -93,6 +96,7 @@ namespace BookingBanquetDV.Source.Welcome
             _navigationService = navigationService ?? throw new ArgumentNullException("navigationService");
             _customerPhotoDataProvider = customerPhotoDataProvider ?? throw new ArgumentNullException("customerPhotoDataProvider");
             _banquetDataProvider = banquetDataProvider ?? throw new ArgumentNullException("banquetDataProvider");
+            _analyticsManager = analyticsManager ?? throw new ArgumentNullException("analyticsManager");
 
             _deletePhoto = new List<CustomerPhotoDetail>();
             _totalFLourList = new ObservableCollection<string>();
@@ -532,7 +536,7 @@ namespace BookingBanquetDV.Source.Welcome
                     CustomerPhoto = customerPhoto
                 };
 
-                return await EmailUtility.SendEmailsAsync(emailParameter);
+                return await EmailUtility.SendEmailsAsync(emailParameter, _analyticsManager);
             }
 
             return false;

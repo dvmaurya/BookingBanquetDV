@@ -4,6 +4,7 @@ using BookingBanquetDV.Source.Welcome.Controls;
 using BookingBanquetDV.Source.Welcome.PrintOut;
 using BookingBanquetDV.Utility;
 using BookingServices.Interfaces;
+using CommonServices.Analytcis;
 using CommonServices.ConstantData;
 using CommonServices.Enums;
 using CommonServices.Extensions;
@@ -56,6 +57,7 @@ namespace BookingBanquetDV.Source.Welcome
         private readonly IPhotoDetailDataProvider _photoDetailDataProvider;
         private readonly ICustomerPhotoDataProvider _customerPhotoDataProvider;
         private readonly IBanquetDataProvider _banquetDataProvider;
+        private readonly IAnalyticsManager _analyticsManager;
 
         public WelcomeViewModel(
             ICameraViewModel cameraViewModel,
@@ -66,7 +68,8 @@ namespace BookingBanquetDV.Source.Welcome
             IContentDialogService contentDialogService,
             IPhotoDetailDataProvider photoDetailDataProvider,
             ICustomerPhotoDataProvider customerPhotoDataProvider,
-            IBanquetDataProvider banquetDataProvider)
+            IBanquetDataProvider banquetDataProvider,
+            IAnalyticsManager analyticsManager)
         {
             _cameraViewModel = cameraViewModel ?? throw new ArgumentNullException("cameraViewModel");
             _bookingDataProvider = bookingDataProvider ?? throw new ArgumentNullException("bookingDataProvider");
@@ -77,6 +80,7 @@ namespace BookingBanquetDV.Source.Welcome
             _photoDetailDataProvider = photoDetailDataProvider ?? throw new ArgumentNullException("photoDetailDataProvider");
             _customerPhotoDataProvider = customerPhotoDataProvider ?? throw new ArgumentNullException("customerPhotoDataProvider");
             _banquetDataProvider = banquetDataProvider ?? throw new ArgumentNullException("banquetDataProvider");
+            _analyticsManager = analyticsManager ?? throw new ArgumentNullException("analyticsManager");
 
             _newBookingCommand = new DelegateCommand(
                 parameter => OnClickNewBooking());
@@ -188,7 +192,7 @@ namespace BookingBanquetDV.Source.Welcome
                     PhotoDetails = _photoDetail
                 };
 
-                isEmailSent = await EmailUtility.SendEmailsAsync(emailParameter);
+                isEmailSent = await EmailUtility.SendEmailsAsync(emailParameter, _analyticsManager);
             }
 
             App.HideLoadingIndicator();
@@ -214,7 +218,7 @@ namespace BookingBanquetDV.Source.Welcome
                     CustomerPhoto = customerPhoto
                 };
 
-                return await EmailUtility.SendEmailsAsync(emailParameter);
+                return await EmailUtility.SendEmailsAsync(emailParameter, _analyticsManager);
             }
 
             return false;
@@ -235,19 +239,15 @@ namespace BookingBanquetDV.Source.Welcome
             App.HideLoadingIndicator();
         }
 
-        private void OnSaveUserDetail(object sender, UserDetailEventArgs eventArgs)
-        {
-            if (eventArgs != null &&
-                eventArgs.PreviewDialogAction == PreviewDialogAction.Submit)
-            {
-                _usersPersonalDetailDataProvider.AddOrUpdateUsersPersonalDetail(eventArgs.UsersPersonalDetail);
-            }
-        }
-
         private async Task OnViewProfileClickAsync()
         {
             if (_usersPersonalDetail != null)
             {
+                _analyticsManager.TraceScreenView(
+                    $"{AnalyticConstants.User} " +
+                    $"{AnalyticConstants.Profile} " +
+                    $"{AnalyticConstants.Screen} ");
+
                 ViewUserDetail userDetailView = new ViewUserDetail(_usersPersonalDetail);
                 await _contentDialogService.ShowDialogAsync(userDetailView);
             }
@@ -344,6 +344,13 @@ namespace BookingBanquetDV.Source.Welcome
             _bookingDetailList = null;
             _bookingDetail = null;
 
+            _analyticsManager.TraceEvents(
+                analyticsEvent: $"{AnalyticConstants.Application} ",
+                action: $"{AnalyticConstants.Logout} ",
+                label: $"{AnalyticConstants.User} " +
+                        $"{AnalyticConstants.Clicked} " +
+                        $"{AnalyticConstants.Logout} ");
+
             _navigationService.Navigate(typeof(MainPage));
         }
 
@@ -351,6 +358,14 @@ namespace BookingBanquetDV.Source.Welcome
         {
             if (parameter is BookingDetails bookingDetail)
             {
+                _analyticsManager.TraceEvents(
+                    analyticsEvent: $"{AnalyticConstants.Application} ",
+                    action: $"{AnalyticConstants.Customer} " +
+                            $"{AnalyticConstants.Photo} ",
+                    label: $"{AnalyticConstants.Customer} " +
+                            $"{AnalyticConstants.Photo} " +
+                            $"{AnalyticConstants.Open} ");
+
                 CustomerPhotoDetail photoDetails = new CustomerPhotoDetail();
                 StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.
                     GetFolderAsync(ApplicationConstants.CustomerPhoto);
@@ -372,6 +387,16 @@ namespace BookingBanquetDV.Source.Welcome
         {
             if (parameter is BookingDetails bookingDetail)
             {
+                _analyticsManager.TraceEvents(
+                    analyticsEvent: $"{AnalyticConstants.Application} ",
+                    action: $"{AnalyticConstants.Open} " +
+                            $"{AnalyticConstants.Camera}",
+                    label: $"{AnalyticConstants.Open} " +
+                            $"{AnalyticConstants.Camera} " +
+                            $"for {AnalyticConstants.Add} " +
+                            $"{AnalyticConstants.Customer} " +
+                            $"{AnalyticConstants.Photo} ");
+
                 CustomerPhotoDetail customerPhoto = await _cameraViewModel.OnClickCustomerPhotoAsync(
                     ApplicationConstants.CustomerPhoto);
 

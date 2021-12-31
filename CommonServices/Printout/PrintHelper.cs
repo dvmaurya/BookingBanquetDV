@@ -1,4 +1,5 @@
-﻿using CommonServices.Logger;
+﻿using CommonServices.Analytcis;
+using CommonServices.Logger;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,10 +21,13 @@ namespace CommonServices.Printout
         private FrameworkElement _firstPage;
         private Page _scenarioPage;
 
-        public PrintHelper(Page scenarioPage)
+        private IAnalyticsManager _analyticsManager;
+
+        public PrintHelper(Page scenarioPage, IAnalyticsManager analyticsManager)
         {
             this._scenarioPage = scenarioPage;
             _printPreviewPages = new List<UIElement>();
+            _analyticsManager = analyticsManager;
         }
 
         public virtual void RegisterForPrinting()
@@ -47,6 +51,14 @@ namespace CommonServices.Printout
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("Failed to open printout UI. " + ex.Message);
+                _analyticsManager.TraceEvents(
+                    analyticsEvent: AnalyticConstants.Exception,
+                    action: $"{AnalyticConstants.Printout} " +
+                            $"{AnalyticConstants.Failed} ",
+                    label: $"{AnalyticConstants.Printout} " +
+                            $"{AnalyticConstants.Failed} " +
+                            $"to {AnalyticConstants.Open} " +
+                            $"{ex.Message}");
             }
         }
 
@@ -77,6 +89,13 @@ namespace CommonServices.Printout
                         await _scenarioPage.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                         {
                             FileLogger.Logger.Info("Failed to print");
+                            _analyticsManager.TraceEvents(
+                                analyticsEvent: AnalyticConstants.Exception,
+                                action: $"{AnalyticConstants.Printout} " +
+                                        $"{AnalyticConstants.Failed}",
+                                label: $"{AnalyticConstants.Printout} " +
+                                        $"{AnalyticConstants.Failed} " +
+                                        $"to {AnalyticConstants.Print}");
                         });
                     }
                 };

@@ -1,4 +1,5 @@
 ﻿using BookingServices.Repository.Interface;
+using CommonServices.Analytcis;
 using CommonServices.Extensions;
 using CommonServices.Logger;
 using CommonServices.Model.DbModel;
@@ -10,11 +11,17 @@ using System.Collections.Generic;
 
 namespace BookingServices.Repository
 {
-    public class CountryRepository : ICountryRepository
+    public class CountryRepository : BaseRepository, ICountryRepository
     {
         private string _dbpath;
         private static string _fileName = "Filename={0}";
 
+        public CountryRepository(
+            IAnalyticsManager analyticsManager)
+            : base(analyticsManager)
+        {
+
+        }
         public bool AddOrUpdateCountry(Country country)
         {
             try
@@ -54,6 +61,15 @@ namespace BookingServices.Repository
                         insertCommand.ExecuteReader();
                         db.Close();
 
+                        TraceEvents(
+                            analyticsEvent: AnalyticConstants.Application,
+                            action: $"{AnalyticConstants.Add} " +
+                                    $"{AnalyticConstants.Country} ",
+                            label: $"{AnalyticConstants.Add} " +
+                                    $"{AnalyticConstants.Country} " +
+                                    $"in {AnalyticConstants.Database} " +
+                                    $"{AnalyticConstants.Successfully}");
+
                         return true;
                     }
                 }
@@ -61,6 +77,15 @@ namespace BookingServices.Repository
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("Country Exception: ".ConcatString(ex.Message));
+                TraceEvents(
+                    analyticsEvent: AnalyticConstants.Exception,
+                    action: $"{AnalyticConstants.Add} " +
+                            $"{AnalyticConstants.Country} ",
+                    label: $"{AnalyticConstants.Add} " +
+                            $"{AnalyticConstants.Country} " +
+                            $"in {AnalyticConstants.Database} " +
+                            $"{AnalyticConstants.Failed} " +
+                            $"{ex.Message}");
             }
 
             return false;
@@ -72,43 +97,59 @@ namespace BookingServices.Repository
             Country country = null;
             _dbpath = DataAccess.GetDbPath();
 
-            using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
+            try
             {
-                db.Open();
-
-                SqliteCommand selectCommand = new SqliteCommand
-                    (CountryQuery.GetAllCountryData, db);
-
-                SqliteDataReader query = selectCommand.ExecuteReader();
-
-                while (query.Read())
+                using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                 {
-                    country = new Country
+                    db.Open();
+
+                    SqliteCommand selectCommand = new SqliteCommand
+                        (CountryQuery.GetAllCountryData, db);
+
+                    SqliteDataReader query = selectCommand.ExecuteReader();
+
+                    while (query.Read())
                     {
-                        Id = query.GetString(0).ToInt64(),
-                        Name = query.GetString(1),
-                        Capital = query.GetString(2),
-                        Currency = query.GetString(3),
-                        CurrencySymbol = query.GetString(4),
-                        Emoji = query.GetString(5),
-                        EmojiU = query.GetString(6),
-                        Iso2 = query.GetString(7),
-                        Iso3 = query.GetString(8),
-                        Latitude = query.GetString(9),
-                        Longitude = query.GetString(10),
-                        Native = query.GetString(11),
-                        NumericCode = query.GetString(12),
-                        PhoneCode = query.GetString(13),
-                        Region = query.GetString(14),
-                        Subregion = query.GetString(15),
-                        Tld = query.GetString(16),
-                        StateJson = query.GetString(17)
-                    };
+                        country = new Country
+                        {
+                            Id = query.GetString(0).ToInt64(),
+                            Name = query.GetString(1),
+                            Capital = query.GetString(2),
+                            Currency = query.GetString(3),
+                            CurrencySymbol = query.GetString(4),
+                            Emoji = query.GetString(5),
+                            EmojiU = query.GetString(6),
+                            Iso2 = query.GetString(7),
+                            Iso3 = query.GetString(8),
+                            Latitude = query.GetString(9),
+                            Longitude = query.GetString(10),
+                            Native = query.GetString(11),
+                            NumericCode = query.GetString(12),
+                            PhoneCode = query.GetString(13),
+                            Region = query.GetString(14),
+                            Subregion = query.GetString(15),
+                            Tld = query.GetString(16),
+                            StateJson = query.GetString(17)
+                        };
 
-                    countries.Add(country);
+                        countries.Add(country);
+                    }
+
+                    db.Close();
                 }
-
-                db.Close();
+            }
+            catch(Exception ex)
+            {
+                FileLogger.Logger.Info("Get country from database Exception: ".ConcatString(ex.Message));
+                TraceEvents(
+                    analyticsEvent: AnalyticConstants.Exception,
+                    action: $"{AnalyticConstants.Get} " +
+                            $"{AnalyticConstants.Country} ",
+                    label: $"{AnalyticConstants.Get} " +
+                            $"{AnalyticConstants.Country} " +
+                            $"from {AnalyticConstants.Database} " +
+                            $"{AnalyticConstants.Failed} " +
+                            $"{ex.Message}");
             }
 
             return countries;

@@ -1,4 +1,5 @@
 ﻿using BookingServices.Repository.Interface;
+using CommonServices.Analytcis;
 using CommonServices.Enums;
 using CommonServices.Extensions;
 using CommonServices.Logger;
@@ -12,10 +13,17 @@ using System.Linq;
 
 namespace BookingServices.Repository
 {
-    public class UserCredRepository : IUserCredRepository
+    public class UserCredRepository : BaseRepository, IUserCredRepository
     {
         private string _dbpath;
         private static string _fileName = "Filename={0}";
+
+        public UserCredRepository(
+            IAnalyticsManager analyticsManager) :
+            base(analyticsManager)
+        {
+
+        }
 
         public bool AddOrUpdateUsersCred(UsersCred usersCred)
         {
@@ -47,9 +55,19 @@ namespace BookingServices.Repository
                     insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.CreationDate), usersCred.CreationDate);
                     insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.IsAdmin), usersCred.IsAdmin);
                     insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.PasswordChanged), usersCred.PasswordChanged);
-                    
+
                     insertCommand.ExecuteReader();
                     db.Close();
+
+                    TraceEvents(
+                        analyticsEvent: AnalyticConstants.Application,
+                        action: $"{AnalyticConstants.User} " +
+                                $"{AnalyticConstants.Cred} ",
+                        label: $"{AnalyticConstants.User} " +
+                                $"{AnalyticConstants.Cred} " +
+                                $"{AnalyticConstants.Added} " +
+                                $"{AnalyticConstants.Successfully} " +
+                                $"in {AnalyticConstants.Database} ");
 
                     return true;
                 }
@@ -57,6 +75,17 @@ namespace BookingServices.Repository
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("User Exception: ".ConcatString(ex.Message));
+                TraceEvents(
+                    analyticsEvent: AnalyticConstants.Exception,
+                    action: $"{AnalyticConstants.User} " +
+                            $"{AnalyticConstants.Cred} ",
+                    label: $"{AnalyticConstants.User} " +
+                            $"{AnalyticConstants.Cred} " +
+                            $"{AnalyticConstants.Added} " +
+                            $"in {AnalyticConstants.Database} " +
+                            $"{AnalyticConstants.Failed} " +
+                            $"{ex.Message} ");
+
                 return false;
             }
         }
@@ -66,26 +95,42 @@ namespace BookingServices.Repository
             List<string> entries = new List<string>();
             _dbpath = DataAccess.GetDbPath();
 
-            using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
+            try
             {
-                db.Open();
-
-                string sqlText = string.Empty;
-
-                sqlText = SignupQuery.SelectUserIdFromUser;
-
-                SqliteCommand selectCommand = new SqliteCommand
-                    (sqlText, db);
-
-                SqliteDataReader query = selectCommand.ExecuteReader();
-
-                while (query.Read())
+                using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                 {
-                    entries.Add(query.GetString(0));
-                    entries.Add(query.GetString(1));
-                }
+                    db.Open();
 
-                db.Close();
+                    string sqlText = string.Empty;
+
+                    sqlText = SignupQuery.SelectUserIdFromUser;
+
+                    SqliteCommand selectCommand = new SqliteCommand
+                        (sqlText, db);
+
+                    SqliteDataReader query = selectCommand.ExecuteReader();
+
+                    while (query.Read())
+                    {
+                        entries.Add(query.GetString(0));
+                        entries.Add(query.GetString(1));
+                    }
+
+                    db.Close();
+                }
+            }
+            catch(Exception ex)
+            {
+                TraceEvents(
+                    analyticsEvent: AnalyticConstants.Exception,
+                    action: $"{AnalyticConstants.Get} " +
+                            $"{AnalyticConstants.User} ",
+                    label: $"{AnalyticConstants.Get} " +
+                            $"all {AnalyticConstants.User} " +
+                            $"{AnalyticConstants.Detail} " +
+                            $"from {AnalyticConstants.Database} " +
+                            $"{AnalyticConstants.Failed} " +
+                            $"{ex.Message} ");
             }
 
             return entries;
@@ -130,46 +175,69 @@ namespace BookingServices.Repository
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("User Exception: ".ConcatString(ex.Message));
+                GetUserFailed(ex);
             }
 
             return entries;
+        }
+
+        private void GetUserFailed(Exception ex)
+        {
+            TraceEvents(
+                analyticsEvent: AnalyticConstants.Exception,
+                action: $"{AnalyticConstants.Get} " +
+                        $"{AnalyticConstants.User} ",
+                label: $"{AnalyticConstants.Get} " +
+                        $"current {AnalyticConstants.User} " +
+                        $"{AnalyticConstants.Detail} " +
+                        $"from {AnalyticConstants.Database} " +
+                        $"{AnalyticConstants.Failed} " +
+                        $"{ex.Message} ");
         }
 
         public UsersCred GetUsersDetail(string userId)
         {
             UsersCred users = new UsersCred();
 
-            if (userId != null)
+            try
             {
-                string emailOrMobile = userId.All(char.IsDigit)
-                    ?
-                    nameof(UsersCred.Mobile)
-                    :
-                    nameof(UsersCred.EmailId);
-
-                _dbpath = DataAccess.GetDbPath();
-
-                using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
+                if (userId != null)
                 {
-                    db.Open();
+                    string emailOrMobile = userId.All(char.IsDigit)
+                        ?
+                        nameof(UsersCred.Mobile)
+                        :
+                        nameof(UsersCred.EmailId);
 
-                    SqliteCommand selectCommand = new SqliteCommand
-                        (SignupQuery.GetUserDetailByUserId.
-                        FormatString(emailOrMobile, userId), db);
+                    _dbpath = DataAccess.GetDbPath();
 
-                    SqliteDataReader query = selectCommand.ExecuteReader();
-
-                    while (query.Read())
+                    using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                     {
-                        users.UserId = query.GetString(0);
-                        users.FullName = query.GetString(1);
-                        users.EmailId = query.GetString(2);
-                        users.Mobile = query.GetString(3);
-                        users.CreationDate = query.GetString(4);
-                    }
+                        db.Open();
 
-                    db.Close();
+                        SqliteCommand selectCommand = new SqliteCommand
+                            (SignupQuery.GetUserDetailByUserId.
+                            FormatString(emailOrMobile, userId), db);
+
+                        SqliteDataReader query = selectCommand.ExecuteReader();
+
+                        while (query.Read())
+                        {
+                            users.UserId = query.GetString(0);
+                            users.FullName = query.GetString(1);
+                            users.EmailId = query.GetString(2);
+                            users.Mobile = query.GetString(3);
+                            users.CreationDate = query.GetString(4);
+                        }
+
+                        db.Close();
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+                FileLogger.Logger.Info("User Exception: ".ConcatString(ex.Message));
+                GetUserFailed(ex);
             }
 
             return users;

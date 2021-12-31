@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using BookingBanquetDV.Source.Camera;
+using CommonServices.Analytcis;
 using CommonServices.ConstantData;
 using CommonServices.Model;
 using ViewModelsAndValidation.Command;
@@ -18,8 +19,13 @@ namespace BookingBanquetDV.Source.Welcome.Controls
         private CustomerPhotoDetail _customerPhoto;
         private readonly ICommand _onLoadDialogCommand;
 
-        public ViewBookingViewModel()
+        private readonly IAnalyticsManager _analyticsManager;
+
+        public ViewBookingViewModel(
+            IAnalyticsManager analyticsManager)
         {
+            _analyticsManager = analyticsManager ?? throw new ArgumentNullException("analyticsManager");
+
             _onLoadDialogCommand = new DelegateCommand(
                 async parameter => await OnDialogLoadAsync());
         }
@@ -28,6 +34,11 @@ namespace BookingBanquetDV.Source.Welcome.Controls
         {
             if (_bookingDetail != null)
                 await SetPhotoAsync();
+
+            _analyticsManager.TraceScreenView(
+                $"{AnalyticConstants.Booking} " +
+                $"{AnalyticConstants.View} " +
+                $"{AnalyticConstants.Screen} ");
         }
 
         private async Task SetPhotoAsync()

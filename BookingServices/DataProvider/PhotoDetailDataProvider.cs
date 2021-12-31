@@ -28,11 +28,11 @@ namespace BookingServices.DataProvider
             }
         }
 
-        public IList<PhotoDetails> GetPreviousPhotoDetail(string emailId)
+        public IList<PhotoDetails> GetAllPhotoDetail(string emailId)
         {
             IList<PhotoDetails> photoDetails = new List<PhotoDetails>();
 
-            IList<DbModel.PhotoDetails> dbPhotoDetail = _photoDetailRepository.GetPreviousPhotoDetail(emailId);
+            IList<DbModel.PhotoDetails> dbPhotoDetail = _photoDetailRepository.GetAllPhotoDetail(emailId);
 
             if(dbPhotoDetail != null && dbPhotoDetail.Any())
             {

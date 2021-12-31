@@ -1,5 +1,6 @@
 ﻿using BookingBanquetDV.Source.Welcome;
 using BookingServices.Interfaces;
+using CommonServices.Analytcis;
 using CommonServices.ConstantData;
 using CommonServices.Enums;
 using CommonServices.Extensions;
@@ -22,15 +23,18 @@ namespace BookingBanquetDV.Source.Login
         private readonly INavigationService _navigationService;
         private readonly IMessageDialogService _messageDialogService;
         private readonly IOfflineDatabaseProvider _offlineDatabaseProvider;
+        private readonly IAnalyticsManager _analyticsManager;
 
         public LoginViewModel(
             INavigationService navigationService,
             IOfflineDatabaseProvider offlineDatabaseProvider,
-            IMessageDialogService messageDialogService)
+            IMessageDialogService messageDialogService,
+            IAnalyticsManager analyticsManager)
         {
-            _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
-            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException(nameof(offlineDatabaseProvider));
-            _messageDialogService = messageDialogService ?? throw new ArgumentNullException(nameof(messageDialogService));
+            _navigationService = navigationService ?? throw new ArgumentNullException("navigationService");
+            _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException("offlineDatabaseProvider");
+            _messageDialogService = messageDialogService ?? throw new ArgumentNullException("messageDialogService");
+            _analyticsManager = analyticsManager ?? throw new ArgumentNullException("analyticsManager");
         }
 
         public async Task<bool> NavigateToWelcomePageAsync(object parameter)
@@ -44,6 +48,14 @@ namespace BookingBanquetDV.Source.Login
                 {
                     if (_userDetail[UsersEnum.IsAdmin.ConvertToString()] == "0")
                     {
+                        _analyticsManager.TraceEvents(
+                            analyticsEvent: $"{AnalyticConstants.Application} ",
+                            action: $"{AnalyticConstants.Login} " +
+                                $"{AnalyticConstants.Success} ",
+                            label: $"{AnalyticConstants.User} " +
+                                    $"{AnalyticConstants.Login} " +
+                                    $"{AnalyticConstants.Successfully} ");
+
                         _isLoginSuccess = true;
                         _loginDetail = new LoginDetail
                         {
@@ -61,6 +73,14 @@ namespace BookingBanquetDV.Source.Login
                     }
                     else
                     {
+                        _analyticsManager.TraceEvents(
+                            analyticsEvent: $"{AnalyticConstants.Application} ",
+                            action: $"{AnalyticConstants.Login} " +
+                                $"{AnalyticConstants.Failed} ",
+                            label: $"{AnalyticConstants.User} " +
+                                    $"{AnalyticConstants.Account} " +
+                                    $"not {AnalyticConstants.Verified} ");
+
                         _isLoginSuccess = false;
                         await _messageDialogService.ShowMessageDialogAsync(
                             ApplicationConstants.Error,
@@ -69,6 +89,14 @@ namespace BookingBanquetDV.Source.Login
                 }
                 else
                 {
+                    _analyticsManager.TraceEvents(
+                            analyticsEvent: $"{AnalyticConstants.Application} ",
+                            action: $"{AnalyticConstants.Login} " +
+                                $"{AnalyticConstants.Failed} ",
+                            label: $"{AnalyticConstants.User} " +
+                                    $"{AnalyticConstants.Credential} " +
+                                    $"not {AnalyticConstants.Wrong} ");
+
                     _isLoginSuccess = false;
                     await _messageDialogService.ShowMessageDialogAsync(
                         ApplicationConstants.Error,

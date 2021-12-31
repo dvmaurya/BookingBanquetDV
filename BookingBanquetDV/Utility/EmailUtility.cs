@@ -1,4 +1,5 @@
 ﻿using BookingBanquetDV.Source.Camera;
+using CommonServices.Analytcis;
 using CommonServices.ConstantData;
 using CommonServices.Extensions;
 using CommonServices.Logger;
@@ -8,14 +9,20 @@ using MailKit.Net.Smtp;
 using MimeKit;
 using System;
 using System.Threading.Tasks;
+using ViewModelsAndValidation;
 using Windows.Storage;
 
 namespace BookingBanquetDV.Utility
 {
     public static class EmailUtility
     {
-        public static async Task<bool> SendEmailsAsync(EmailParameter emailParameter)
-        {
+        private static string _emailFor;
+        private static string _photoName;
+
+        public static async Task<bool> SendEmailsAsync(
+            EmailParameter emailParameter, 
+            IAnalyticsManager analyticsManager)
+        {            
             bool isEmailSent = false;
             if (Utilities.IsInternetConnected())
             { 
@@ -26,7 +33,7 @@ namespace BookingBanquetDV.Utility
                     message.To.Add(new MailboxAddress(emailParameter.UserName,
                         emailParameter.EmailAddress));
 
-                    message = await ConstructBodyAsync(emailParameter, message);
+                    message = await ConstructBodyAsync(emailParameter, message, analyticsManager);
 
                     using (SmtpClient client = new SmtpClient())
                     {
@@ -36,20 +43,48 @@ namespace BookingBanquetDV.Utility
                         client.Disconnect(true);
                         isEmailSent = true;
                     }
+
+                    string attachment = !string.IsNullOrEmpty(_photoName) ?
+                        $"with {AnalyticConstants.Attachment} {_photoName}" :
+                        string.Empty;
+
+                    analyticsManager.TraceEvents(
+                        analyticsEvent: AnalyticConstants.Application,
+                        action: $"{AnalyticConstants.Email} " +
+                                $"{AnalyticConstants.Sent} ",
+                        label: $"{AnalyticConstants.Email} " +
+                                $"{AnalyticConstants.Sent} " +
+                                $"{AnalyticConstants.Successfully} " +
+                                $"for {_emailFor} " +
+                                $"{attachment}");
                 }
                 catch (Exception ex)
                 {
                     FileLogger.Logger.Info("Email Exception: ".ConcatString(ex.Message));
+
+                    analyticsManager.TraceEvents(
+                        analyticsEvent: AnalyticConstants.Exception,
+                        action: $"{AnalyticConstants.Email} " +
+                                $"{AnalyticConstants.Sent} ",
+                        label: $"{AnalyticConstants.Email} " +
+                                $"{AnalyticConstants.Sent} " +
+                                $"{AnalyticConstants.Failed} " +
+                                $"{ex.Message}");
                 }
             }
 
             return isEmailSent;
         }
 
-        private static async Task<MimeMessage> ConstructBodyAsync(EmailParameter emailParameter, MimeMessage message)
+        private static async Task<MimeMessage> ConstructBodyAsync(
+            EmailParameter emailParameter,
+            MimeMessage message, 
+            IAnalyticsManager analyticsManager)
         {
             if (emailParameter.IsSignup)
             {
+                _emailFor = $"{ApplicationConstants.SignUp} {ApplicationConstants.Otp}";
+
                 message.Subject = EmailConstants.AccountCreationOtp;
 
                 message.Body = new TextPart("plain")
@@ -61,6 +96,7 @@ namespace BookingBanquetDV.Utility
             }
             else if (emailParameter.IsRecovery)
             {
+                _emailFor = $"{ApplicationConstants.RecoverPassword}";
                 message.Subject = EmailConstants.PasswordRecoverOtp;
 
                 message.Body = new TextPart("plain")
@@ -72,6 +108,7 @@ namespace BookingBanquetDV.Utility
             }
             else if (emailParameter.BookingDetails != null)
             {
+                _emailFor = EmailConstants.BookingSuccessfull;
                 message.Subject = EmailConstants.BookingSuccessfull;
 
                 BodyBuilder builder = new BodyBuilder
@@ -95,11 +132,12 @@ namespace BookingBanquetDV.Utility
                     "\r\rThanks and regards\nAdmin")
                 };
 
-                builder = await AddAttachment(emailParameter.CustomerPhoto.PhotoName, builder, ApplicationConstants.CustomerPhoto);
+                builder = await AddAttachment(emailParameter.CustomerPhoto.PhotoName, builder, ApplicationConstants.CustomerPhoto, analyticsManager);
                 message.Body = builder.ToMessageBody();
             }
             else if (emailParameter.UsersPersonalDetail != null)
             {
+                _emailFor = $"{ApplicationConstants.Users} {EmailConstants.AccountCreation}";
                 message.Subject = EmailConstants.AccountCreation;
 
                 BodyBuilder builder = new BodyBuilder
@@ -116,17 +154,22 @@ namespace BookingBanquetDV.Utility
                     "\r\rThanks and regards\nAdmin")
                 };
 
-                builder = await AddAttachment(emailParameter.PhotoDetails.LocalPhotoName, builder, ApplicationConstants.Document);
+                builder = await AddAttachment(emailParameter.PhotoDetails.LocalPhotoName, builder, ApplicationConstants.Document, analyticsManager);
                 message.Body = builder.ToMessageBody();
             }
 
             return message;
         }
 
-        private static async Task<BodyBuilder> AddAttachment(string photoName, BodyBuilder builder, string folderName)
+        private static async Task<BodyBuilder> AddAttachment(
+            string photoName, 
+            BodyBuilder builder,
+            string folderName,
+            IAnalyticsManager analyticsManager)
         {
             try
             {
+                _photoName = photoName;
                 StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.
                     GetFolderAsync(folderName);
 
@@ -141,7 +184,16 @@ namespace BookingBanquetDV.Utility
             }
             catch (Exception ex)
             {
-                FileLogger.Logger.Info("Email Attachment Exception: ".ConcatString(ex.Message));
+                FileLogger.Logger.Info("Email attachment exception: ".ConcatString(ex.Message));
+                analyticsManager.TraceEvents(
+                    analyticsEvent: AnalyticConstants.Exception,
+                    action: $"{AnalyticConstants.Email} " +
+                            $"{AnalyticConstants.Attachment} ",
+                    label: $"{AnalyticConstants.Email} " +
+                            $"{AnalyticConstants.Attachment} " +
+                            $"{AnalyticConstants.Add} " +
+                            $"{AnalyticConstants.Failed} " +
+                            $"{ex.Message}");
             }
 
             return builder;

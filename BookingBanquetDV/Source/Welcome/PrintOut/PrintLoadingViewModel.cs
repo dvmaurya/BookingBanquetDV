@@ -1,4 +1,5 @@
 ﻿using BookingBanquetDV.Source.Camera;
+using CommonServices.Analytcis;
 using CommonServices.ConstantData;
 using CommonServices.Model;
 using System;
@@ -22,14 +23,16 @@ namespace BookingBanquetDV.Source.Welcome.PrintOut
         private readonly ICommand _printCommand;
 
         private readonly INavigationService _nativationService;
+        private readonly IAnalyticsManager _analyticsManager;
 
         public PrintLoadingViewModel(
-            INavigationService navigationService)
+            INavigationService navigationService,
+            IAnalyticsManager analyticsManager)
         {
             _nativationService = navigationService ?? throw new ArgumentNullException("navigationService");
+            _analyticsManager = analyticsManager ?? throw new ArgumentNullException("analyticsManager");
 
-            _printCommand = new DelegateCommand(
-                parameter => OnPrintPage());
+            _printCommand = new DelegateCommand(parameter => OnPrintPage());
         }
 
         private void OnPrintPage()
@@ -49,6 +52,12 @@ namespace BookingBanquetDV.Source.Welcome.PrintOut
 
                 if (_customerPhoto != null)
                     await SetPhotoAsync();
+
+                _analyticsManager.TraceEvents(
+                    analyticsEvent: $"{AnalyticConstants.Printout}",
+                    action: $"{AnalyticConstants.User} " +
+                        $"{AnalyticConstants.Clicked} " +
+                        $" on {AnalyticConstants.Printout}");
             }
         }
 

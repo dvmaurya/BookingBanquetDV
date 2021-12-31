@@ -10,7 +10,7 @@ namespace CommonServices.Analytcis
 {
     public class AnalyticsManager : IAnalyticsManager
     {
-        private const string _analyticsId = "G-V9364KJT78";
+        private const string _analyticsId = "UA-216092568-1";
         private const string _systemName = "SystemName";
         private const string _systemDevice = "Device";
         private const string _systemArchitecture = "SystemArchitecture";

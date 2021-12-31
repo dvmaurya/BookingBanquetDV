@@ -1,4 +1,5 @@
 ﻿using BookingServices.Repository.Interface;
+using CommonServices.Analytcis;
 using CommonServices.Extensions;
 using CommonServices.Logger;
 using CommonServices.Model.DbModel;
@@ -10,10 +11,17 @@ using System.Linq;
 
 namespace BookingServices.Repository
 {
-    public class UsersPersonalDetailRepository : IUsersPersonalDetailRepository
+    public class UsersPersonalDetailRepository : BaseRepository, IUsersPersonalDetailRepository
     {
         private string _dbpath;
         private static string _fileName = "Filename={0}";
+
+        public UsersPersonalDetailRepository(
+            IAnalyticsManager analyticsManager) :
+            base(analyticsManager)
+        {
+
+        }
 
         public bool AddOrUpdateUsersPersonalDetail(UsersPersonalDetail usersPersonalDetail)
         {
@@ -50,12 +58,37 @@ namespace BookingServices.Repository
                     insertCommand.ExecuteReader();
                     db.Close();
 
+                    TraceEvents(
+                        analyticsEvent: AnalyticConstants.Application,
+                        action: $"{AnalyticConstants.User} " +
+                                $"{AnalyticConstants.Personal} " +
+                                $"{AnalyticConstants.Detail} ",
+                        label: $"{AnalyticConstants.User} " +
+                                $"{AnalyticConstants.Personal} " +
+                                $"{AnalyticConstants.Detail} " +
+                                $"{AnalyticConstants.Added} " +
+                                $"{AnalyticConstants.Successfully} " +
+                                $"in {AnalyticConstants.Database} ");
+
                     return true;
                 }
             }
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("User personal detail Exception: ".ConcatString(ex.Message));
+                TraceEvents(
+                    analyticsEvent: AnalyticConstants.Exception,
+                    action: $"{AnalyticConstants.User} " +
+                            $"{AnalyticConstants.Personal} " +
+                            $"{AnalyticConstants.Detail} ",
+                    label: $"{AnalyticConstants.User} " +
+                            $"{AnalyticConstants.Personal} " +
+                            $"{AnalyticConstants.Detail} " +
+                            $"{AnalyticConstants.Added} " +
+                            $"in {AnalyticConstants.Database} " +
+                            $"{AnalyticConstants.Failed} " +
+                            $"{ex.Message} ");
+
                 return false;
             }
         }
@@ -63,46 +96,66 @@ namespace BookingServices.Repository
         public UsersPersonalDetail GetUsersPersonalDetail(string userId)
         {
             UsersPersonalDetail usersPersonalDetail = null;
-            if (!string.IsNullOrEmpty(userId))
+
+            try
             {
-                string emailOrMobile = userId.All(char.IsDigit)
-                    ?
-                    nameof(UsersCred.Mobile)
-                    :
-                    nameof(UsersCred.EmailId);
-
-                _dbpath = DataAccess.GetDbPath();
-
-                using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
+                if (!string.IsNullOrEmpty(userId))
                 {
-                    db.Open();
+                    string emailOrMobile = userId.All(char.IsDigit)
+                        ?
+                        nameof(UsersCred.Mobile)
+                        :
+                        nameof(UsersCred.EmailId);
 
-                    SqliteCommand selectCommand = new SqliteCommand
-                    (
-                        UsersPersonalDetailQuery.GetUsersPersonalDetailByUserId.FormatString(emailOrMobile, userId),
-                        db
-                    );
+                    _dbpath = DataAccess.GetDbPath();
 
-                    SqliteDataReader query = selectCommand.ExecuteReader();
-
-                    while (query.Read())
+                    using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                     {
-                        usersPersonalDetail = new UsersPersonalDetail
-                        {
-                            Id = query.GetString(0).ToInt32(),
-                            FullName = query.GetString(1),
-                            EmailId = query.GetString(2),
-                            Mobile = query.GetString(3),
-                            Address = query.GetString(4),
-                            Country = query.GetString(5),
-                            State = query.GetString(6),
-                            City = query.GetString(7),
-                            CreationDate = query.GetString(8)
-                        };
-                    }
+                        db.Open();
 
-                    db.Close();
+                        SqliteCommand selectCommand = new SqliteCommand
+                        (
+                            UsersPersonalDetailQuery.GetUsersPersonalDetailByUserId.FormatString(emailOrMobile, userId),
+                            db
+                        );
+
+                        SqliteDataReader query = selectCommand.ExecuteReader();
+
+                        while (query.Read())
+                        {
+                            usersPersonalDetail = new UsersPersonalDetail
+                            {
+                                Id = query.GetString(0).ToInt32(),
+                                FullName = query.GetString(1),
+                                EmailId = query.GetString(2),
+                                Mobile = query.GetString(3),
+                                Address = query.GetString(4),
+                                Country = query.GetString(5),
+                                State = query.GetString(6),
+                                City = query.GetString(7),
+                                CreationDate = query.GetString(8)
+                            };
+                        }
+
+                        db.Close();
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+                TraceEvents(
+                    analyticsEvent: AnalyticConstants.Exception,
+                    action: $"{AnalyticConstants.Get} " +
+                            $"{AnalyticConstants.User} " +
+                            $"{AnalyticConstants.Personal} " +
+                            $"{AnalyticConstants.Detail} ",
+                    label: $"{AnalyticConstants.Get} " +
+                            $"{AnalyticConstants.User} " +
+                            $"{AnalyticConstants.Personal} " +
+                            $"{AnalyticConstants.Detail} " +
+                            $"from {AnalyticConstants.Database} " +
+                            $"{AnalyticConstants.Failed} " +
+                            $"{ex.Message} ");
             }
 
             return usersPersonalDetail;

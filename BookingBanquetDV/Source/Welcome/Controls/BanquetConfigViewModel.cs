@@ -1,4 +1,5 @@
 ﻿using BookingServices.Interfaces;
+using CommonServices.Analytcis;
 using CommonServices.Extensions;
 using CommonServices.Model;
 using System;
@@ -21,12 +22,16 @@ namespace BookingBanquetDV.Source.Welcome.Controls
         private bool _isNoSelected;
         private readonly ICommand _saveDetailCommand;
         private readonly ICommand _dialogLoadingCommand;
+
         private readonly IBanquetDataProvider _banquetDataProvider;
+        private readonly IAnalyticsManager _analyticsManager;
 
         public BanquetConfigViewModel(
-            IBanquetDataProvider banquetDataProvider)
+            IBanquetDataProvider banquetDataProvider,
+            IAnalyticsManager analyticsManager)
         {
             _banquetDataProvider = banquetDataProvider ?? throw new ArgumentNullException("banquetDataProvider");
+            _analyticsManager = analyticsManager ?? throw new ArgumentNullException("analyticsManager");
 
             _saveDetailCommand = new DelegateCommand(
                 parameter => OnSaveDetails());
@@ -37,7 +42,12 @@ namespace BookingBanquetDV.Source.Welcome.Controls
 
         private void OnDialogLoading()
         {
-            if(_banquetDetail != null)
+            _analyticsManager.TraceScreenView(
+                $"{AnalyticConstants.Banquet} " +
+                $"{AnalyticConstants.Config} " +
+                $"{AnalyticConstants.Screen}");
+
+            if (_banquetDetail != null)
             {
                 _availableFlours = _banquetDetail.AvailableFlours;
                 _availableParkings= _banquetDetail.AvailableParkings;

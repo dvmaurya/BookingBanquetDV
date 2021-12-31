@@ -1,4 +1,5 @@
 ﻿using BookingServices.Repository.Interface;
+using CommonServices.Analytcis;
 using CommonServices.ConstantData;
 using CommonServices.Extensions;
 using CommonServices.Logger;
@@ -13,10 +14,17 @@ using Windows.Storage;
 
 namespace BookingServices.Repository
 {
-    public class PhotoDetailRepository : IPhotoDetailRepository
+    public class PhotoDetailRepository :BaseRepository, IPhotoDetailRepository
     {
         private string _dbpath;
         private static string _fileName = "Filename={0}";
+
+        public PhotoDetailRepository(
+            IAnalyticsManager analyticsManager) :
+            base(analyticsManager)
+        {
+
+        }
 
         public void AddOrUpdatePhotoDetail(PhotoDetails photoDetail)
         {
@@ -51,47 +59,85 @@ namespace BookingServices.Repository
 
                     insertCommand.ExecuteReader();
                     db.Close();
+
+                    TraceEvents(
+                        analyticsEvent: AnalyticConstants.Application,
+                        action: $"{AnalyticConstants.User} " +
+                                $"{AnalyticConstants.Photo} ",
+                        label: $"{AnalyticConstants.Add} " +
+                            $"{AnalyticConstants.User} " +
+                            $"{AnalyticConstants.Photo} " +
+                            $"in {AnalyticConstants.Database} " +
+                            $"{AnalyticConstants.Successfully} ");
                 }
             }
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("Photo Exception: ".ConcatString(ex.Message));
+                TraceEvents(
+                    analyticsEvent: AnalyticConstants.Exception,
+                    action: $"{AnalyticConstants.User} " +
+                            $"{AnalyticConstants.Photo} ",
+                    label: $"{AnalyticConstants.Add} " +
+                            $"{AnalyticConstants.User} " +
+                            $"{AnalyticConstants.Photo} " +
+                            $"{AnalyticConstants.Failed} " +
+                            $"in {AnalyticConstants.Database} " +
+                            $"{ex.Message}");
             }
         }
 
-        public IList<PhotoDetails> GetPreviousPhotoDetail(string emailId)
+        public IList<PhotoDetails> GetAllPhotoDetail(string emailId)
         {
             IList<PhotoDetails> photoDetails = new List<PhotoDetails>();
             PhotoDetails photoDetail = null;
             _dbpath = DataAccess.GetDbPath();
 
-            using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
+            try
             {
-                db.Open();
-
-                SqliteCommand selectCommand = new SqliteCommand
-                    (UserPhotoDetailQuery.GetPreviousPhoto.FormatString(emailId), db);
-
-                SqliteDataReader query = selectCommand.ExecuteReader();
-
-                while (query.Read())
+                using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                 {
-                    photoDetail = new PhotoDetails
+                    db.Open();
+
+                    SqliteCommand selectCommand = new SqliteCommand
+                        (UserPhotoDetailQuery.GetPreviousPhoto.FormatString(emailId), db);
+
+                    SqliteDataReader query = selectCommand.ExecuteReader();
+
+                    while (query.Read())
                     {
-                        Id = query.GetString(0).ToInt32(),
-                        PhotoName = query.GetString(1),
-                        Date = query.GetString(2),
-                        FileType = query.GetString(3),
-                        Size = query.GetString(4).UlongParse(),
-                        EmailId = query.GetString(5),
-                        IsChecked = query.GetBoolean(6),
-                        IsPhotoRemoved = query.GetBoolean(7)
-                    };
+                        photoDetail = new PhotoDetails
+                        {
+                            Id = query.GetString(0).ToInt32(),
+                            PhotoName = query.GetString(1),
+                            Date = query.GetString(2),
+                            FileType = query.GetString(3),
+                            Size = query.GetString(4).UlongParse(),
+                            EmailId = query.GetString(5),
+                            IsChecked = query.GetBoolean(6),
+                            IsPhotoRemoved = query.GetBoolean(7)
+                        };
 
-                    photoDetails.Add(photoDetail);
+                        photoDetails.Add(photoDetail);
+                    }
+
+                    db.Close();
                 }
-
-                db.Close();
+            }
+            catch(Exception ex)
+            {
+                TraceEvents(
+                    analyticsEvent: AnalyticConstants.Exception,
+                    action: $"{AnalyticConstants.User} " +
+                            $"{AnalyticConstants.Photo} " +
+                            $"{AnalyticConstants.Detail} ",
+                    label: $"{AnalyticConstants.Get} " +
+                            $" all {AnalyticConstants.User} " +
+                            $" {AnalyticConstants.Photo} " +
+                            $"{AnalyticConstants.Detail} " +
+                            $"from {AnalyticConstants.Database} " +
+                            $"{AnalyticConstants.Failed} " +
+                            $"{ex.Message}");
             }
 
             return photoDetails;
@@ -102,31 +148,49 @@ namespace BookingServices.Repository
             PhotoDetails photoDetail = null;
             _dbpath = DataAccess.GetDbPath();
 
-            using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
+            try
             {
-                db.Open();
-
-                SqliteCommand selectCommand = new SqliteCommand
-                    (UserPhotoDetailQuery.GetActivePhoto.FormatString(emailId), db);
-
-                SqliteDataReader query = selectCommand.ExecuteReader();
-
-                while (query.Read())
+                using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                 {
-                    photoDetail = new PhotoDetails
-                    {
-                        Id = query.GetString(0).ToInt32(),
-                        PhotoName = query.GetString(1),
-                        Date = query.GetString(2),
-                        FileType = query.GetString(3),
-                        Size = query.GetString(4).UlongParse(),
-                        EmailId = query.GetString(5),
-                        IsChecked = query.GetBoolean(6),
-                        IsPhotoRemoved = query.GetBoolean(7)
-                    };
-                }
+                    db.Open();
 
-                db.Close();
+                    SqliteCommand selectCommand = new SqliteCommand
+                        (UserPhotoDetailQuery.GetActivePhoto.FormatString(emailId), db);
+
+                    SqliteDataReader query = selectCommand.ExecuteReader();
+
+                    while (query.Read())
+                    {
+                        photoDetail = new PhotoDetails
+                        {
+                            Id = query.GetString(0).ToInt32(),
+                            PhotoName = query.GetString(1),
+                            Date = query.GetString(2),
+                            FileType = query.GetString(3),
+                            Size = query.GetString(4).UlongParse(),
+                            EmailId = query.GetString(5),
+                            IsChecked = query.GetBoolean(6),
+                            IsPhotoRemoved = query.GetBoolean(7)
+                        };
+                    }
+
+                    db.Close();
+                }
+            }
+            catch(Exception ex)
+            {
+                TraceEvents(
+                    analyticsEvent: AnalyticConstants.Exception,
+                    action: $"{AnalyticConstants.User} " +
+                            $"{AnalyticConstants.Photo} " +
+                            $"{AnalyticConstants.Detail} ",
+                    label: $"{AnalyticConstants.Get} " +
+                            $"{AnalyticConstants.Active} " +
+                            $"{AnalyticConstants.User} " +
+                            $"{AnalyticConstants.Photo} " +
+                            $"from {AnalyticConstants.Database} " +
+                            $"{AnalyticConstants.Failed} " +
+                            $"{ex.Message}");
             }
 
             return photoDetail;
@@ -152,6 +216,17 @@ namespace BookingServices.Repository
             catch(Exception ex)
             {
                 FileLogger.Logger.Info("Photo delete from folder exception: ".ConcatString(ex.Message));
+                TraceEvents(
+                    analyticsEvent: AnalyticConstants.Exception,
+                    action: $"{AnalyticConstants.User} " +
+                            $"{AnalyticConstants.Photo} " +
+                            $"{AnalyticConstants.Detail} ",
+                    label: $"{AnalyticConstants.Deleted} " +
+                            $"{AnalyticConstants.User} " +
+                            $"{AnalyticConstants.Photo} " +
+                            $"from {AnalyticConstants.Database} " +
+                            $"{AnalyticConstants.Failed} " +
+                            $"{ex.Message}");
             }
         }
     }

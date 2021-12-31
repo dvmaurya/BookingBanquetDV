@@ -2,6 +2,7 @@
 using BookingBanquetDV.Utility;
 using BookingBanquetDV.Validation;
 using BookingServices.Interfaces;
+using CommonServices.Analytcis;
 using CommonServices.ConstantData;
 using CommonServices.Enums;
 using CommonServices.Extensions;
@@ -44,17 +45,20 @@ namespace BookingBanquetDV.Source.Recover
         private readonly INavigationService _navigationService;
         private readonly IMessageDialogService _messageDialogService;
         private readonly IOfflineDatabaseProvider _offlineDatabaseProvider;
+        private readonly IAnalyticsManager _analyticsManager;
 
         public RecoverUserViewModel(
             INavigationService navigationService,
             IMessageDialogService messageDialogService,
             IOfflineDatabaseProvider offlineDatabaseProvider,
-            IUsersPersonalDetailDataProvider usersPersonalDetailDataProvider)
+            IUsersPersonalDetailDataProvider usersPersonalDetailDataProvider,
+            IAnalyticsManager analyticsManager)
         {
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             _messageDialogService = messageDialogService ?? throw new ArgumentNullException(nameof(messageDialogService));
             _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException(nameof(offlineDatabaseProvider));
             _usersPersonalDetailDataProvider = usersPersonalDetailDataProvider ?? throw new ArgumentNullException(nameof(usersPersonalDetailDataProvider));
+            _analyticsManager = analyticsManager ?? throw new ArgumentNullException(nameof(analyticsManager));
 
             _isRecoverUIVisible = true;
             _recoverCommand = new DelegateCommand(parameter => OnClickRecover());
@@ -142,7 +146,7 @@ namespace BookingBanquetDV.Source.Recover
                     };
 
                     App.ShowLoadingIndicator(ApplicationConstants.SendingEmail);
-                    bool isEmailSent = await EmailUtility.SendEmailsAsync(emailParameter);
+                    bool isEmailSent = await EmailUtility.SendEmailsAsync(emailParameter, _analyticsManager);
                     App.HideLoadingIndicator();
 
                     if (isEmailSent)

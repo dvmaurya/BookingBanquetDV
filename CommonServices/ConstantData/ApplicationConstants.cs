@@ -82,5 +82,8 @@
         public const string VerifyItsYou = "First verify it's you. Fill the following details.";
         public const string EmailSent = "Email sent successfully on email id: {0}";
         public const string SomethingWentWrong = "Some thing went wrong. Email could not send.";
+        public const string SignUp = "signup";
+        public const string Recovery = "recovery";
+        public const string Otp = "OTP";
     }
 }

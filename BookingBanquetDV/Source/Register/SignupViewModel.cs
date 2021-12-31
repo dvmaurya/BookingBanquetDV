@@ -2,6 +2,7 @@
 using BookingBanquetDV.Utility;
 using BookingBanquetDV.Validation;
 using BookingServices.Interfaces;
+using CommonServices.Analytcis;
 using CommonServices.ConstantData;
 using CommonServices.Extensions;
 using CommonServices.Model;
@@ -61,6 +62,7 @@ namespace BookingBanquetDV.Source.Register
         private readonly ICountryDataProvider _countryDataProvider;
         private readonly IUsersPersonalDetailDataProvider _userPersonalDetailDataProvider;
         private readonly IPhotoDetailDataProvider _photoDetailDataProvider;
+        private readonly IAnalyticsManager _analyticsManager;
 
         private ICameraViewModel _cameraViewModel;
         private bool _isEmailSent;
@@ -73,7 +75,8 @@ namespace BookingBanquetDV.Source.Register
             ICountryDataProvider countryDataProvider,
             ICameraViewModel cameraViewModel,
             IUsersPersonalDetailDataProvider usersPersonalDetailDataProvider,
-            IPhotoDetailDataProvider photoDetailDataProvider)
+            IPhotoDetailDataProvider photoDetailDataProvider,
+            IAnalyticsManager analyticsManager)
         {
             _navigationService = navigationService ?? throw new ArgumentNullException("navigationService");
             _offlineDatabaseProvider = offlineDatabaseProvider ?? throw new ArgumentNullException("offlineDatabaseProvider");
@@ -82,6 +85,7 @@ namespace BookingBanquetDV.Source.Register
             _cameraViewModel = cameraViewModel ?? throw new ArgumentNullException("cameraViewModel");
             _userPersonalDetailDataProvider = usersPersonalDetailDataProvider ?? throw new ArgumentNullException("usersPersonalDetailDataProvider");
             _photoDetailDataProvider = photoDetailDataProvider ?? throw new ArgumentNullException("photoDetailDataProvider");
+            _analyticsManager = analyticsManager ?? throw new ArgumentNullException("analyticsManager");
 
             _oTPCommand = new DelegateCommand(
                 async parameter => await OnOTPClickAsync(parameter));
@@ -245,7 +249,7 @@ namespace BookingBanquetDV.Source.Register
                     PhotoDetails = _photoDetail
                 };
 
-                return await EmailUtility.SendEmailsAsync(emailParameter);
+                return await EmailUtility.SendEmailsAsync(emailParameter, _analyticsManager);
             }
 
             return false;
@@ -344,7 +348,7 @@ namespace BookingBanquetDV.Source.Register
             };
 
             App.ShowLoadingIndicator(ApplicationConstants.SendingEmail);
-            _isEmailSent = await EmailUtility.SendEmailsAsync(emailParameter);
+            _isEmailSent = await EmailUtility.SendEmailsAsync(emailParameter, _analyticsManager);
             App.HideLoadingIndicator();
 
             if (_isEmailSent)

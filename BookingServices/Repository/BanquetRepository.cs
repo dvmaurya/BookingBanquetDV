@@ -1,4 +1,5 @@
 ﻿using BookingServices.Repository.Interface;
+using CommonServices.Analytcis;
 using CommonServices.Extensions;
 using CommonServices.Logger;
 using CommonServices.Model.DbModel;
@@ -9,10 +10,16 @@ using System;
 
 namespace BookingServices.Repository
 {
-    public class BanquetRepository : IBanquetRepository
+    public class BanquetRepository : BaseRepository, IBanquetRepository
     {
         private string _dbpath;
         private static string _fileName = "Filename={0}";
+
+        public BanquetRepository(
+            IAnalyticsManager analyticsManager)
+            : base(analyticsManager)
+        {
+        }
 
         public void AddOrUpdateBanquet(BanquetDetail banquetDetail)
         {
@@ -46,11 +53,28 @@ namespace BookingServices.Repository
                     insertCommand.ExecuteReader();
 
                     db.Close();
+
+                    TraceEvents(
+                        analyticsEvent: AnalyticConstants.Application,
+                        action: $"{AnalyticConstants.Banquet} " +
+                                $"{AnalyticConstants.Config} ",
+                        label: $"{AnalyticConstants.Banquet} " +
+                                $"{AnalyticConstants.Config} " +
+                                $"{AnalyticConstants.Added} " +
+                                $"{AnalyticConstants.Successfully}");
                 }
             }
             catch (Exception ex)
             {
-                FileLogger.Logger.Info("Bnquet add Exception: ".ConcatString(ex.Message));
+                FileLogger.Logger.Info("Banquet add Exception: ".ConcatString(ex.Message));
+                TraceEvents(
+                    analyticsEvent: AnalyticConstants.Exception,
+                    action: $"{AnalyticConstants.Banquet} " +
+                            $"{AnalyticConstants.Config} ",
+                    label: $"{AnalyticConstants.Banquet} " +
+                            $"{AnalyticConstants.Config} " +
+                            $"{AnalyticConstants.Failed} " +
+                            $"{ex.Message}");
             }
         }
 
@@ -58,32 +82,49 @@ namespace BookingServices.Repository
         {
             _dbpath = DataAccess.GetDbPath();
 
-            using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
+            try
             {
-                db.Open();
-
-                string sqlText = BanquetDetailQuery.GetBanquetDetail;
-
-                SqliteCommand selectCommand = new SqliteCommand
-                    (sqlText, db);
-
-                SqliteDataReader query = selectCommand.ExecuteReader();
-
-                while (query.Read())
+                using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                 {
-                    return new BanquetDetail
-                    {
-                        Id = query.GetString(0).ToInt32(),
-                        AvailableFlours = query.GetString(1),
-                        AvailableMandap = query.GetString(2),
-                        AvailableParkings = query.GetString(3),
-                        AvailableRooms = query.GetString(4),
-                        EmailId = query.GetString(5),
-                        UpdationDate = query.GetString(6)
-                    };
-                }
+                    db.Open();
 
-                db.Close();
+                    string sqlText = BanquetDetailQuery.GetBanquetDetail;
+
+                    SqliteCommand selectCommand = new SqliteCommand
+                        (sqlText, db);
+
+                    SqliteDataReader query = selectCommand.ExecuteReader();
+
+                    while (query.Read())
+                    {
+                        return new BanquetDetail
+                        {
+                            Id = query.GetString(0).ToInt32(),
+                            AvailableFlours = query.GetString(1),
+                            AvailableMandap = query.GetString(2),
+                            AvailableParkings = query.GetString(3),
+                            AvailableRooms = query.GetString(4),
+                            EmailId = query.GetString(5),
+                            UpdationDate = query.GetString(6)
+                        };
+                    }
+
+                    db.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLogger.Logger.Info("Get banquet configuration Exception: ".ConcatString(ex.Message));
+                TraceEvents(
+                    analyticsEvent: AnalyticConstants.Exception,
+                    action: $"{AnalyticConstants.Get} " +
+                            $"{AnalyticConstants.Banquet} " +
+                            $"{AnalyticConstants.Config} ", 
+                    label: $"{AnalyticConstants.Get} " +
+                            $"{AnalyticConstants.Banquet} " +
+                            $"{AnalyticConstants.Config} " +
+                            $"{AnalyticConstants.Failed} " +
+                            $"{ex.Message}");
             }
 
             return null;
