@@ -97,13 +97,16 @@ namespace BookingBanquetDV.Source.Welcome.Controls
 
         private async Task SetPhotoAsync(IList<PhotoDetails> photoDetailList)
         {
-            StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.
-                    GetFolderAsync(ApplicationConstants.Document);
-
-            foreach (PhotoDetails photo in photoDetailList)
+            if (photoDetailList != null && photoDetailList.Any())
             {
-                if (await storageFolder.TryGetItemAsync(photo.LocalPhotoName) is StorageFile file)
-                    photo.ImageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file, ApplicationConstants.Document);
+                StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.
+                        GetFolderAsync(ApplicationConstants.Document);
+
+                foreach (PhotoDetails photo in photoDetailList)
+                {
+                    if (await storageFolder.TryGetItemAsync(photo.LocalPhotoName) is StorageFile file)
+                        photo.ImageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file, ApplicationConstants.Document);
+                }
             }
         }
 

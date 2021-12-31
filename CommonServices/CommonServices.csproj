@@ -188,27 +188,20 @@
     <Compile Include="Utilities\CursorUtility.cs" />
     <Compile Include="Utilities\DisposeDialogEventArgs.cs" />
     <Compile Include="Utilities\EnumUtility.cs" />
-    <Compile Include="Utilities\GoogleAPI.cs" />
     <Compile Include="Utilities\Helper.cs" />
     <Compile Include="Utilities\HttpUtility.cs" />
     <Compile Include="Utilities\Utilities.cs" />
     <EmbeddedResource Include="Properties\CommonServices.rd.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Google.Apis.Drive.v3">
-      <Version>1.55.0.2502</Version>
-    </PackageReference>
     <PackageReference Include="MetroLog">
       <Version>1.0.1</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client">
+      <Version>5.2.7</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.8</Version>
-    </PackageReference>
-    <PackageReference Include="SQLite.Net.Core-PCL">
-      <Version>3.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="SQLite.UWP.Native">
-      <Version>3.12.3</Version>
     </PackageReference>
     <PackageReference Include="UWP.SDKforGoogleAnalytics.Managed">
       <Version>1.5.2</Version>

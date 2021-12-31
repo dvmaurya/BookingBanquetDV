@@ -159,9 +159,6 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.8</Version>
     </PackageReference>
-    <PackageReference Include="SQLCipher.Net.WindowsUAP-PCL">
-      <Version>3.4.2</Version>
-    </PackageReference>
     <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3">
       <Version>1.1.8</Version>
     </PackageReference>

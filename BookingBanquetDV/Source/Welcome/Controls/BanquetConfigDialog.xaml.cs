@@ -29,11 +29,15 @@ namespace BookingBanquetDV.Source.Welcome.Controls
             }
 
             this.Hide();
+
+            if (sender != null && args != null) { }
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             this.Hide();
+
+            if (sender != null && args != null) { }
         }
 
         private void ContentDialog_Loading(FrameworkElement sender, object args)
@@ -44,6 +48,8 @@ namespace BookingBanquetDV.Source.Welcome.Controls
                 viewModel.BanquetDetail = _banquetDetail;
                 viewModel.DialogLoadingCommand.Execute(null);
             }
+
+            if (sender != null && args != null) { }
         }
     }
 }

@@ -30,7 +30,7 @@ namespace BookingBanquetDV.Source.Camera
 
             if (_storeFile != null)
             {
-                ulong photoSize = await GetCapturedPhotoSizeAsync(_storeFile);
+                ulong photoSize = await GetCapturedPhotoSizeAsync();
                 _cutomerPhotoDetails = new CustomerPhotoDetail
                 {
                     StorageFile = _storeFile,
@@ -60,7 +60,7 @@ namespace BookingBanquetDV.Source.Camera
 
             if (_storeFile != null)
             {
-                ulong photoSize = await GetCapturedPhotoSizeAsync(_storeFile);
+                ulong photoSize = await GetCapturedPhotoSizeAsync();
                 _photoDetails = new PhotoDetails
                 {
                     StorageFile = _storeFile,
@@ -83,7 +83,7 @@ namespace BookingBanquetDV.Source.Camera
             return _photoDetails;
         }
 
-        private async Task<ulong> GetCapturedPhotoSizeAsync(StorageFile storeFile)
+        private async Task<ulong> GetCapturedPhotoSizeAsync()
         {
             BasicProperties basicProperties = await _storeFile.GetBasicPropertiesAsync();
             return basicProperties.Size;

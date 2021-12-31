@@ -1,6 +1,4 @@
-﻿using Windows.UI.Xaml.Media.Imaging;
-
-namespace CommonServices.Model.DbModel
+﻿namespace CommonServices.Model.DbModel
 {
     public class UsersPersonalDetail
     {

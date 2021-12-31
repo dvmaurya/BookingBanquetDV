@@ -35,12 +35,16 @@ namespace BookingBanquetDV.Source.Welcome.PrintOut
                 (senders, eventArgs) => PrintCompleted(sender, eventArgs);
 
             await _printHelper.ShowPrintUIAsync();
+
+            if(e != null) { }
         }
 
         private void PrintCompleted(object sender, bool eventArgs)
         {
             if (eventArgs && this.DataContext is PrintLoadingViewModel printLoading)
                 _navigationService.Navigate(typeof(WelcomePage), printLoading.LoginDetail);
+
+            if (sender != null) { }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -48,12 +52,16 @@ namespace BookingBanquetDV.Source.Welcome.PrintOut
             _printHelper = new PrintHelper(this);
             _printHelper.RegisterForPrinting();
             _printHelper.PreparePrintContent(new PageToPrint());
+
+            if (e != null) { }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             if (_printHelper != null)
                 _printHelper.UnregisterForPrinting();
+
+            if (e != null) { }
         }
     }
 }

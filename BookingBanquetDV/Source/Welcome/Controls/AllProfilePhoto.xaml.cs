@@ -40,6 +40,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            if (sender != null && args != null) { }
             this.Hide();
         }
 
@@ -52,6 +53,8 @@ namespace BookingBanquetDV.Source.Welcome.Controls
                 viewModel.PhotoDetailList = new ObservableCollection<PhotoDetails>(_photoDetails);
                 viewModel.OnDialogLoadingCommand.Execute(null);
             }
+
+            if (sender != null && args != null) { }
         }
     }
 }

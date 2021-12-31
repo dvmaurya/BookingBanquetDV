@@ -188,14 +188,12 @@ namespace BookingBanquetDV.Source.Welcome
                     PhotoDetails = _photoDetail
                 };
 
-                await EmailUtility.SendEmailsAsync(emailParameter);
+                isEmailSent = await EmailUtility.SendEmailsAsync(emailParameter);
             }
 
             App.HideLoadingIndicator();
 
-            string emailMessage = string.Empty;
-
-            emailMessage = isEmailSent ? 
+            string emailMessage = isEmailSent ? 
                 ApplicationConstants.EmailSent.FormatString(_usersPersonalDetail.EmailId) :
                 ApplicationConstants.SomethingWentWrong;
 

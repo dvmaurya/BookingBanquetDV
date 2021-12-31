@@ -21,6 +21,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            if (sender != null && args != null) { }
             this.Hide();
         }
 

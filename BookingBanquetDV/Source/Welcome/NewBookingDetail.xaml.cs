@@ -29,6 +29,8 @@ namespace BookingBanquetDV.Source.Welcome
             int advnce = !string.IsNullOrEmpty(Advance.Text) ? Advance.Text.ToInt32() : 0;
 
             RemainingAmount.Text = (totalAmount - advnce).ConvertToString();
+
+            if (sender != null && e != null) { }
         }
     }
 }

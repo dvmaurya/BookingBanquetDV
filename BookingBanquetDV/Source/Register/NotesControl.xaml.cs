@@ -21,12 +21,15 @@ namespace BookingBanquetDV.Source.Register
         private void ShowNotesLength(object sender, object e)
         {
             txtNotesLength.Visibility = Visibility.Visible;
-        }
 
+            if(sender != null && e != null) { }
+        }
 
         private void AddNotes_LostFocus(object sender, RoutedEventArgs e)
         {
             txtNotesLength.Visibility = Visibility.Collapsed;
+
+            if (sender != null && e != null) { }
         }
 
         public string NotesText

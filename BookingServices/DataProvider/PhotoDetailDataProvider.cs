@@ -22,7 +22,10 @@ namespace BookingServices.DataProvider
 
         public void AddOrUpdatePhotoDetail(PhotoDetails photoDetail)
         {
-            _photoDetailRepository.AddOrUpdatePhotoDetail(photoDetail.ToDbPhotoDetail());
+            if (photoDetail != null)
+            {
+                _photoDetailRepository.AddOrUpdatePhotoDetail(photoDetail.ToDbPhotoDetail());
+            }
         }
 
         public IList<PhotoDetails> GetPreviousPhotoDetail(string emailId)

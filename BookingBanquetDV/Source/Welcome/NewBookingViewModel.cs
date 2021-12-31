@@ -8,7 +8,6 @@ using CommonServices.ConstantData;
 using CommonServices.Extensions;
 using CommonServices.Model;
 using CommonServices.Model.City;
-using CommonServices.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -23,7 +22,6 @@ using ViewModelsAndValidation.Services;
 using ViewModelsAndValidation.ViewModels;
 using Windows.Storage;
 using Windows.UI.Popups;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace BookingBanquetDV.Source.Welcome
