@@ -161,7 +161,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
         private async Task OnPreviousPhotoAsync()
         {
             if(_allPhotoDetails == null)
-                _allPhotoDetails = _photoDetailDataProvider.GetPreviousPhotoDetail(
+                _allPhotoDetails = _photoDetailDataProvider.GetAllPhotoDetail(
                     _usersPersonalDetail.EmailId);
 
             AllProfilePhoto allProfilePhoto = new AllProfilePhoto(_allPhotoDetails);
