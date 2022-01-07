@@ -24,51 +24,48 @@ namespace BookingServices.Repository
 
         public void AddOrUpdateBooking(BookingDetails bookingDetails)
         {
-            string InsertOrUpdate = string.Empty;
+            string insertOrUpdate = string.Empty;
             try
             {
                 _dbpath = DataAccess.GetDbPath();
 
                 if (bookingDetails != null && bookingDetails.Id != 0)
                 {
-                    InsertOrUpdate = BookingQuery.UpdateBookingDetail;
+                    insertOrUpdate = BookingQuery.UpdateBookingDetail;
                 }
                 else
                 {
-                    InsertOrUpdate = BookingQuery.InsertInBooking;
+                    insertOrUpdate = BookingQuery.InsertInBooking;
                 }
 
                 using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                 {
                     db.Open();
 
-                    SqliteCommand insertCommand = new SqliteCommand
+                    using (SqliteCommand insertCommand = new SqliteCommand(insertOrUpdate, db))
                     {
-                        Connection = db,
-                        CommandText = InsertOrUpdate
-                    };
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Id), bookingDetails.Id);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.CustomerName), bookingDetails.CustomerName);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.MobileNo), bookingDetails.MobileNo);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.EmailId), bookingDetails.EmailId);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.BookingDate), bookingDetails.BookingDate);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.BookedBy), bookingDetails.BookedBy);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.TotalRooms), bookingDetails.TotalRooms);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.TotalFlours), bookingDetails.TotalFlours);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.TotalAmount), bookingDetails.TotalAmount);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Advanced), bookingDetails.Advanced);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Balance), bookingDetails.Balance);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Confirmation), bookingDetails.Confirmation);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.CreationDate), bookingDetails.CreationDate);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.UserId), bookingDetails.UserId);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.IsEmailSent), bookingDetails.IsEmailSent);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Address), bookingDetails.Address);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Country), bookingDetails.Country);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.State), bookingDetails.State);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.City), bookingDetails.City);
 
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Id), bookingDetails.Id);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.CustomerName), bookingDetails.CustomerName);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.MobileNo), bookingDetails.MobileNo);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.EmailId), bookingDetails.EmailId);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.BookingDate), bookingDetails.BookingDate);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.BookedBy), bookingDetails.BookedBy);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.TotalRooms), bookingDetails.TotalRooms);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.TotalFlours), bookingDetails.TotalFlours);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.TotalAmount), bookingDetails.TotalAmount);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Advanced), bookingDetails.Advanced);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Balance), bookingDetails.Balance);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Confirmation), bookingDetails.Confirmation);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.CreationDate), bookingDetails.CreationDate);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.UserId), bookingDetails.UserId);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.IsEmailSent), bookingDetails.IsEmailSent);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Address), bookingDetails.Address);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.Country), bookingDetails.Country);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.State), bookingDetails.State);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(bookingDetails.City), bookingDetails.City);
-
-                    insertCommand.ExecuteReader();
+                        insertCommand.ExecuteReader();
+                    }
 
                     db.Close();
 
@@ -103,37 +100,38 @@ namespace BookingServices.Repository
 
                     string sqlText = BookingQuery.SelectAllFromBooking;
 
-                    SqliteCommand selectCommand = new SqliteCommand
-                        (sqlText, db);
-
-                    SqliteDataReader query = selectCommand.ExecuteReader();
-
-                    while (query.Read())
+                    using (SqliteCommand selectCommand = new SqliteCommand(sqlText, db))
                     {
-                        bookingDetail = new BookingDetails
+                        using (SqliteDataReader query = selectCommand.ExecuteReader())
                         {
-                            Id = query.GetString(0).ToInt32(),
-                            CustomerName = query.GetString(1),
-                            MobileNo = query.GetString(2),
-                            EmailId = query.GetString(3),
-                            BookingDate = query.GetString(4),
-                            BookedBy = query.GetString(5),
-                            TotalRooms = query.GetString(6),
-                            TotalFlours = query.GetString(7),
-                            TotalAmount = query.GetString(8),
-                            Advanced = query.GetString(9),
-                            Balance = query.GetString(10),
-                            Confirmation = query.GetString(11),
-                            CreationDate = query.GetString(12),
-                            UserId = query.GetString(13),
-                            IsEmailSent = query.GetBoolean(14),
-                            Address = query.GetString(15),
-                            Country = query.GetString(16),
-                            State = query.GetString(17),
-                            City = query.GetString(18)
-                        };
+                            while (query.Read())
+                            {
+                                bookingDetail = new BookingDetails
+                                {
+                                    Id = query.GetString(0).ToInt32(),
+                                    CustomerName = query.GetString(1),
+                                    MobileNo = query.GetString(2),
+                                    EmailId = query.GetString(3),
+                                    BookingDate = query.GetString(4),
+                                    BookedBy = query.GetString(5),
+                                    TotalRooms = query.GetString(6),
+                                    TotalFlours = query.GetString(7),
+                                    TotalAmount = query.GetString(8),
+                                    Advanced = query.GetString(9),
+                                    Balance = query.GetString(10),
+                                    Confirmation = query.GetString(11),
+                                    CreationDate = query.GetString(12),
+                                    UserId = query.GetString(13),
+                                    IsEmailSent = query.GetBoolean(14),
+                                    Address = query.GetString(15),
+                                    Country = query.GetString(16),
+                                    State = query.GetString(17),
+                                    City = query.GetString(18)
+                                };
 
-                        bookingDetails.Add(bookingDetail);
+                                bookingDetails.Add(bookingDetail);
+                            }
+                        }
                     }
 
                     db.Close();
@@ -160,10 +158,10 @@ namespace BookingServices.Repository
 
                     string sqlText = BookingQuery.DeleteBooking.FormatString(bookingDetails.Id);
 
-                    SqliteCommand selectCommand = new SqliteCommand
-                        (sqlText, db);
-
-                    SqliteDataReader query = selectCommand.ExecuteReader();
+                    using (SqliteCommand selectCommand = new SqliteCommand(sqlText, db))
+                    {
+                        selectCommand.ExecuteReader();
+                    }
 
                     db.Close();
                 }

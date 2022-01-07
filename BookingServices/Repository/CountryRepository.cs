@@ -34,31 +34,29 @@ namespace BookingServices.Repository
                     {
                         db.Open();
 
-                        SqliteCommand insertCommand = new SqliteCommand
+                        using (SqliteCommand insertCommand = new SqliteCommand(CountryQuery.InsertInCountry, db))
                         {
-                            Connection = db,
-                            CommandText = CountryQuery.InsertInCountry
-                        };
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.Name), country.Name ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.Capital), country.Capital ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.Currency), country.Currency ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.CurrencySymbol), country.CurrencySymbol ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.Emoji), country.Emoji ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.EmojiU), country.EmojiU ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.Iso2), country.Iso2 ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.Iso3), country.Iso3 ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.Latitude), country.Latitude ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.Longitude), country.Longitude ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.Native), country.Native ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.NumericCode), country.NumericCode ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.PhoneCode), country.PhoneCode ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.Region), country.Region ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.Subregion), country.Subregion ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.Tld), country.Tld ?? string.Empty);
+                            insertCommand.Parameters.AddWithValue("@" + nameof(country.StateJson), country.StateJson ?? string.Empty);
 
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Name), country.Name ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Capital), country.Capital ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Currency), country.Currency ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.CurrencySymbol), country.CurrencySymbol ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Emoji), country.Emoji ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.EmojiU), country.EmojiU ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Iso2), country.Iso2 ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Iso3), country.Iso3 ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Latitude), country.Latitude ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Longitude), country.Longitude ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Native), country.Native ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.NumericCode), country.NumericCode ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.PhoneCode), country.PhoneCode ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Region), country.Region ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Subregion), country.Subregion ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.Tld), country.Tld ?? string.Empty);
-                        insertCommand.Parameters.AddWithValue("@" + nameof(country.StateJson), country.StateJson ?? string.Empty);
+                            insertCommand.ExecuteReader();
+                        }
 
-                        insertCommand.ExecuteReader();
                         db.Close();
 
                         TraceEvents(
@@ -94,37 +92,37 @@ namespace BookingServices.Repository
                 using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                 {
                     db.Open();
-
-                    SqliteCommand selectCommand = new SqliteCommand
-                        (CountryQuery.GetAllCountryData, db);
-
-                    SqliteDataReader query = selectCommand.ExecuteReader();
-
-                    while (query.Read())
+                    using (SqliteCommand selectCommand = new SqliteCommand(CountryQuery.GetAllCountryData, db))
                     {
-                        country = new Country
+                        using (SqliteDataReader query = selectCommand.ExecuteReader())
                         {
-                            Id = query.GetString(0).ToInt64(),
-                            Name = query.GetString(1),
-                            Capital = query.GetString(2),
-                            Currency = query.GetString(3),
-                            CurrencySymbol = query.GetString(4),
-                            Emoji = query.GetString(5),
-                            EmojiU = query.GetString(6),
-                            Iso2 = query.GetString(7),
-                            Iso3 = query.GetString(8),
-                            Latitude = query.GetString(9),
-                            Longitude = query.GetString(10),
-                            Native = query.GetString(11),
-                            NumericCode = query.GetString(12),
-                            PhoneCode = query.GetString(13),
-                            Region = query.GetString(14),
-                            Subregion = query.GetString(15),
-                            Tld = query.GetString(16),
-                            StateJson = query.GetString(17)
-                        };
+                            while (query.Read())
+                            {
+                                country = new Country
+                                {
+                                    Id = query.GetString(0).ToInt64(),
+                                    Name = query.GetString(1),
+                                    Capital = query.GetString(2),
+                                    Currency = query.GetString(3),
+                                    CurrencySymbol = query.GetString(4),
+                                    Emoji = query.GetString(5),
+                                    EmojiU = query.GetString(6),
+                                    Iso2 = query.GetString(7),
+                                    Iso3 = query.GetString(8),
+                                    Latitude = query.GetString(9),
+                                    Longitude = query.GetString(10),
+                                    Native = query.GetString(11),
+                                    NumericCode = query.GetString(12),
+                                    PhoneCode = query.GetString(13),
+                                    Region = query.GetString(14),
+                                    Subregion = query.GetString(15),
+                                    Tld = query.GetString(16),
+                                    StateJson = query.GetString(17)
+                                };
 
-                        countries.Add(country);
+                                countries.Add(country);
+                            }
+                        }
                     }
 
                     db.Close();

@@ -23,34 +23,31 @@ namespace BookingServices.Repository
 
         public void AddOrUpdateBanquet(BanquetDetail banquetDetail)
         {
-            string InsertOrUpdate = string.Empty;
+            string insertOrUpdate = string.Empty;
             try
             {
                 _dbpath = DataAccess.GetDbPath();
 
-                InsertOrUpdate = banquetDetail != null && banquetDetail.Id != 0 ?
-                    BanquetDetailQuery.UpdateBanquetDetail : 
+                insertOrUpdate = banquetDetail != null && banquetDetail.Id != 0 ?
+                    BanquetDetailQuery.UpdateBanquetDetail :
                     BanquetDetailQuery.InsertInBanquetDetail;
 
                 using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                 {
                     db.Open();
 
-                    SqliteCommand insertCommand = new SqliteCommand
+                    using (SqliteCommand insertCommand = new SqliteCommand(insertOrUpdate, db))
                     {
-                        Connection = db,
-                        CommandText = InsertOrUpdate
+                        insertCommand.Parameters.AddWithValue("@" + nameof(banquetDetail.Id), banquetDetail.Id);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(banquetDetail.AvailableFlours), banquetDetail.AvailableFlours);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(banquetDetail.AvailableMandap), banquetDetail.AvailableMandap);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(banquetDetail.AvailableParkings), banquetDetail.AvailableParkings);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(banquetDetail.AvailableRooms), banquetDetail.AvailableRooms);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(banquetDetail.EmailId), banquetDetail.EmailId);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(banquetDetail.UpdationDate), banquetDetail.UpdationDate);
+
+                        insertCommand.ExecuteReader();
                     };
-
-                    insertCommand.Parameters.AddWithValue("@" + nameof(banquetDetail.Id), banquetDetail.Id);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(banquetDetail.AvailableFlours), banquetDetail.AvailableFlours);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(banquetDetail.AvailableMandap), banquetDetail.AvailableMandap);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(banquetDetail.AvailableParkings), banquetDetail.AvailableParkings);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(banquetDetail.AvailableRooms), banquetDetail.AvailableRooms);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(banquetDetail.EmailId), banquetDetail.EmailId);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(banquetDetail.UpdationDate), banquetDetail.UpdationDate);
-
-                    insertCommand.ExecuteReader();
 
                     db.Close();
 
@@ -83,23 +80,24 @@ namespace BookingServices.Repository
 
                     string sqlText = BanquetDetailQuery.GetBanquetDetail;
 
-                    SqliteCommand selectCommand = new SqliteCommand
-                        (sqlText, db);
-
-                    SqliteDataReader query = selectCommand.ExecuteReader();
-
-                    while (query.Read())
+                    using (SqliteCommand selectCommand = new SqliteCommand(sqlText, db))
                     {
-                        return new BanquetDetail
+                        using (SqliteDataReader query = selectCommand.ExecuteReader())
                         {
-                            Id = query.GetString(0).ToInt32(),
-                            AvailableFlours = query.GetString(1),
-                            AvailableMandap = query.GetString(2),
-                            AvailableParkings = query.GetString(3),
-                            AvailableRooms = query.GetString(4),
-                            EmailId = query.GetString(5),
-                            UpdationDate = query.GetString(6)
-                        };
+                            while (query.Read())
+                            {
+                                return new BanquetDetail
+                                {
+                                    Id = query.GetString(0).ToInt32(),
+                                    AvailableFlours = query.GetString(1),
+                                    AvailableMandap = query.GetString(2),
+                                    AvailableParkings = query.GetString(3),
+                                    AvailableRooms = query.GetString(4),
+                                    EmailId = query.GetString(5),
+                                    UpdationDate = query.GetString(6)
+                                };
+                            }
+                        }
                     }
 
                     db.Close();

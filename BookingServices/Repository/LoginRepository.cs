@@ -1,6 +1,5 @@
 ﻿using BookingServices.Repository.Interface;
 using CommonServices.Analytcis;
-using CommonServices.Enums;
 using CommonServices.Extensions;
 using CommonServices.Logger;
 using CommonServices.Model.DbModel;
@@ -28,7 +27,7 @@ namespace BookingServices.Repository
 
         public bool AddOrUpdateLoginDetail(LoginDetail loginDetail)
         {
-            string InsertOrUpdate = string.Empty;
+            string insertOrUpdate = string.Empty;
             try
             {
                 _dbpath = DataAccess.GetDbPath();
@@ -38,30 +37,26 @@ namespace BookingServices.Repository
                 if (userExist != null && userExist.Any())
                 {
                     loginDetail.NumberOfLogin = (userExist[nameof(LoginDetail.NumberOfLogin)].ToInt32() + 1).ConvertToString();
-                    InsertOrUpdate = LoginQuery.UpdateLoginDetail;
+                    insertOrUpdate = LoginQuery.UpdateLoginDetail;
                 }
                 else
                 {
-                    InsertOrUpdate = LoginQuery.InsertInLogin;
+                    insertOrUpdate = LoginQuery.InsertInLogin;
                 }
 
                 using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                 {
                     db.Open();
-
-                    SqliteCommand insertCommand = new SqliteCommand
+                    using (SqliteCommand insertCommand = new SqliteCommand(insertOrUpdate, db))
                     {
-                        Connection = db,
-                        CommandText = InsertOrUpdate
-                    };
+                        insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.MobileNo), loginDetail.MobileNo);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.EmailId), loginDetail.EmailId);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.IsRememberChecked), loginDetail.IsRememberChecked);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.NumberOfLogin), loginDetail.NumberOfLogin);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.LastLogin), loginDetail.LastLogin);
 
-                    insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.MobileNo), loginDetail.MobileNo);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.EmailId), loginDetail.EmailId);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.IsRememberChecked), loginDetail.IsRememberChecked);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.NumberOfLogin), loginDetail.NumberOfLogin);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.LastLogin), loginDetail.LastLogin);
-
-                    insertCommand.ExecuteReader();
+                        insertCommand.ExecuteReader();
+                    }
 
                     db.Close();
 
@@ -96,23 +91,23 @@ namespace BookingServices.Repository
             {
                 using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                 {
-                    db.Open();
-
                     string sqlText = LoginQuery.SelectAllFromLogin.FormatString(loginDetail.MobileNo);
 
-                    SqliteCommand selectCommand = new SqliteCommand
-                        (sqlText, db);
-
-                    SqliteDataReader query = selectCommand.ExecuteReader();
-
-                    while (query.Read())
+                    db.Open();
+                    using (SqliteCommand selectCommand = new SqliteCommand(sqlText, db))
                     {
-                        entries.Add(nameof(LoginDetail.Id), query.GetString(0));
-                        entries.Add(nameof(LoginDetail.MobileNo), query.GetString(1));
-                        entries.Add(nameof(LoginDetail.EmailId), query.GetString(2));
-                        entries.Add(nameof(LoginDetail.IsRememberChecked), query.GetString(3));
-                        entries.Add(nameof(LoginDetail.NumberOfLogin), query.GetString(4));
-                        entries.Add(nameof(LoginDetail.LastLogin), query.GetString(5));
+                        using (SqliteDataReader query = selectCommand.ExecuteReader())
+                        {
+                            while (query.Read())
+                            {
+                                entries.Add(nameof(LoginDetail.Id), query.GetString(0));
+                                entries.Add(nameof(LoginDetail.MobileNo), query.GetString(1));
+                                entries.Add(nameof(LoginDetail.EmailId), query.GetString(2));
+                                entries.Add(nameof(LoginDetail.IsRememberChecked), query.GetString(3));
+                                entries.Add(nameof(LoginDetail.NumberOfLogin), query.GetString(4));
+                                entries.Add(nameof(LoginDetail.LastLogin), query.GetString(5));
+                            }
+                        }
                     }
 
                     db.Close();
@@ -150,20 +145,23 @@ namespace BookingServices.Repository
                     {
                         db.Open();
 
-                        SqliteCommand selectCommand = new SqliteCommand(selectQuery, db);
-                        SqliteDataReader executeQuery = selectCommand.ExecuteReader();
-
-                        while (executeQuery.Read())
+                        using (SqliteCommand selectCommand = new SqliteCommand(selectQuery, db))
                         {
-                            entries.Add(nameof(UsersCred.Id), executeQuery.GetString(0));
-                            entries.Add(nameof(UsersCred.UserId), executeQuery.GetString(1));
-                            entries.Add(nameof(UsersCred.EmailId), executeQuery.GetString(2));
-                            entries.Add(nameof(UsersCred.Mobile), executeQuery.GetString(3));
-                            entries.Add(nameof(UsersCred.MobilePassword), executeQuery.GetString(4));
-                            entries.Add(nameof(UsersCred.EmailPassword), executeQuery.GetString(5));
-                            entries.Add(nameof(UsersCred.CreationDate), executeQuery.GetString(6));
-                            entries.Add(nameof(UsersCred.IsAdmin), executeQuery.GetString(7));
-                            entries.Add(nameof(UsersCred.PasswordChanged), executeQuery.GetString(8));
+                            using (SqliteDataReader executeQuery = selectCommand.ExecuteReader())
+                            {
+                                while (executeQuery.Read())
+                                {
+                                    entries.Add(nameof(UsersCred.Id), executeQuery.GetString(0));
+                                    entries.Add(nameof(UsersCred.UserId), executeQuery.GetString(1));
+                                    entries.Add(nameof(UsersCred.EmailId), executeQuery.GetString(2));
+                                    entries.Add(nameof(UsersCred.Mobile), executeQuery.GetString(3));
+                                    entries.Add(nameof(UsersCred.MobilePassword), executeQuery.GetString(4));
+                                    entries.Add(nameof(UsersCred.EmailPassword), executeQuery.GetString(5));
+                                    entries.Add(nameof(UsersCred.CreationDate), executeQuery.GetString(6));
+                                    entries.Add(nameof(UsersCred.IsAdmin), executeQuery.GetString(7));
+                                    entries.Add(nameof(UsersCred.PasswordChanged), executeQuery.GetString(8));
+                                }
+                            }
                         }
 
                         db.Close();
@@ -190,20 +188,22 @@ namespace BookingServices.Repository
                 {
                     db.Open();
 
-                    SqliteCommand selectCommand = new SqliteCommand
-                        (LoginQuery.SelectAllFromLoginInDec, db);
-
-                    SqliteDataReader query = selectCommand.ExecuteReader();
-
-                    while (query.Read())
+                    using (SqliteCommand selectCommand = new SqliteCommand
+                        (LoginQuery.SelectAllFromLoginInDec, db))
                     {
-                        entries.Add(nameof(LoginDetail.Id), query.GetString(0));
-                        entries.Add(nameof(LoginDetail.MobileNo), query.GetString(1));
-                        entries.Add(nameof(LoginDetail.IsRememberChecked), query.GetString(2));
-                        entries.Add(nameof(LoginDetail.NumberOfLogin), query.GetString(3));
-                        entries.Add(nameof(LoginDetail.LastLogin), query.GetString(4));
+                        using (SqliteDataReader query = selectCommand.ExecuteReader())
+                        {
+                            while (query.Read())
+                            {
+                                entries.Add(nameof(LoginDetail.Id), query.GetString(0));
+                                entries.Add(nameof(LoginDetail.MobileNo), query.GetString(1));
+                                entries.Add(nameof(LoginDetail.IsRememberChecked), query.GetString(2));
+                                entries.Add(nameof(LoginDetail.NumberOfLogin), query.GetString(3));
+                                entries.Add(nameof(LoginDetail.LastLogin), query.GetString(4));
 
-                        break;
+                                break;
+                            }
+                        }
                     }
 
                     db.Close();

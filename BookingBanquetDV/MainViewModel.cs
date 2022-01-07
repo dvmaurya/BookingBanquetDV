@@ -4,7 +4,7 @@ using BookingServices.Interfaces;
 using CommonServices.Analytcis;
 using CommonServices.ConstantData;
 using CommonServices.Extensions;
-using CommonServices.Model.DbModel;
+using CommonServices.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,6 +15,7 @@ using ViewModelsAndValidation;
 using ViewModelsAndValidation.Command;
 using ViewModelsAndValidation.Services;
 using ViewModelsAndValidation.ViewModels;
+using Windows.UI.Xaml.Navigation;
 
 namespace BookingBanquetDV
 {
@@ -87,6 +88,23 @@ namespace BookingBanquetDV
 
                 _isCredentialWrong = !_isCredentialWrong;
                 OnPropertyChanged(() => IsCredentialWrong);
+            }
+        }
+
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode navigationMode)
+        {
+            await base.OnNavigatedToAsync(parameter, navigationMode);
+
+            if(parameter is LoginDetail loginDetail)
+            {
+                if (loginDetail.IsRememberChecked)
+                {
+                    _userId = loginDetail.UserId;
+                    _isRememberChecked = loginDetail.IsRememberChecked;
+
+                    OnPropertyChanged(() => UserId);
+                    OnPropertyChanged(() => IsRememberChecked);
+                }
             }
         }
 

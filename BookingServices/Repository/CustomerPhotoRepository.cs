@@ -41,21 +41,19 @@ namespace BookingServices.Repository
                 {
                     db.Open();
 
-                    SqliteCommand insertCommand = new SqliteCommand
+                    using (SqliteCommand insertCommand = new SqliteCommand(insertOrUpdate, db))
                     {
-                        Connection = db,
-                        CommandText = insertOrUpdate
-                    };
+                        insertCommand.Parameters.AddWithValue("@" + nameof(CustomerPhotoDetail.Id), photoDetail.Id);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(CustomerPhotoDetail.PhotoName), photoDetail.PhotoName);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(CustomerPhotoDetail.Date), photoDetail.Date);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(CustomerPhotoDetail.FileType), photoDetail.FileType);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(CustomerPhotoDetail.Size), photoDetail.Size);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(CustomerPhotoDetail.EmailId), photoDetail.EmailId);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(CustomerPhotoDetail.BookingId), photoDetail.BookingId);
 
-                    insertCommand.Parameters.AddWithValue("@" + nameof(CustomerPhotoDetail.Id), photoDetail.Id);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(CustomerPhotoDetail.PhotoName), photoDetail.PhotoName);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(CustomerPhotoDetail.Date), photoDetail.Date);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(CustomerPhotoDetail.FileType), photoDetail.FileType);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(CustomerPhotoDetail.Size), photoDetail.Size);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(CustomerPhotoDetail.EmailId), photoDetail.EmailId);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(CustomerPhotoDetail.BookingId), photoDetail.BookingId);
+                        insertCommand.ExecuteReader();
+                    }
 
-                    insertCommand.ExecuteReader();
                     db.Close();
 
                     TraceEvents(
@@ -89,23 +87,25 @@ namespace BookingServices.Repository
                 {
                     db.Open();
 
-                    SqliteCommand selectCommand = new SqliteCommand
-                        (CustomerPhotoDetailQuery.GetActivePhoto.FormatString(bookingId), db);
-
-                    SqliteDataReader query = selectCommand.ExecuteReader();
-
-                    while (query.Read())
+                    using (SqliteCommand selectCommand = new SqliteCommand
+                        (CustomerPhotoDetailQuery.GetActivePhoto.FormatString(bookingId), db))
                     {
-                        photoDetail = new CustomerPhotoDetail
+                        using (SqliteDataReader query = selectCommand.ExecuteReader())
                         {
-                            Id = query.GetInt32(0),
-                            PhotoName = query.GetString(1),
-                            Date = query.GetString(2),
-                            FileType = query.GetString(3),
-                            Size = query.GetString(4).UlongParse(),
-                            EmailId = query.GetString(5),
-                            BookingId = query.GetInt32(6)
-                        };
+                            while (query.Read())
+                            {
+                                photoDetail = new CustomerPhotoDetail
+                                {
+                                    Id = query.GetInt32(0),
+                                    PhotoName = query.GetString(1),
+                                    Date = query.GetString(2),
+                                    FileType = query.GetString(3),
+                                    Size = query.GetString(4).UlongParse(),
+                                    EmailId = query.GetString(5),
+                                    BookingId = query.GetInt32(6)
+                                };
+                            }
+                        }
                     }
 
                     db.Close();
@@ -131,13 +131,12 @@ namespace BookingServices.Repository
                     using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                     {
                         db.Open();
-
                         string sqlText = CustomerPhotoDetailQuery.DeleteCustomerPhoto.FormatString(photoDetail.BookingId);
 
-                        SqliteCommand selectCommand = new SqliteCommand
-                            (sqlText, db);
-
-                        SqliteDataReader query = selectCommand.ExecuteReader();
+                        using (SqliteCommand selectCommand = new SqliteCommand(sqlText, db))
+                        {
+                            SqliteDataReader query = selectCommand.ExecuteReader();
+                        }
 
                         db.Close();
                     }

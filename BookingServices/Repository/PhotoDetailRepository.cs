@@ -41,23 +41,20 @@ namespace BookingServices.Repository
                 using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                 {
                     db.Open();
-
-                    SqliteCommand insertCommand = new SqliteCommand
+                    using (SqliteCommand insertCommand = new SqliteCommand(insertOrUpdate, db))
                     {
-                        Connection = db,
-                        CommandText = insertOrUpdate
-                    };
+                        insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.Id), photoDetail.Id);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.PhotoName), photoDetail.PhotoName);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.Date), photoDetail.Date);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.FileType), photoDetail.FileType);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.Size), photoDetail.Size);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.EmailId), photoDetail.EmailId);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.IsChecked), photoDetail.IsChecked);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.IsPhotoRemoved), photoDetail.IsPhotoRemoved);
 
-                    insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.Id), photoDetail.Id);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.PhotoName), photoDetail.PhotoName);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.Date), photoDetail.Date);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.FileType), photoDetail.FileType);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.Size), photoDetail.Size);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.EmailId), photoDetail.EmailId);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.IsChecked), photoDetail.IsChecked);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(PhotoDetails.IsPhotoRemoved), photoDetail.IsPhotoRemoved);
+                        insertCommand.ExecuteReader();
+                    }
 
-                    insertCommand.ExecuteReader();
                     db.Close();
 
                     TraceEvents(
@@ -89,27 +86,28 @@ namespace BookingServices.Repository
                 using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                 {
                     db.Open();
-
-                    SqliteCommand selectCommand = new SqliteCommand
-                        (UserPhotoDetailQuery.GetPreviousPhoto.FormatString(emailId), db);
-
-                    SqliteDataReader query = selectCommand.ExecuteReader();
-
-                    while (query.Read())
+                    using (SqliteCommand selectCommand = new SqliteCommand
+                        (UserPhotoDetailQuery.GetPreviousPhoto.FormatString(emailId), db))
                     {
-                        photoDetail = new PhotoDetails
+                        using (SqliteDataReader query = selectCommand.ExecuteReader())
                         {
-                            Id = query.GetString(0).ToInt32(),
-                            PhotoName = query.GetString(1),
-                            Date = query.GetString(2),
-                            FileType = query.GetString(3),
-                            Size = query.GetString(4).UlongParse(),
-                            EmailId = query.GetString(5),
-                            IsChecked = query.GetBoolean(6),
-                            IsPhotoRemoved = query.GetBoolean(7)
-                        };
+                            while (query.Read())
+                            {
+                                photoDetail = new PhotoDetails
+                                {
+                                    Id = query.GetString(0).ToInt32(),
+                                    PhotoName = query.GetString(1),
+                                    Date = query.GetString(2),
+                                    FileType = query.GetString(3),
+                                    Size = query.GetString(4).UlongParse(),
+                                    EmailId = query.GetString(5),
+                                    IsChecked = query.GetBoolean(6),
+                                    IsPhotoRemoved = query.GetBoolean(7)
+                                };
 
-                        photoDetails.Add(photoDetail);
+                                photoDetails.Add(photoDetail);
+                            }
+                        }
                     }
 
                     db.Close();
@@ -134,25 +132,26 @@ namespace BookingServices.Repository
                 using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                 {
                     db.Open();
-
-                    SqliteCommand selectCommand = new SqliteCommand
-                        (UserPhotoDetailQuery.GetActivePhoto.FormatString(emailId), db);
-
-                    SqliteDataReader query = selectCommand.ExecuteReader();
-
-                    while (query.Read())
+                    using (SqliteCommand selectCommand = new SqliteCommand
+                        (UserPhotoDetailQuery.GetActivePhoto.FormatString(emailId), db))
                     {
-                        photoDetail = new PhotoDetails
+                        using (SqliteDataReader query = selectCommand.ExecuteReader())
                         {
-                            Id = query.GetString(0).ToInt32(),
-                            PhotoName = query.GetString(1),
-                            Date = query.GetString(2),
-                            FileType = query.GetString(3),
-                            Size = query.GetString(4).UlongParse(),
-                            EmailId = query.GetString(5),
-                            IsChecked = query.GetBoolean(6),
-                            IsPhotoRemoved = query.GetBoolean(7)
-                        };
+                            while (query.Read())
+                            {
+                                photoDetail = new PhotoDetails
+                                {
+                                    Id = query.GetString(0).ToInt32(),
+                                    PhotoName = query.GetString(1),
+                                    Date = query.GetString(2),
+                                    FileType = query.GetString(3),
+                                    Size = query.GetString(4).UlongParse(),
+                                    EmailId = query.GetString(5),
+                                    IsChecked = query.GetBoolean(6),
+                                    IsPhotoRemoved = query.GetBoolean(7)
+                                };
+                            }
+                        }
                     }
 
                     db.Close();

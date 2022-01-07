@@ -27,7 +27,7 @@ namespace BookingBanquetDV.Validation
                     {
                         if (newBooking.BookingDetails.Id != 0)
                         {
-                            if(newBooking.MasterBookingDetailList.FirstOrDefault(
+                            if(newBooking.MasterBookingDetailList.Where(
                                 booking =>
                                 booking.Id != newBooking.BookingDetails?.Id &&
                                 booking.BookingDate.FormatStringEquals(newBooking.BookingDetails.BookingDate)) != null)

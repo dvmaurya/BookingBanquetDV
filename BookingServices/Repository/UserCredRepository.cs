@@ -41,23 +41,21 @@ namespace BookingServices.Repository
                 {
                     db.Open();
 
-                    SqliteCommand insertCommand = new SqliteCommand
+                    using (SqliteCommand insertCommand = new SqliteCommand(insertOrUpdate, db))
                     {
-                        Connection = db,
-                        CommandText = insertOrUpdate
-                    };
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.UserId), usersCred.UserId);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.FullName), usersCred.FullName);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.EmailId), usersCred.EmailId);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.Mobile), usersCred.Mobile);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.MobilePassword), usersCred.MobilePassword);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.EmailPassword), usersCred.EmailPassword);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.CreationDate), usersCred.CreationDate);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.IsAdmin), usersCred.IsAdmin);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.PasswordChanged), usersCred.PasswordChanged);
 
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.UserId), usersCred.UserId);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.FullName), usersCred.FullName);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.EmailId), usersCred.EmailId);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.Mobile), usersCred.Mobile);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.MobilePassword), usersCred.MobilePassword);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.EmailPassword), usersCred.EmailPassword);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.CreationDate), usersCred.CreationDate);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.IsAdmin), usersCred.IsAdmin);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.PasswordChanged), usersCred.PasswordChanged);
+                        insertCommand.ExecuteReader();
+                    }
 
-                    insertCommand.ExecuteReader();
                     db.Close();
 
                     TraceEvents(
@@ -97,15 +95,16 @@ namespace BookingServices.Repository
 
                     sqlText = SignupQuery.SelectUserIdFromUser;
 
-                    SqliteCommand selectCommand = new SqliteCommand
-                        (sqlText, db);
-
-                    SqliteDataReader query = selectCommand.ExecuteReader();
-
-                    while (query.Read())
+                    using (SqliteCommand selectCommand = new SqliteCommand(sqlText, db))
                     {
-                        entries.Add(query.GetString(0));
-                        entries.Add(query.GetString(1));
+                        using (SqliteDataReader query = selectCommand.ExecuteReader())
+                        {
+                            while (query.Read())
+                            {
+                                entries.Add(query.GetString(0));
+                                entries.Add(query.GetString(1));
+                            }
+                        }
                     }
 
                     db.Close();
@@ -136,20 +135,21 @@ namespace BookingServices.Repository
                     using (SqliteConnection db = new SqliteConnection(_fileName.FormatString(_dbpath)))
                     {
                         db.Open();
-
-                        SqliteCommand selectCommand = new SqliteCommand(queryString, db);
-
-                        SqliteDataReader query = selectCommand.ExecuteReader();
-
-                        while (query.Read())
+                        using (SqliteCommand selectCommand = new SqliteCommand(queryString, db))
                         {
-                            entries.Add(UsersEnum.Id.ConvertToString(), query.GetString(0));
-                            entries.Add(UsersEnum.UserId.ConvertToString(), query.GetString(1));
-                            entries.Add(UsersEnum.EmailId.ConvertToString(), query.GetString(2));
-                            entries.Add(UsersEnum.Mobile.ConvertToString(), query.GetString(3));
-                            entries.Add(UsersEnum.CreationDate.ConvertToString(), query.GetString(5));
-                            entries.Add(UsersEnum.IsAdmin.ConvertToString(), query.GetString(6));
-                            entries.Add(UsersEnum.PasswordChanged.ConvertToString(), query.GetString(7));
+                            using (SqliteDataReader query = selectCommand.ExecuteReader())
+                            {
+                                while (query.Read())
+                                {
+                                    entries.Add(UsersEnum.Id.ConvertToString(), query.GetString(0));
+                                    entries.Add(UsersEnum.UserId.ConvertToString(), query.GetString(1));
+                                    entries.Add(UsersEnum.EmailId.ConvertToString(), query.GetString(2));
+                                    entries.Add(UsersEnum.Mobile.ConvertToString(), query.GetString(3));
+                                    entries.Add(UsersEnum.CreationDate.ConvertToString(), query.GetString(5));
+                                    entries.Add(UsersEnum.IsAdmin.ConvertToString(), query.GetString(6));
+                                    entries.Add(UsersEnum.PasswordChanged.ConvertToString(), query.GetString(7));
+                                }
+                            }
                         }
 
                         db.Close();
@@ -190,19 +190,21 @@ namespace BookingServices.Repository
                     {
                         db.Open();
 
-                        SqliteCommand selectCommand = new SqliteCommand
+                        using (SqliteCommand selectCommand = new SqliteCommand
                             (SignupQuery.GetUserDetailByUserId.
-                            FormatString(emailOrMobile, userId), db);
-
-                        SqliteDataReader query = selectCommand.ExecuteReader();
-
-                        while (query.Read())
+                            FormatString(emailOrMobile, userId), db))
                         {
-                            users.UserId = query.GetString(0);
-                            users.FullName = query.GetString(1);
-                            users.EmailId = query.GetString(2);
-                            users.Mobile = query.GetString(3);
-                            users.CreationDate = query.GetString(4);
+                            using (SqliteDataReader query = selectCommand.ExecuteReader())
+                            {
+                                while (query.Read())
+                                {
+                                    users.UserId = query.GetString(0);
+                                    users.FullName = query.GetString(1);
+                                    users.EmailId = query.GetString(2);
+                                    users.Mobile = query.GetString(3);
+                                    users.CreationDate = query.GetString(4);
+                                }
+                            }
                         }
 
                         db.Close();

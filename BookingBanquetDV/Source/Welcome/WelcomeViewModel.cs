@@ -202,8 +202,8 @@ namespace BookingBanquetDV.Source.Welcome
                 ApplicationConstants.SomethingWentWrong;
 
             await _messageDialogService.ShowMessageDialogAsync(
-                    string.Empty,
-                    emailMessage);
+                string.Empty,
+                emailMessage);
         }
 
         private async Task<bool> SendBookingMailAsync(BookingDetails bookingDetail, CustomerPhotoDetail customerPhoto)
@@ -351,7 +351,7 @@ namespace BookingBanquetDV.Source.Welcome
                         $"{AnalyticConstants.Clicked} " +
                         $"{AnalyticConstants.Logout} ");
 
-            _navigationService.Navigate(typeof(MainPage));
+            _navigationService.Navigate(typeof(MainPage), _loginDetail);
         }
 
         private async Task OnViewPhotoClickAsync(object parameter)

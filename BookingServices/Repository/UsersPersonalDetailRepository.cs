@@ -40,22 +40,20 @@ namespace BookingServices.Repository
                 {
                     db.Open();
 
-                    SqliteCommand insertCommand = new SqliteCommand
+                    using (SqliteCommand insertCommand = new SqliteCommand(insertOrUpdate, db))
                     {
-                        Connection = db,
-                        CommandText = insertOrUpdate
-                    };
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.FullName), usersPersonalDetail.FullName);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.EmailId), usersPersonalDetail.EmailId);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.Mobile), usersPersonalDetail.Mobile);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.Address), usersPersonalDetail.Address);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.Country), usersPersonalDetail.Country);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.State), usersPersonalDetail.State);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.City), usersPersonalDetail.City);
+                        insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.CreationDate), usersPersonalDetail.CreationDate);
 
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.FullName), usersPersonalDetail.FullName);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.EmailId), usersPersonalDetail.EmailId);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.Mobile), usersPersonalDetail.Mobile);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.Address), usersPersonalDetail.Address);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.Country), usersPersonalDetail.Country);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.State), usersPersonalDetail.State);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.City), usersPersonalDetail.City);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersPersonalDetail.CreationDate), usersPersonalDetail.CreationDate);
+                        insertCommand.ExecuteReader();
+                    }
 
-                    insertCommand.ExecuteReader();
                     db.Close();
 
                     TraceEvents(
@@ -102,35 +100,35 @@ namespace BookingServices.Repository
                     {
                         db.Open();
 
-                        SqliteCommand selectCommand = new SqliteCommand
-                        (
+                        using (SqliteCommand selectCommand = new SqliteCommand(
                             UsersPersonalDetailQuery.GetUsersPersonalDetailByUserId.FormatString(emailOrMobile, userId),
-                            db
-                        );
-
-                        SqliteDataReader query = selectCommand.ExecuteReader();
-
-                        while (query.Read())
+                            db))
                         {
-                            usersPersonalDetail = new UsersPersonalDetail
+                            using (SqliteDataReader query = selectCommand.ExecuteReader())
                             {
-                                Id = query.GetString(0).ToInt32(),
-                                FullName = query.GetString(1),
-                                EmailId = query.GetString(2),
-                                Mobile = query.GetString(3),
-                                Address = query.GetString(4),
-                                Country = query.GetString(5),
-                                State = query.GetString(6),
-                                City = query.GetString(7),
-                                CreationDate = query.GetString(8)
-                            };
+                                while (query.Read())
+                                {
+                                    usersPersonalDetail = new UsersPersonalDetail
+                                    {
+                                        Id = query.GetString(0).ToInt32(),
+                                        FullName = query.GetString(1),
+                                        EmailId = query.GetString(2),
+                                        Mobile = query.GetString(3),
+                                        Address = query.GetString(4),
+                                        Country = query.GetString(5),
+                                        State = query.GetString(6),
+                                        City = query.GetString(7),
+                                        CreationDate = query.GetString(8)
+                                    };
+                                }
+                            }
                         }
 
                         db.Close();
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 FileLogger.Logger.Info("User personal detail Exception: ".ConcatString(ex.Message));
                 TraceExceptions("Get user personal detail from database exception: ".ConcatString(ex.Message));
