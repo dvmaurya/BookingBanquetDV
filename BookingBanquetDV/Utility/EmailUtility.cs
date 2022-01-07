@@ -118,8 +118,8 @@ namespace BookingBanquetDV.Utility
                     "\r\tTotal room: ", emailParameter.BookingDetails.TotalRooms,
                     "\r\tTotal flour: ", emailParameter.BookingDetails.TotalFlours,
                     "\r\tTotal amount: ", emailParameter.BookingDetails.TotalAmount,
-                    "\r\tAdvance given by you: ", emailParameter.BookingDetails.Advanced,
-                    "\r\tRemaining balance: ", emailParameter.BookingDetails.Balance,
+                    "\r\tAdvance amount: ", emailParameter.BookingDetails.Advanced,
+                    "\r\tBalance amount: ", emailParameter.BookingDetails.Balance,
                     "\r\tConfirmation: ", emailParameter.BookingDetails.Confirmation,
                     "\r\rThanks and regards\nAdmin")
                 };
