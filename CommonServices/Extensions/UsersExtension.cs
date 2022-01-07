@@ -14,7 +14,8 @@ namespace CommonServices.Extensions
                 Mobile = usersCred.Mobile,
                 CreationDate = usersCred.CreationDate,
                 IsAdmin = usersCred.IsAdmin,
-                Password = usersCred.Password,
+                MobilePassword = Utilities.Utilities.GetSha1Hashed(usersCred.Mobile + "|" + usersCred.MobilePassword),
+                EmailPassword = Utilities.Utilities.GetSha1Hashed(usersCred.EmailId + "|" + usersCred.MobilePassword),
                 PasswordChanged = usersCred.PasswordChanged,
                 UserId = usersCred.UserId
             };
@@ -31,7 +32,8 @@ namespace CommonServices.Extensions
                 Mobile = dbUsersCred.Mobile,
                 CreationDate = dbUsersCred.CreationDate,
                 IsAdmin = dbUsersCred.IsAdmin,
-                Password = dbUsersCred.Password,
+                MobilePassword = dbUsersCred.MobilePassword,
+                EmailPassword = dbUsersCred.EmailPassword,
                 PasswordChanged = dbUsersCred.PasswordChanged,
                 UserId = dbUsersCred.UserId
             };

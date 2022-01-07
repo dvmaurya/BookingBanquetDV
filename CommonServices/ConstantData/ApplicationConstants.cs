@@ -74,6 +74,7 @@
         public const string City = "City";
         public const string RemovePhotoWarning = "Are you sure that to remove photo?";
         public const string CurrentUserEmailId = "CurrentUserEmailId";
+        public const string CurrentUserMobileNo = "CurrentUserMobileNo";
         public const string PhotoNotAvailable = "Photo is not selected. You can capture new photo {0}. Do you want to preceed without photo ?";
         public const string ChooseFromList = " or choose from previous photo";
         public const string Note = "Note";

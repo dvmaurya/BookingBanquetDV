@@ -13,7 +13,7 @@ namespace CommonServices.Extensions
                 NumberOfLogin = loginDetail.NumberOfLogin,
                 IsRememberChecked = loginDetail.IsRememberChecked,
                 LastLogin = loginDetail.LastLogin,
-                UserId = loginDetail.UserId,
+                MobileNo = loginDetail.MobileNo,
                 EmailId = loginDetail.EmailId
             };
 
@@ -28,7 +28,7 @@ namespace CommonServices.Extensions
                 NumberOfLogin = dbLoginDetail.NumberOfLogin,
                 IsRememberChecked = dbLoginDetail.IsRememberChecked,
                 LastLogin = dbLoginDetail.LastLogin,
-                UserId = dbLoginDetail.UserId,
+                MobileNo = dbLoginDetail.MobileNo,
                 EmailId = dbLoginDetail.EmailId
             };
         }

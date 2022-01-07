@@ -462,7 +462,7 @@ namespace BookingBanquetDV.Source.Welcome
             _bookingDetails.Advanced = _advanced;
             _bookingDetails.Balance = _balance;
             _bookingDetails.BookedBy = _bookedBy;
-            _bookingDetails.UserId = _loginDetail?.UserId;
+            _bookingDetails.UserId = _loginDetail?.MobileNo;
             _bookingDetails.BookingDate = _bookingDate.ConvertToString(ApplicationConstants.DatabaseDateFormat);
             _bookingDetails.Confirmation = _selectedConfirmation ?? "Not decided";
             _bookingDetails.CreationDate = _creationDate.ConvertToString(ApplicationConstants.DatabaseDateFormat);
@@ -492,8 +492,6 @@ namespace BookingBanquetDV.Source.Welcome
         {
             if (_bookingDetails != null)
             {
-                //bool isEmailSent = await SendingEmailAsync(_bookingDetails, _customerPhoto);
-                //_bookingDetails.IsEmailSent = isEmailSent;
                 _bookingDataProvider.AddOrUpdateBooking(_bookingDetails);
 
                 if (_customerPhoto != null)
@@ -512,34 +510,6 @@ namespace BookingBanquetDV.Source.Welcome
                         await _customerPhotoDataProvider.DeleteCustomerPhotoAsync(deletePhoto);
                 }
             }
-        }
-
-        private async Task<bool> SendingEmailAsync(BookingDetails bookingDetail, CustomerPhotoDetail customerPhoto)
-        {
-            bool isEmailSent = false;
-            App.ShowLoadingIndicator(ApplicationConstants.SendingEmail);
-            isEmailSent = await SendBookingMailAsync(bookingDetail, customerPhoto);
-            App.HideLoadingIndicator();
-
-            return isEmailSent;
-        }
-
-        private async Task<bool> SendBookingMailAsync(BookingDetails bookingDetail, CustomerPhotoDetail customerPhoto)
-        {
-            if (bookingDetail != null)
-            {
-                EmailParameter emailParameter = new EmailParameter
-                {
-                    BookingDetails = bookingDetail,
-                    EmailAddress = bookingDetail.EmailId,
-                    UserName = bookingDetail.CustomerName,
-                    CustomerPhoto = customerPhoto
-                };
-
-                return await EmailUtility.SendEmailsAsync(emailParameter, _analyticsManager);
-            }
-
-            return false;
         }
 
         private void GetConfirmationList()

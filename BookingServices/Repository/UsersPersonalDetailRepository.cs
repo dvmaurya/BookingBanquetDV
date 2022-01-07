@@ -76,18 +76,7 @@ namespace BookingServices.Repository
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("User personal detail Exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.User} " +
-                            $"{AnalyticConstants.Personal} " +
-                            $"{AnalyticConstants.Detail} ",
-                    label: $"{AnalyticConstants.User} " +
-                            $"{AnalyticConstants.Personal} " +
-                            $"{AnalyticConstants.Detail} " +
-                            $"{AnalyticConstants.Added} " +
-                            $"in {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message} ");
+                TraceExceptions("User personal detail exception: ".ConcatString(ex.Message));
 
                 return false;
             }
@@ -143,19 +132,8 @@ namespace BookingServices.Repository
             }
             catch(Exception ex)
             {
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.User} " +
-                            $"{AnalyticConstants.Personal} " +
-                            $"{AnalyticConstants.Detail} ",
-                    label: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.User} " +
-                            $"{AnalyticConstants.Personal} " +
-                            $"{AnalyticConstants.Detail} " +
-                            $"from {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message} ");
+                FileLogger.Logger.Info("User personal detail Exception: ".ConcatString(ex.Message));
+                TraceExceptions("Get user personal detail from database exception: ".ConcatString(ex.Message));
             }
 
             return usersPersonalDetail;

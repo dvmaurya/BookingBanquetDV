@@ -84,16 +84,8 @@ namespace BookingServices.Repository
             }
             catch (Exception ex)
             {
-                FileLogger.Logger.Info("Add Booking Exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Banquet} " +
-                            $"{AnalyticConstants.Booking} ",
-                    label: $"{AnalyticConstants.Add} " +
-                            $"{AnalyticConstants.Banquet} " +
-                            $"{AnalyticConstants.Booking} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                FileLogger.Logger.Info("Add booking exception: ".ConcatString(ex.Message));
+                TraceExceptions("Add booking exception: ".ConcatString(ex.Message));
             }
         }
 
@@ -150,15 +142,7 @@ namespace BookingServices.Repository
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("Get booking detail from database Exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.Booking} ",
-                    label: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.Booking} " +
-                            $"from {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                TraceExceptions("Get booking detail from database Exception: ".ConcatString(ex.Message));
             }
 
             return bookingDetails;
@@ -187,15 +171,7 @@ namespace BookingServices.Repository
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("Booking delete exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Booking} " +
-                            $"{AnalyticConstants.Deleted} ",
-                    label: $"{AnalyticConstants.Booking} " +
-                            $"{AnalyticConstants.Deleted} " +
-                            $"from {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                TraceExceptions("Banquet delete exception: ".ConcatString(ex.Message));
             }
         }
     }

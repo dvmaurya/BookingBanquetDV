@@ -272,7 +272,7 @@ namespace BookingBanquetDV.Source.Register
                 {
                     EmailId = _emailId,
                     Mobile = _mobileNo,
-                    Password = _password,
+                    MobilePassword = _password,
                     UserId = _emailId,
                     CreationDate = DateTime.Now.ConvertToString(
                         ApplicationConstants.DatabaseDateTimeFormat),

@@ -66,15 +66,8 @@ namespace BookingServices.Repository
             }
             catch (Exception ex)
             {
-                FileLogger.Logger.Info("Banquet add Exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Banquet} " +
-                            $"{AnalyticConstants.Config} ",
-                    label: $"{AnalyticConstants.Banquet} " +
-                            $"{AnalyticConstants.Config} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                FileLogger.Logger.Info("Banquet add exception: ".ConcatString(ex.Message));
+                TraceExceptions("Banquet add exception: ".ConcatString(ex.Message));
             }
         }
 
@@ -115,16 +108,7 @@ namespace BookingServices.Repository
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("Get banquet configuration Exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.Banquet} " +
-                            $"{AnalyticConstants.Config} ", 
-                    label: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.Banquet} " +
-                            $"{AnalyticConstants.Config} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                TraceExceptions("Get banquet configuration add exception: ".ConcatString(ex.Message));
             }
 
             return null;

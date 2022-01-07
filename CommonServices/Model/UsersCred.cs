@@ -16,8 +16,11 @@ namespace CommonServices.Model
         [JsonProperty("mobile")]
         public string Mobile { get; set; }
 
-        [JsonProperty("password")]
-        public string Password { get; set; }
+        [JsonProperty("mobilePassword")]
+        public string MobilePassword { get; set; }
+
+        [JsonProperty("emailPassword")]
+        public string EmailPassword { get; set; }
 
         [JsonProperty("creationDate")]
         public string CreationDate { get; set; }

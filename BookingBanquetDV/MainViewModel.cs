@@ -20,8 +20,8 @@ namespace BookingBanquetDV
 {
     public class MainViewModel : ValidationViewModelBase, IMainViewModel
     {
-        private string _userId = "8318412422";
-        private string _password = "123";
+        private string _userId;
+        private string _password;
         private bool _isRememberChecked;
         private bool _isCredentialWrong;
         private readonly ICommand _loginCommand;
@@ -51,16 +51,16 @@ namespace BookingBanquetDV
 
         public void GetPreviousLoginDetails()
         {
-            IDictionary<string, string> loginDetail = _offlineDatabaseProvider.GetPreviousLoginDetail();
+            IDictionary<string, string> lastLoginDetail = _offlineDatabaseProvider.GetPreviousLoginDetail();
 
-            if(loginDetail != null && loginDetail.Any())
+            if(lastLoginDetail != null && lastLoginDetail.Any())
             {
                 _isRememberChecked = 
-                    loginDetail[nameof(LoginDetail.IsRememberChecked)].ToInt32() == 1
+                    lastLoginDetail[nameof(LoginDetail.IsRememberChecked)].ToInt32() == 1
                     ? true : false;
 
                 if(_isRememberChecked)
-                    _userId = loginDetail[nameof(LoginDetail.UserId)];
+                    _userId = lastLoginDetail[nameof(LoginDetail.UserId)];
 
                 OnPropertyChanged(() => UserId);
                 OnPropertyChanged(() => IsRememberChecked);

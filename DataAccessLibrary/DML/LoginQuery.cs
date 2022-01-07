@@ -8,7 +8,7 @@ namespace DataAccessLibrary.DML
             "CREATE TABLE IF NOT " +
             "EXISTS " + nameof(LoginDetail) +
             " ( " + nameof(LoginDetail.Id) + " INTEGER PRIMARY KEY, " +
-            " " + nameof(LoginDetail.UserId) + " NVARCHAR(2048) NUll," +
+            " " + nameof(LoginDetail.MobileNo) + " NVARCHAR(2048) NUll," +
             " " + nameof(LoginDetail.EmailId) + " NVARCHAR(2048) NUll," +
             " " + nameof(LoginDetail.IsRememberChecked) + " NVARCHAR(2048) NUll," +
             " " + nameof(LoginDetail.NumberOfLogin) + " NVARCHAR(2048) NUll," +
@@ -17,17 +17,18 @@ namespace DataAccessLibrary.DML
         public const string UpdateLoginDetail =
             "UPDATE " +
             nameof(LoginDetail) + " SET " +
-            nameof(LoginDetail.UserId) + " = @" + nameof(LoginDetail.UserId) + ", " +
-            nameof(LoginDetail.EmailId) + " = @" + nameof(LoginDetail.UserId) + ", " +
+            nameof(LoginDetail.MobileNo) + " = @" + nameof(LoginDetail.MobileNo) + ", " +
+            nameof(LoginDetail.EmailId) + " = @" + nameof(LoginDetail.MobileNo) + ", " +
             nameof(LoginDetail.IsRememberChecked) + " = @" + nameof(LoginDetail.IsRememberChecked) + ", " +
             nameof(LoginDetail.NumberOfLogin) + " = @" + nameof(LoginDetail.NumberOfLogin) + ", " +
             nameof(LoginDetail.LastLogin) + " = @" + nameof(LoginDetail.LastLogin) + " Where " +
-            nameof(LoginDetail.UserId) + " = @" + nameof(LoginDetail.UserId);
+            nameof(LoginDetail.MobileNo) + " = @" + nameof(LoginDetail.MobileNo) + " OR "+
+            nameof(LoginDetail.EmailId) + " = @" + nameof(LoginDetail.EmailId);
 
         public const string InsertInLogin =
             "INSERT INTO " + nameof(LoginDetail) + " VALUES (" +
             "NULL, " +
-            "@" + nameof(LoginDetail.UserId) + "," +
+            "@" + nameof(LoginDetail.MobileNo) + "," +
             "@" + nameof(LoginDetail.EmailId) + "," +
             "@" + nameof(LoginDetail.IsRememberChecked) + "," +
             "@" + nameof(LoginDetail.NumberOfLogin) + "," +
@@ -36,7 +37,7 @@ namespace DataAccessLibrary.DML
         public const string SelectAllFromLogin =
             "SELECT * from " +
             nameof(LoginDetail) + " Where " +
-            nameof(LoginDetail.UserId) + " = '{0}'";
+            nameof(LoginDetail.MobileNo) + " = '{0}'";
 
         public const string SelectAllFromLoginInDec =
             "SELECT * from " +

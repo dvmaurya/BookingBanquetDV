@@ -1,4 +1,6 @@
-﻿using CommonServices.Extensions;
+﻿using CommonServices.ConstantData;
+using CommonServices.Extensions;
+using CommonServices.Utilities;
 using GoogleAnalytics;
 using System;
 using System.Collections.Generic;
@@ -19,12 +21,15 @@ namespace CommonServices.Analytcis
         private const string _systemDeviceModel = "DeviceModel";
         private readonly Tracker _tracker;
         private static readonly IAnalyticsManager _analyticsManager = new AnalyticsManager();
+        private string _mobileNo;
+        private string _emailId;
 
         private AnalyticsManager()
         {
             _tracker = GoogleAnalytics.AnalyticsManager.Current.CreateTracker(_analyticsId);
             GoogleAnalytics.AnalyticsManager.Current.AutoAppLifetimeMonitoring = true;
             GoogleAnalytics.AnalyticsManager.Current.AutoTrackNetworkConnectivity = true;
+            ResetEmailAndMobile();
 
             Dictionary<string, string> deviceInfo = GetDeviceInfo();
 
@@ -61,24 +66,37 @@ namespace CommonServices.Analytcis
                 HitBuilder.CreateCustomEvent(
                     analyticsEvent,
                     action,
-                    Labels(action))
-                    .Build());
+                    Labels(action)).
+                    SetCustomDimension(AnalyticsCustomDimension.EmailId.ToInt32(), _emailId).
+                    SetCustomDimension(AnalyticsCustomDimension.MobileNo.ToInt32(), _mobileNo).
+                    Build());
 
         }
 
         private string Labels(string message)
         {
+            GetLocalSettingValues();
+
             string networkStatus = Utilities.Utilities.IsInternetConnected() ? "Online" : "Offline";
 
-            return $"{AnalyticConstants.NetworkStatus}: {networkStatus} " +
+            return (!string.IsNullOrEmpty(_mobileNo) ? $"{AnalyticConstants.MobileNo}: {_mobileNo} | " : string.Empty) +
+                    $"{AnalyticConstants.NetworkStatus}: {networkStatus} | " +
                     $"{message}";
         }
 
         public void TraceScreenView(string screenName)
         {
+            if (AnalyticConstants.LoginScreen.FormatStringEquals(screenName))
+                ResetEmailAndMobile();
+
+            GetLocalSettingValues();
+
             if (!string.IsNullOrEmpty(screenName))
             {
-                _tracker.Send(HitBuilder.CreateScreenView(screenName).Build());
+                _tracker.Send(HitBuilder.CreateScreenView(screenName).
+                    SetCustomDimension(AnalyticsCustomDimension.EmailId.ToInt32(), _emailId).
+                    SetCustomDimension(AnalyticsCustomDimension.MobileNo.ToInt32(), _mobileNo).
+                    Build());
             }
         }
 
@@ -123,11 +141,16 @@ namespace CommonServices.Analytcis
                 HitBuilder.CreateCustomEvent(
                     analyticsEvent,
                     action,
-                    Labels(label)).Build());
+                    Labels(label)).
+                    SetCustomDimension(AnalyticsCustomDimension.EmailId.ToInt32(), _emailId).
+                    SetCustomDimension(AnalyticsCustomDimension.MobileNo.ToInt32(), _mobileNo).
+                    Build());
         }
 
         public void TraceExceptions(string description)
         {
+            GetLocalSettingValues();
+
             Dictionary<string, string> deviceInfo = GetDeviceInfo();
             _tracker.Send(
                 HitBuilder.CreateException(
@@ -137,7 +160,25 @@ namespace CommonServices.Analytcis
                     $"{deviceInfo[_systemOSBuildVersion]} + " +
                     $"{deviceInfo[_systemDeviceModel]} | " +
                     $"{description}",
-                true).Build());
+                true).
+                SetCustomDimension(AnalyticsCustomDimension.EmailId.ToInt32(), _emailId).
+                SetCustomDimension(AnalyticsCustomDimension.MobileNo.ToInt32(), _mobileNo).
+                Build());
+        }
+
+        public void GetLocalSettingValues()
+        {
+            string mobileNo = Helper.GetLocalSettingsValue<string>(ApplicationConstants.CurrentUserMobileNo);
+            _mobileNo = !string.IsNullOrEmpty(mobileNo) ? mobileNo : string.Empty;
+
+            string emailId = Helper.GetLocalSettingsValue<string>(ApplicationConstants.CurrentUserEmailId);
+            _emailId = !string.IsNullOrEmpty(mobileNo) ? emailId : string.Empty;
+        }
+
+        private void ResetEmailAndMobile()
+        {
+            Helper.SetLocalSetting(ApplicationConstants.CurrentUserEmailId, string.Empty);
+            Helper.SetLocalSetting(ApplicationConstants.CurrentUserMobileNo, string.Empty);
         }
     }
 }

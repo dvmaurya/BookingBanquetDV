@@ -131,6 +131,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Analytcis\AnalyticConstants.cs" />
+    <Compile Include="Analytcis\AnalyticsCustomDimension.cs" />
     <Compile Include="Analytcis\AnalyticsManager.cs" />
     <Compile Include="Analytcis\IAnalyticsManager.cs" />
     <Compile Include="ConstantData\ApplicationConstants.cs" />

@@ -363,10 +363,10 @@ namespace BookingBanquetDV.Source.Welcome.Controls
 
             LoginDetail loginDetail = new LoginDetail
             {
-                UserId = _usersPersonalDetail.Mobile,
+                MobileNo = _usersPersonalDetail.Mobile,
                 EmailId = _usersPersonalDetail.EmailId
-            }
-            ;
+            };
+
             _navigationService.Navigate(typeof(WelcomePage), loginDetail);
         }
 

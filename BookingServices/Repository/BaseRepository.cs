@@ -22,6 +22,11 @@ namespace BookingServices.Repository
             _analyticsManager.TraceEvents(analyticsEvent, action, label);
         }
 
+        protected void TraceExceptions(string label)
+        {
+            _analyticsManager.TraceExceptions(label);
+        }
+
         protected static string FormatAdditionalInfo(string caption, string value)
         {
             return

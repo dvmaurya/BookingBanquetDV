@@ -77,7 +77,7 @@ namespace BookingBanquetDV.Source.Recover
                     EmailId = _userDetails[UsersEnum.EmailId.ConvertToString()],
                     UserId = _userDetails[UsersEnum.UserId.ConvertToString()],
                     Mobile = _userDetails[UsersEnum.Mobile.ConvertToString()],
-                    Password = _password,
+                    MobilePassword = _password,
                     CreationDate = _userDetails[UsersEnum.CreationDate.ConvertToString()],
                     IsAdmin = _userDetails[UsersEnum.IsAdmin.ConvertToString()] == "0"
                                 ? false : true,

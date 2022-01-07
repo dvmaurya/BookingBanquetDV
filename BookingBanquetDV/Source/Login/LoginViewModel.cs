@@ -61,14 +61,17 @@ namespace BookingBanquetDV.Source.Login
                         {
                             IsRememberChecked = mainView.IsRememberChecked,
                             UserId = mainView.UserId,
+                            MobileNo = _userDetail[UsersEnum.Mobile.ConvertToString()],
                             NumberOfLogin = "1",
                             LastLogin = DateTime.Now.ConvertToString(
                                 ApplicationConstants.DatabaseDateTimeFormat),
                             EmailId = _userDetail[UsersEnum.EmailId.ConvertToString()]
                         };
 
+                        Helper.SetLocalSetting(ApplicationConstants.CurrentUserEmailId, _userDetail[UsersEnum.EmailId.ConvertToString()]);
+                        Helper.SetLocalSetting(ApplicationConstants.CurrentUserMobileNo, _userDetail[UsersEnum.Mobile.ConvertToString()]);
+
                         SaveLoginDetails(_loginDetail);
-                        Helper.SetLocalSetting<string>(ApplicationConstants.CurrentUserEmailId, _userDetail[UsersEnum.EmailId.ConvertToString()]);
                         _navigationService.Navigate(typeof(WelcomePage), _loginDetail);
                     }
                     else

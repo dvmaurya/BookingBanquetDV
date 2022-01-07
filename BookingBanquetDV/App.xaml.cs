@@ -69,6 +69,7 @@ namespace BookingBanquetDV
 
                 if (args.Arguments != ApplicationConstants.ToastNotification)
                 {
+                    ShowLoadingIndicator(ApplicationConstants.Loading);
                     FileLogger.Logger.Info(
                         ApplicationConstants.AppVersion +
                         " : " +
@@ -99,6 +100,7 @@ namespace BookingBanquetDV
                     titleBar.ButtonForegroundColor = Colors.White;
                     RegisterAppLoginPage();
                     //await InitializeCertificateProcessAsync();
+                    HideLoadingIndicator();
                 }
             }
             catch (Exception ex)

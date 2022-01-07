@@ -51,7 +51,8 @@ namespace BookingServices.Repository
                     insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.FullName), usersCred.FullName);
                     insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.EmailId), usersCred.EmailId);
                     insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.Mobile), usersCred.Mobile);
-                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.Password), usersCred.Password);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.MobilePassword), usersCred.MobilePassword);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.EmailPassword), usersCred.EmailPassword);
                     insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.CreationDate), usersCred.CreationDate);
                     insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.IsAdmin), usersCred.IsAdmin);
                     insertCommand.Parameters.AddWithValue("@" + nameof(usersCred.PasswordChanged), usersCred.PasswordChanged);
@@ -74,17 +75,8 @@ namespace BookingServices.Repository
             }
             catch (Exception ex)
             {
-                FileLogger.Logger.Info("User Exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.User} " +
-                            $"{AnalyticConstants.Cred} ",
-                    label: $"{AnalyticConstants.User} " +
-                            $"{AnalyticConstants.Cred} " +
-                            $"{AnalyticConstants.Added} " +
-                            $"in {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message} ");
+                FileLogger.Logger.Info("Add user cred into database exception: ".ConcatString(ex.Message));
+                TraceExceptions("Add user cred into database exception: ".ConcatString(ex.Message));
 
                 return false;
             }
@@ -121,16 +113,8 @@ namespace BookingServices.Repository
             }
             catch(Exception ex)
             {
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.User} ",
-                    label: $"{AnalyticConstants.Get} " +
-                            $"all {AnalyticConstants.User} " +
-                            $"{AnalyticConstants.Detail} " +
-                            $"from {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message} ");
+                FileLogger.Logger.Info("Get user detail from database exception: ".ConcatString(ex.Message));
+                GetUserFailed(ex);
             }
 
             return entries;
@@ -183,16 +167,7 @@ namespace BookingServices.Repository
 
         private void GetUserFailed(Exception ex)
         {
-            TraceEvents(
-                analyticsEvent: AnalyticConstants.Exception,
-                action: $"{AnalyticConstants.Get} " +
-                        $"{AnalyticConstants.User} ",
-                label: $"{AnalyticConstants.Get} " +
-                        $"current {AnalyticConstants.User} " +
-                        $"{AnalyticConstants.Detail} " +
-                        $"from {AnalyticConstants.Database} " +
-                        $"{AnalyticConstants.Failed} " +
-                        $"{ex.Message} ");
+            TraceExceptions("Get user detail from database exception: ".ConcatString(ex.Message));
         }
 
         public UsersCred GetUsersDetail(string userId)

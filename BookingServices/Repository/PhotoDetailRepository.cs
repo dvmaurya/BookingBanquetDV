@@ -73,17 +73,8 @@ namespace BookingServices.Repository
             }
             catch (Exception ex)
             {
-                FileLogger.Logger.Info("Photo Exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.User} " +
-                            $"{AnalyticConstants.Photo} ",
-                    label: $"{AnalyticConstants.Add} " +
-                            $"{AnalyticConstants.User} " +
-                            $"{AnalyticConstants.Photo} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"in {AnalyticConstants.Database} " +
-                            $"{ex.Message}");
+                FileLogger.Logger.Info("Photo add into database exception: ".ConcatString(ex.Message));
+                TraceExceptions("Photo add into database exception: ".ConcatString(ex.Message));
             }
         }
 
@@ -126,18 +117,8 @@ namespace BookingServices.Repository
             }
             catch(Exception ex)
             {
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.User} " +
-                            $"{AnalyticConstants.Photo} " +
-                            $"{AnalyticConstants.Detail} ",
-                    label: $"{AnalyticConstants.Get} " +
-                            $" all {AnalyticConstants.User} " +
-                            $" {AnalyticConstants.Photo} " +
-                            $"{AnalyticConstants.Detail} " +
-                            $"from {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                FileLogger.Logger.Info("Get photo from database exception: ".ConcatString(ex.Message));
+                TraceExceptions("Get photo from database exception: ".ConcatString(ex.Message));
             }
 
             return photoDetails;
@@ -179,18 +160,8 @@ namespace BookingServices.Repository
             }
             catch(Exception ex)
             {
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.User} " +
-                            $"{AnalyticConstants.Photo} " +
-                            $"{AnalyticConstants.Detail} ",
-                    label: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.Active} " +
-                            $"{AnalyticConstants.User} " +
-                            $"{AnalyticConstants.Photo} " +
-                            $"from {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                FileLogger.Logger.Info("Get active user photo from database exception: ".ConcatString(ex.Message));
+                TraceExceptions("Get active user photo from database exception: ".ConcatString(ex.Message));
             }
 
             return photoDetail;
@@ -216,17 +187,7 @@ namespace BookingServices.Repository
             catch(Exception ex)
             {
                 FileLogger.Logger.Info("Photo delete from folder exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.User} " +
-                            $"{AnalyticConstants.Photo} " +
-                            $"{AnalyticConstants.Detail} ",
-                    label: $"{AnalyticConstants.Deleted} " +
-                            $"{AnalyticConstants.User} " +
-                            $"{AnalyticConstants.Photo} " +
-                            $"from {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                TraceExceptions("Photo delete from folder exception: ".ConcatString(ex.Message));
             }
         }
     }

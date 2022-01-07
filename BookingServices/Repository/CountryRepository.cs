@@ -77,15 +77,7 @@ namespace BookingServices.Repository
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("Country Exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Add} " +
-                            $"{AnalyticConstants.Country} ",
-                    label: $"{AnalyticConstants.Add} " +
-                            $"{AnalyticConstants.Country} " +
-                            $"in {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                TraceExceptions("Country exception: ".ConcatString(ex.Message));
             }
 
             return false;
@@ -141,15 +133,7 @@ namespace BookingServices.Repository
             catch(Exception ex)
             {
                 FileLogger.Logger.Info("Get country from database Exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.Country} ",
-                    label: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.Country} " +
-                            $"from {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                TraceExceptions("Get country from database exception: ".ConcatString(ex.Message));
             }
 
             return countries;

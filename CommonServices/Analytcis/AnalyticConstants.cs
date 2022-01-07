@@ -50,5 +50,7 @@
         public const string Verified = "verified";
         public const string Credential = "credential";
         public const string Wrong = "wrong";
+        public const string LoginScreen = "MainPage";
+        public const string MobileNo = "Mobile no";
     }
 }

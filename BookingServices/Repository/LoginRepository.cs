@@ -4,6 +4,7 @@ using CommonServices.Enums;
 using CommonServices.Extensions;
 using CommonServices.Logger;
 using CommonServices.Model.DbModel;
+using CommonServices.Utilities;
 using DataAccessLibrary;
 using DataAccessLibrary.DML;
 using Microsoft.Data.Sqlite;
@@ -19,7 +20,7 @@ namespace BookingServices.Repository
         private static string _fileName = "Filename={0}";
 
         public LoginRepository(
-            IAnalyticsManager analyticManager):
+            IAnalyticsManager analyticManager) :
             base(analyticManager)
         {
 
@@ -54,7 +55,7 @@ namespace BookingServices.Repository
                         CommandText = InsertOrUpdate
                     };
 
-                    insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.UserId), loginDetail.UserId);
+                    insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.MobileNo), loginDetail.MobileNo);
                     insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.EmailId), loginDetail.EmailId);
                     insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.IsRememberChecked), loginDetail.IsRememberChecked);
                     insertCommand.Parameters.AddWithValue("@" + nameof(loginDetail.NumberOfLogin), loginDetail.NumberOfLogin);
@@ -79,16 +80,8 @@ namespace BookingServices.Repository
             }
             catch (Exception ex)
             {
-                FileLogger.Logger.Info("Exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Login} " +
-                            $"{AnalyticConstants.Detail} ",
-                    label: $"{AnalyticConstants.Login} " +
-                            $"{AnalyticConstants.Detail} " +
-                            $"{AnalyticConstants.Added} " +
-                            $"in {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} ");
+                FileLogger.Logger.Info("Add login detail into database exception: ".ConcatString(ex.Message));
+                TraceExceptions("Add login detail into database exception: ".ConcatString(ex.Message));
 
                 return false;
             }
@@ -105,7 +98,7 @@ namespace BookingServices.Repository
                 {
                     db.Open();
 
-                    string sqlText = LoginQuery.SelectAllFromLogin.FormatString(loginDetail.UserId);
+                    string sqlText = LoginQuery.SelectAllFromLogin.FormatString(loginDetail.MobileNo);
 
                     SqliteCommand selectCommand = new SqliteCommand
                         (sqlText, db);
@@ -115,7 +108,7 @@ namespace BookingServices.Repository
                     while (query.Read())
                     {
                         entries.Add(nameof(LoginDetail.Id), query.GetString(0));
-                        entries.Add(nameof(LoginDetail.UserId), query.GetString(1));
+                        entries.Add(nameof(LoginDetail.MobileNo), query.GetString(1));
                         entries.Add(nameof(LoginDetail.EmailId), query.GetString(2));
                         entries.Add(nameof(LoginDetail.IsRememberChecked), query.GetString(3));
                         entries.Add(nameof(LoginDetail.NumberOfLogin), query.GetString(4));
@@ -125,19 +118,10 @@ namespace BookingServices.Repository
                     db.Close();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.Login} " +
-                            $"{AnalyticConstants.Detail} ",
-                    label: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.Login} " +
-                            $"{AnalyticConstants.Detail} " +
-                            $"from {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                FileLogger.Logger.Info("Get login detail exception: " + ex.Message);
+                TraceExceptions("Get login detail exception: ".ConcatString(ex.Message));
             }
 
             return entries;
@@ -151,11 +135,14 @@ namespace BookingServices.Repository
             {
                 if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
                 {
-                    string emailOrMobile = userName.All(char.IsDigit)
-                        ?
-                        nameof(UsersCred.Mobile)
-                        :
-                        nameof(UsersCred.EmailId);
+                    string selectQuery = string.Empty;
+                    string sha1Password = Utilities.GetSha1Hashed(userName + "|" + password);
+
+                    selectQuery = userName.All(char.IsDigit) ?
+                        SignupQuery.SelectAllFromUserMobile.FormatString(
+                            nameof(UsersCred.Mobile), userName, sha1Password) :
+                        SignupQuery.SelectAllFromUserEmail.FormatString(
+                            nameof(UsersCred.EmailId), userName, sha1Password);
 
                     _dbpath = DataAccess.GetDbPath();
 
@@ -163,43 +150,30 @@ namespace BookingServices.Repository
                     {
                         db.Open();
 
-                        SqliteCommand selectCommand = new SqliteCommand
-                            (SignupQuery.SelectAllFromUser.FormatString(
-                                emailOrMobile, userName, password),
-                            db);
+                        SqliteCommand selectCommand = new SqliteCommand(selectQuery, db);
+                        SqliteDataReader executeQuery = selectCommand.ExecuteReader();
 
-                        SqliteDataReader query = selectCommand.ExecuteReader();
-
-                        while (query.Read())
+                        while (executeQuery.Read())
                         {
-                            entries.Add(nameof(UsersCred.Id), query.GetString(0));
-                            entries.Add(nameof(UsersCred.UserId), query.GetString(1));
-                            entries.Add(nameof(UsersCred.EmailId), query.GetString(2));
-                            entries.Add(nameof(UsersCred.Mobile), query.GetString(3));
-                            entries.Add(nameof(UsersCred.Password), query.GetString(4));
-                            entries.Add(nameof(UsersCred.CreationDate), query.GetString(5));
-                            entries.Add(nameof(UsersCred.IsAdmin), query.GetString(6));
-                            entries.Add(nameof(UsersCred.PasswordChanged), query.GetString(7));
+                            entries.Add(nameof(UsersCred.Id), executeQuery.GetString(0));
+                            entries.Add(nameof(UsersCred.UserId), executeQuery.GetString(1));
+                            entries.Add(nameof(UsersCred.EmailId), executeQuery.GetString(2));
+                            entries.Add(nameof(UsersCred.Mobile), executeQuery.GetString(3));
+                            entries.Add(nameof(UsersCred.MobilePassword), executeQuery.GetString(4));
+                            entries.Add(nameof(UsersCred.EmailPassword), executeQuery.GetString(5));
+                            entries.Add(nameof(UsersCred.CreationDate), executeQuery.GetString(6));
+                            entries.Add(nameof(UsersCred.IsAdmin), executeQuery.GetString(7));
+                            entries.Add(nameof(UsersCred.PasswordChanged), executeQuery.GetString(8));
                         }
 
                         db.Close();
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.Login} " +
-                            $"{AnalyticConstants.Data} ",
-                    label: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.Login} " +
-                            $"{AnalyticConstants.Data} " +
-                            $"for {AnalyticConstants.Login} " +
-                            $"from {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                FileLogger.Logger.Info("Get login detail from database exception: " + ex.Message);
+                TraceExceptions("Get login detail from database exception: ".ConcatString(ex.Message));
             }
 
             return entries;
@@ -224,7 +198,7 @@ namespace BookingServices.Repository
                     while (query.Read())
                     {
                         entries.Add(nameof(LoginDetail.Id), query.GetString(0));
-                        entries.Add(nameof(LoginDetail.UserId), query.GetString(1));
+                        entries.Add(nameof(LoginDetail.MobileNo), query.GetString(1));
                         entries.Add(nameof(LoginDetail.IsRememberChecked), query.GetString(2));
                         entries.Add(nameof(LoginDetail.NumberOfLogin), query.GetString(3));
                         entries.Add(nameof(LoginDetail.LastLogin), query.GetString(4));
@@ -235,21 +209,10 @@ namespace BookingServices.Repository
                     db.Close();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.Previous} " +
-                            $"{AnalyticConstants.Login} " +
-                            $"{AnalyticConstants.Detail} ",
-                    label: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.Previous} " +
-                            $"{AnalyticConstants.Login} " +
-                            $"{AnalyticConstants.Detail} " +
-                            $"from {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                FileLogger.Logger.Info("Get previous login detail exception: " + ex.Message);
+                TraceExceptions("Get previous login detail exception: ".ConcatString(ex.Message));
             }
 
             return entries;

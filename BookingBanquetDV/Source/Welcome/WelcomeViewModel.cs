@@ -430,7 +430,7 @@ namespace BookingBanquetDV.Source.Welcome
                 _loginDetail = loginDetail;
                 LoadAllBookingDetail();
 
-                _usersPersonalDetail = _usersPersonalDetailDataProvider.GetUsersPersonalDetail(_loginDetail.UserId);
+                _usersPersonalDetail = _usersPersonalDetailDataProvider.GetUsersPersonalDetail(_loginDetail.MobileNo);
 
                 if (_usersPersonalDetail != null)
                 {
@@ -463,7 +463,7 @@ namespace BookingBanquetDV.Source.Welcome
                 _bookingDetailList = new ObservableCollection<BookingDetails>();
                 foreach (BookingDetails booking in _masterBookingDetailList)
                 {
-                    if (booking.UserId == _loginDetail.UserId || booking.UserId == _loginDetail.EmailId)
+                    if (booking.UserId == _loginDetail.MobileNo || booking.UserId == _loginDetail.EmailId)
                     {
                         _bookingDetailList.Add(booking);
                         CustomerPhotoDetail photo = _customerPhotoDataProvider.GetCustomerPhotoDetail(booking.Id);

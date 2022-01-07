@@ -51,6 +51,7 @@ namespace CommonServices.Printout
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("Failed to open printout UI. " + ex.Message);
+                _analyticsManager.TraceExceptions(ex.Message);
                 _analyticsManager.TraceEvents(
                     analyticsEvent: AnalyticConstants.Exception,
                     action: $"{AnalyticConstants.Printout} " +

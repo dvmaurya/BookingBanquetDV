@@ -72,16 +72,8 @@ namespace BookingServices.Repository
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("Customer Photo insert/update Exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Customer} " +
-                            $"{AnalyticConstants.Photo} ",
-                    label: $"{AnalyticConstants.Customer} " +
-                            $"{AnalyticConstants.Photo} " +
-                            $"{AnalyticConstants.Added} " +
-                            $"in {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                TraceExceptions("Customer Photo insert/update Exception: ".ConcatString(ex.Message));
+
             }
         }
 
@@ -122,16 +114,7 @@ namespace BookingServices.Repository
             catch(Exception ex)
             {
                 FileLogger.Logger.Info("Customer photo retrieve exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Customer} " +
-                            $"{AnalyticConstants.Photo} ",
-                    label: $"{AnalyticConstants.Get} " +
-                            $"{AnalyticConstants.Customer} " +
-                            $"{AnalyticConstants.Photo} " +
-                            $"from {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                TraceExceptions("Coustomer photo retrieve exception: ".ConcatString(ex.Message));
             }
 
             return photoDetail;
@@ -165,16 +148,7 @@ namespace BookingServices.Repository
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("Customer photo delete exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Customer} " +
-                            $"{AnalyticConstants.Customer} ",
-                    label: $"{AnalyticConstants.Customer} " +
-                            $"{AnalyticConstants.Photo} " +
-                            $"{AnalyticConstants.Deleted} " +
-                            $"from {AnalyticConstants.Database} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                TraceExceptions("Customer photot delete exception: ".ConcatString(ex.Message));
             }
         }
 
@@ -198,16 +172,7 @@ namespace BookingServices.Repository
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("Customer photo delete from folder exception: ".ConcatString(ex.Message));
-                TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Customer} " +
-                            $"{AnalyticConstants.Customer} ",
-                    label: $"{AnalyticConstants.Customer} " +
-                            $"{AnalyticConstants.Photo} " +
-                            $"{AnalyticConstants.Deleted} " +
-                            $"from {AnalyticConstants.Folder} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                TraceExceptions("Customer photo delete from folder exception: ".ConcatString(ex.Message));
             }
         }
     }

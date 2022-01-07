@@ -61,15 +61,7 @@ namespace BookingBanquetDV.Utility
                 catch (Exception ex)
                 {
                     FileLogger.Logger.Info("Email Exception: ".ConcatString(ex.Message));
-
-                    analyticsManager.TraceEvents(
-                        analyticsEvent: AnalyticConstants.Exception,
-                        action: $"{AnalyticConstants.Email} " +
-                                $"{AnalyticConstants.Sent} ",
-                        label: $"{AnalyticConstants.Email} " +
-                                $"{AnalyticConstants.Sent} " +
-                                $"{AnalyticConstants.Failed} " +
-                                $"{ex.Message}");
+                    analyticsManager.TraceExceptions("Email Exception: ".ConcatString(ex.Message));
                 }
             }
 
@@ -185,15 +177,7 @@ namespace BookingBanquetDV.Utility
             catch (Exception ex)
             {
                 FileLogger.Logger.Info("Email attachment exception: ".ConcatString(ex.Message));
-                analyticsManager.TraceEvents(
-                    analyticsEvent: AnalyticConstants.Exception,
-                    action: $"{AnalyticConstants.Email} " +
-                            $"{AnalyticConstants.Attachment} ",
-                    label: $"{AnalyticConstants.Email} " +
-                            $"{AnalyticConstants.Attachment} " +
-                            $"{AnalyticConstants.Add} " +
-                            $"{AnalyticConstants.Failed} " +
-                            $"{ex.Message}");
+                analyticsManager.TraceExceptions("Email attachment Exception: ".ConcatString(ex.Message));
             }
 
             return builder;
