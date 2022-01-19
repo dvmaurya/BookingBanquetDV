@@ -42,9 +42,7 @@
                         <Button
                             Margin="0,0,10,10"
                             BorderBrush="Green"
-                            BorderThickness="1"
-                            PointerEntered="AppBarButton_PointerEntered"
-                            PointerExited="AppBarButton_PointerExited">
+                            BorderThickness="1">
                             <ToolTipService.ToolTip>
                                 <TextBlock Text="{Binding UsersPersonalDetail.FullName}" />
                             </ToolTipService.ToolTip>
@@ -468,14 +466,16 @@
                                                     CommandParameter="{Binding}"
                                                     Label="Edit booking"
                                                     PointerEntered="AppBarButton_PointerEntered"
-                                                    PointerExited="AppBarButton_PointerExited" />
+                                                    PointerExited="AppBarButton_PointerExited"
+                                                    Visibility="{Binding IsCurrentUserBooking}" />
                                                 <AppBarButton
                                                     VerticalAlignment="Center"
                                                     Command="{Binding DataContext.DeleteBookingCommand, ElementName=BookingList}"
                                                     CommandParameter="{Binding}"
                                                     Label="Delete booking"
                                                     PointerEntered="AppBarButton_PointerEntered"
-                                                    PointerExited="AppBarButton_PointerExited" />
+                                                    PointerExited="AppBarButton_PointerExited"
+                                                    Visibility="{Binding IsCurrentUserBooking}" />
                                                 <AppBarButton
                                                     VerticalAlignment="Center"
                                                     Command="{Binding DataContext.SendEmailCommand, ElementName=BookingList}"

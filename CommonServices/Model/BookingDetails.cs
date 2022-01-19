@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace CommonServices.Model
 {
@@ -59,6 +60,12 @@ namespace CommonServices.Model
 
         [JsonProperty("city")]
         public string City { get; set; }
+
+        [JsonIgnore]
+        public BitmapImage UserPhoto { get; set; }
+
+        [JsonIgnore]
+        public bool IsCurrentUserBooking { get; set; }
 
         [JsonIgnore]
         public bool CanShowPhoto

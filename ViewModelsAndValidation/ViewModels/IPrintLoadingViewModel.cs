@@ -8,6 +8,6 @@ namespace ViewModelsAndValidation.ViewModels
         BookingDetails BookingDetails { get; set; }
         CustomerPhotoDetail CustomerPhoto { get; set; }
         LoginDetail LoginDetail { get; set; }
-        ICommand PrintCommand { get; }
+        ICommand CloseCommand { get; }
     }
 }

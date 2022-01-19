@@ -15,14 +15,26 @@
             </Grid.RowDefinitions>
             <Canvas x:Name="PrintCanvas" Opacity="0" />
             <welcome:ViewBooking />
-            <Button
-                x:Name="InvokePrintingButton"
+            <StackPanel
                 Grid.Row="1"
                 HorizontalAlignment="Center"
-                Background="#2596BE"
-                Click="OnPrintButtonClick"
-                Content="Print"
-                Foreground="#FFFFFF" />
+                Orientation="Horizontal">
+                <Button
+                    x:Name="InvokePrintingButton"
+                    HorizontalAlignment="Center"
+                    Background="#2596BE"
+                    Click="OnPrintButtonClick"
+                    Content="Print"
+                    Foreground="#FFFFFF" />
+                <Button
+                    x:Name="Close"
+                    Margin="20,0,0,0"
+                    HorizontalAlignment="Center"
+                    Background="#2596BE"
+                    Command="{Binding CloseCommand}"
+                    Content="Close"
+                    Foreground="#FFFFFF" />
+            </StackPanel>
         </Grid>
     </Grid>
 </Page>

@@ -29,9 +29,7 @@ namespace BookingBanquetDV.Source.Welcome.Controls
         {
             if (sender != null &&
                 this.DataContext is IUserDetailViewModel viewModel)
-            {
                 viewModel.UsersPersonalDetail = _usersPersonalDetail;
-            }
 
             if (args != null) { }
         }

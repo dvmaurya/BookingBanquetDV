@@ -6,7 +6,6 @@ using BookingBanquetDV.Utility;
 using BookingServices.Interfaces;
 using CommonServices.Analytcis;
 using CommonServices.ConstantData;
-using CommonServices.Enums;
 using CommonServices.Extensions;
 using CommonServices.Model;
 using System;
@@ -20,6 +19,7 @@ using ViewModelsAndValidation.Services;
 using ViewModelsAndValidation.ViewModels;
 using Windows.Storage;
 using Windows.UI.Popups;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace BookingBanquetDV.Source.Welcome
@@ -104,7 +104,7 @@ namespace BookingBanquetDV.Source.Welcome
                 async parameter => await OnDeleteBookingClickAsync(parameter));
 
             _viewProfileCommand = new DelegateCommand(
-                async parameter => await OnViewProfileClickAsync());
+                async parameter => await OnViewProfileClickAsync(parameter));
 
             _editProfileCommand = new DelegateCommand(
                 parameter => OnEditProfileClick());
@@ -197,7 +197,7 @@ namespace BookingBanquetDV.Source.Welcome
 
             App.HideLoadingIndicator();
 
-            string emailMessage = isEmailSent ? 
+            string emailMessage = isEmailSent ?
                 ApplicationConstants.EmailSent.FormatString(_usersPersonalDetail.EmailId) :
                 ApplicationConstants.SomethingWentWrong;
 
@@ -239,16 +239,36 @@ namespace BookingBanquetDV.Source.Welcome
             App.HideLoadingIndicator();
         }
 
-        private async Task OnViewProfileClickAsync()
+        private async Task OnViewProfileClickAsync(object parameter)
         {
-            if (_usersPersonalDetail != null)
+            UsersPersonalDetail userDetailViewParam = null;
+
+            if (parameter is BookingDetails bookingDetails)
+            {
+                if (!bookingDetails.IsCurrentUserBooking)
+                {
+                    userDetailViewParam = _usersPersonalDetailDataProvider.GetUsersPersonalDetail(bookingDetails.UserId);
+                    PhotoDetails photoDetail = _photoDetailDataProvider.GetActivePhotoDetail(userDetailViewParam.EmailId);
+                    userDetailViewParam.ImageSource = await SetUserPhoto(photoDetail.LocalPhotoName);
+                }
+                else if (_usersPersonalDetail != null)
+                {
+                    userDetailViewParam = _usersPersonalDetail;
+                }
+            }
+            else if (_usersPersonalDetail != null)
+            {
+                userDetailViewParam = _usersPersonalDetail;
+            }
+
+            if (userDetailViewParam != null)
             {
                 _analyticsManager.TraceScreenView(
                     $"{AnalyticConstants.User} " +
                     $"{AnalyticConstants.Profile} " +
                     $"{AnalyticConstants.Screen} ");
 
-                ViewUserDetail userDetailView = new ViewUserDetail(_usersPersonalDetail);
+                ViewUserDetail userDetailView = new ViewUserDetail(userDetailViewParam);
                 await _contentDialogService.ShowDialogAsync(userDetailView);
             }
         }
@@ -428,7 +448,7 @@ namespace BookingBanquetDV.Source.Welcome
             if (parameter is LoginDetail loginDetail)
             {
                 _loginDetail = loginDetail;
-                LoadAllBookingDetail();
+                await LoadAllBookingDetailAsync();
 
                 _usersPersonalDetail = _usersPersonalDetailDataProvider.GetUsersPersonalDetail(_loginDetail.MobileNo);
 
@@ -436,24 +456,31 @@ namespace BookingBanquetDV.Source.Welcome
                 {
                     _loginDetail.UserName = _usersPersonalDetail.FullName;
                     _photoDetail = _photoDetailDataProvider.GetActivePhotoDetail(_usersPersonalDetail.EmailId);
-
-                    if (_photoDetail != null)
-                    {
-                        StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.
-                            GetFolderAsync(ApplicationConstants.Document);
-
-                        if (await storageFolder.TryGetItemAsync(_photoDetail.LocalPhotoName) is StorageFile file)
-                            _usersPersonalDetail.ImageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file, ApplicationConstants.Document);
-                    }
-
-                    OnPropertyChanged(() => UsersPersonalDetail);
+                    _usersPersonalDetail.ImageSource = await SetUserPhoto(_photoDetail.LocalPhotoName);
                 }
+
+                OnPropertyChanged(() => UsersPersonalDetail);
 
                 _banquetDetail = _banquetDataProvider.GetBanquetDetail();
             }
         }
 
-        private void LoadAllBookingDetail()
+        private async Task<BitmapImage> SetUserPhoto(string photoName)
+        {
+            BitmapImage imageSource = null;
+            if (photoName != null)
+            {
+                StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.
+                    GetFolderAsync(ApplicationConstants.Document);
+
+                if (await storageFolder.TryGetItemAsync(photoName) is StorageFile file)
+                    imageSource = await PhotoUtility.GetDecrtypedPhotoAsync(file, ApplicationConstants.Document);
+            }
+
+            return imageSource;
+        }
+
+        private async Task LoadAllBookingDetailAsync()
         {
             _masterBookingDetailList = new ObservableCollection<BookingDetails>(
                 _bookingDataProvider.GetAllBookings());
@@ -463,13 +490,24 @@ namespace BookingBanquetDV.Source.Welcome
                 _bookingDetailList = new ObservableCollection<BookingDetails>();
                 foreach (BookingDetails booking in _masterBookingDetailList)
                 {
-                    if (booking.UserId == _loginDetail.MobileNo || booking.UserId == _loginDetail.EmailId)
-                    {
-                        _bookingDetailList.Add(booking);
-                        CustomerPhotoDetail photo = _customerPhotoDataProvider.GetCustomerPhotoDetail(booking.Id);
+                    _bookingDetailList.Add(booking);
+                    CustomerPhotoDetail photo = _customerPhotoDataProvider.GetCustomerPhotoDetail(booking.Id);
 
-                        if (photo != null && !string.IsNullOrEmpty(photo.PhotoName))
-                            booking.CanShowPhoto = true;
+                    if (photo != null && !string.IsNullOrEmpty(photo.PhotoName))
+                        booking.CanShowPhoto = true;
+
+                    if (booking.UserId == _loginDetail.MobileNo || booking.UserId == _loginDetail.EmailId)
+                        booking.IsCurrentUserBooking = true;
+
+                    PhotoDetails userPhoto = _photoDetailDataProvider.GetActivePhotoDetail(booking.UserId);
+
+                    if (userPhoto != null)
+                    {
+                        StorageFolder storageFolder = await ApplicationData.Current.LocalFolder.
+                            GetFolderAsync(ApplicationConstants.Document);
+
+                        if (await storageFolder.TryGetItemAsync(userPhoto.LocalPhotoName) is StorageFile file)
+                            booking.UserPhoto = await PhotoUtility.GetDecrtypedPhotoAsync(file, ApplicationConstants.Document);
                     }
                 }
             }

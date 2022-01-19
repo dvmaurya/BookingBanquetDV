@@ -27,10 +27,10 @@ namespace BookingBanquetDV.Validation
                     {
                         if (newBooking.BookingDetails.Id != 0)
                         {
-                            if(newBooking.MasterBookingDetailList.Where(
+                            if(newBooking.MasterBookingDetailList.FirstOrDefault(
                                 booking =>
-                                booking.Id != newBooking.BookingDetails?.Id &&
-                                booking.BookingDate.FormatStringEquals(newBooking.BookingDetails.BookingDate)) != null)
+                                booking.Id != newBooking.BookingDetails.Id &&
+                                booking.BookingDate.FormatStringEquals(newBooking.BookingDate.ConvertToString(ApplicationConstants.DatabaseDateFormat))) != null)
                                 return CheckExistingDate(allBookingDates, dateTime);
                         }
                     }

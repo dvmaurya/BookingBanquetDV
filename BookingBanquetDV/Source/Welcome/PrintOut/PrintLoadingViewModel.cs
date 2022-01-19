@@ -19,8 +19,7 @@ namespace BookingBanquetDV.Source.Welcome.PrintOut
         private BookingDetails _bookingDetails;
         private CustomerPhotoDetail _customerPhoto;
         private LoginDetail _loginDetail;
-
-        private readonly ICommand _printCommand;
+        private readonly ICommand _closeCommand;
 
         private readonly INavigationService _nativationService;
         private readonly IAnalyticsManager _analyticsManager;
@@ -32,7 +31,7 @@ namespace BookingBanquetDV.Source.Welcome.PrintOut
             _nativationService = navigationService ?? throw new ArgumentNullException("navigationService");
             _analyticsManager = analyticsManager ?? throw new ArgumentNullException("analyticsManager");
 
-            _printCommand = new DelegateCommand(parameter => OnPrintPage());
+            _closeCommand = new DelegateCommand(parameter => OnPrintPage());
         }
 
         private void OnPrintPage()
@@ -93,6 +92,6 @@ namespace BookingBanquetDV.Source.Welcome.PrintOut
             set => _customerPhoto = value;
         }
 
-        public ICommand PrintCommand => _printCommand;
+        public ICommand CloseCommand => _closeCommand;
     }
 }
