@@ -44,9 +44,9 @@ namespace BookingBanquetDV
 
         public static ILogger Logger { get { return FileLogger.Logger; } }
 
-        private void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-
+            FileLogger.Logger.LogError("Unhandled application exception.", e.Exception);
         }
 
         private void OnResuming(object sender, object e)
@@ -105,7 +105,10 @@ namespace BookingBanquetDV
             }
             catch (Exception ex)
             {
-                FileLogger.Logger.Info("Exception: ".ConcatString(ex.Message));
+                FileLogger.Logger.LogError("Application launch failed.", ex);
+#if DEBUG
+                throw;
+#endif
             }
         }
 

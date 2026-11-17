@@ -1,7 +1,6 @@
 ﻿using BookingServices.Interfaces;
 using CommonServices.Extensions;
-using SQLite.Net;
-using SQLite.Net.Platform.SQLCipher.WinRT;
+using SQLite;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -45,7 +44,7 @@ namespace BookingServices.SQLite
                                     () =>
                                     {
                                         foreach (var table in tables)
-                                            _dbConnection.CreateTable(table);
+                                            _dbConnection.CreateTable(table, CreateFlags.None);
                                     });
                             }
                         });
@@ -93,7 +92,7 @@ namespace BookingServices.SQLite
             }
         }
 
-        public Task<T> SelectFirstOrDefaultAsync<T>(string sql, params object[] parameters) where T : class
+        public Task<T> SelectFirstOrDefaultAsync<T>(string sql, params object[] parameters) where T : class, new()
         {
             try
             {
@@ -118,7 +117,7 @@ namespace BookingServices.SQLite
             }
         }
 
-        public Task<IList<T>> SelectAsync<T>(string sql, params object[] parameters) where T : class
+        public Task<IList<T>> SelectAsync<T>(string sql, params object[] parameters) where T : class, new()
         {
             try
             {
@@ -143,7 +142,7 @@ namespace BookingServices.SQLite
             }
         }
 
-        public Task<T> SelectSingleOrDefaultAsync<T>(string sql, params object[] parameters) where T : class
+        public Task<T> SelectSingleOrDefaultAsync<T>(string sql, params object[] parameters) where T : class, new()
         {
             try
             {
@@ -280,8 +279,7 @@ namespace BookingServices.SQLite
                     {
                         _dbConnection =
                             new SQLiteConnectionWithLock(
-                                new SQLitePlatformWinRT(_password),
-                                new SQLiteConnectionString(_connectionString, false));
+                                new SQLiteConnectionString(_connectionString, false, _password, null, null, null));
 
                         _dbConnection.ExecuteScalar<int>(PragmaCipherLicense.FormatString(_license));
                     }
@@ -314,7 +312,7 @@ namespace BookingServices.SQLite
                                     () =>
                                     {
                                         foreach (var table in tables)
-                                            _dbConnection.DropTable(table);
+                                            _dbConnection.DropTable(_dbConnection.GetMapping(table, CreateFlags.None));
                                     });
                             }
                         });

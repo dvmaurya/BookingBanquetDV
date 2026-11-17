@@ -1,0 +1,56 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build UWP Debug x86 (MSBuild)",
+			"type": "shell",
+			"command": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\MSBuild\\Current\\Bin\\MSBuild.exe",
+			"args": [
+				"BookingBanquetDV.sln",
+				"/t:Build",
+				"/p:Configuration=Debug",
+				"/p:Platform=x86",
+				"/nologo",
+				"/clp:Summary"
+			],
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Deploy UWP Debug Package (Admin)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$scriptPath = 'c:\\Users\\dmaurya\\Downloads\\BookingBanquetDV\\BookingBanquetDV\\AppPackages\\BookingBanquetDV_1.0.1.0_Debug_Test\\Add-AppDevPackage.ps1'; Start-Process PowerShell -Verb RunAs -ArgumentList ('-NoProfile -ExecutionPolicy Bypass -File \"' + $scriptPath + '\" -Force')"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Launch BookingBanquetDV",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$pkg = Get-AppxPackage | Where-Object { $_.Name -like '*BookingBanquetDV*' } | Select-Object -First 1; if (-not $pkg) { Write-Error 'BookingBanquetDV package is not installed. Run Deploy task first.'; exit 1 }; $app = Get-AppxPackageManifest $pkg | Select-Object -ExpandProperty Package | Select-Object -ExpandProperty Applications | Select-Object -ExpandProperty Application | Select-Object -First 1; Start-Process ('shell:AppsFolder\\' + $pkg.PackageFamilyName + '!' + $app.Id)"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Build + Deploy + Launch UWP",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"Build UWP Debug x86 (MSBuild)",
+				"Deploy UWP Debug Package (Admin)",
+				"Launch BookingBanquetDV"
+			],
+			"problemMatcher": []
+		}
+	]
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup Condition="'$(MSBuildRuntimeType)' == 'Core' and !Exists('$(MSBuildExtensionsPath)\\Microsoft\\WindowsXaml\\v$(VisualStudioVersion)\\Microsoft.Windows.UI.Xaml.CSharp.targets')">
+    <_VsMsBuildRoot Condition="Exists('C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\MSBuild\\Microsoft\\WindowsXaml\\v18.0\\Microsoft.Windows.UI.Xaml.CSharp.targets')">C:\Program Files\Microsoft Visual Studio\18\Professional\MSBuild</_VsMsBuildRoot>
+    <_VsMsBuildRoot Condition="'$(_VsMsBuildRoot)' == '' and Exists('C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\MSBuild\\Microsoft\\WindowsXaml\\v17.0\\Microsoft.Windows.UI.Xaml.CSharp.targets')">C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild</_VsMsBuildRoot>
+    <MSBuildExtensionsPath Condition="'$(_VsMsBuildRoot)' != ''">$(_VsMsBuildRoot)</MSBuildExtensionsPath>
+    <VisualStudioVersion Condition="'$(_VsMsBuildRoot)' != '' and Exists('$(_VsMsBuildRoot)\\Microsoft\\WindowsXaml\\v18.0\\Microsoft.Windows.UI.Xaml.CSharp.targets')">18.0</VisualStudioVersion>
+    <VisualStudioVersion Condition="'$(_VsMsBuildRoot)' != '' and !Exists('$(_VsMsBuildRoot)\\Microsoft\\WindowsXaml\\v18.0\\Microsoft.Windows.UI.Xaml.CSharp.targets') and Exists('$(_VsMsBuildRoot)\\Microsoft\\WindowsXaml\\v17.0\\Microsoft.Windows.UI.Xaml.CSharp.targets')">17.0</VisualStudioVersion>
+  </PropertyGroup>
+</Project>

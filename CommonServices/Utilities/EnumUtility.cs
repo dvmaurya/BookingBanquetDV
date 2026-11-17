@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Reflection;
 
 namespace CommonServices.Utilities
@@ -68,7 +69,8 @@ namespace CommonServices.Utilities
             foreach (string name in names)
             {
                 FieldInfo field = type.GetField(name);
-                IEnumerable<Attribute> descriptionAttributes = field.GetCustomAttributes(typeof(DisplayAttribute), true);
+                IEnumerable<DisplayAttribute> descriptionAttributes =
+                    field.GetCustomAttributes(typeof(DisplayAttribute), true).Cast<DisplayAttribute>();
                 foreach (DisplayAttribute descriptionAttribute in descriptionAttributes)
                 {
                     descriptions.Add(descriptionAttribute.Description);
@@ -84,7 +86,8 @@ namespace CommonServices.Utilities
             foreach (var name in names)
             {
                 FieldInfo field = type.GetField(name);
-                IEnumerable<Attribute> descriptionAttributes = field.GetCustomAttributes(typeof(DisplayAttribute), true);
+                IEnumerable<DisplayAttribute> descriptionAttributes =
+                    field.GetCustomAttributes(typeof(DisplayAttribute), true).Cast<DisplayAttribute>();
                 foreach (DisplayAttribute fd in descriptionAttributes)
                 {
                     descriptions.Add(fd.Description);

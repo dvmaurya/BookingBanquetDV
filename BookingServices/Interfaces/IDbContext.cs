@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SQLite.Net;
+using SQLite;
 
 namespace BookingServices.Interfaces
 {
@@ -10,9 +10,9 @@ namespace BookingServices.Interfaces
     {
         Task<int> ExecuteAsync(string sql, params object[] parameters);
         Task<T> ExecuteScalarAsync<T>(string sql, params object[] parameters);
-        Task<T> SelectFirstOrDefaultAsync<T>(string sql, params object[] parameters) where T : class;
-        Task<T> SelectSingleOrDefaultAsync<T>(string sql, params object[] parameters) where T : class;
-        Task<IList<T>> SelectAsync<T>(string sql, params object[] parameters) where T : class;
+        Task<T> SelectFirstOrDefaultAsync<T>(string sql, params object[] parameters) where T : class, new();
+        Task<T> SelectSingleOrDefaultAsync<T>(string sql, params object[] parameters) where T : class, new();
+        Task<IList<T>> SelectAsync<T>(string sql, params object[] parameters) where T : class, new();
         Task<int> InsertAsync(object value);
         Task<int> InsertAllAsync(IEnumerable value);
         Task UpdateAsync(object value);
